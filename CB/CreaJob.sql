@@ -7,7 +7,7 @@ BEGIN
 		START_DATE => SYSTIMESTAMP,
 		REPEAT_INTERVAL => 'FREQ=DAILY;BYHOUR=24',
 		ENABLED => TRUE,
-		COMMENTS => 'Backup des nouveaux utilisateurs et leurs évaluations du jour de leur création.';
-	)
+		COMMENTS => 'Backup des nouveaux utilisateurs et leurs évaluations du jour de leur création.'
+	);
 END;
 /
