@@ -22,7 +22,8 @@ BEGIN
 
 EXCEPTION
 	WHEN OTHERS THEN
-		IF SQLCODE = -2291 THEN :NEW.TOKEN := 'KO';
+		IF SQLCODE = -2291 THEN :NEW.TOKEN := 'KO'; -- Clé étrangère (login) inconnue de l'autre schéma
+		-- ELSE IF SQLCODE = .... THEN :NEW.TOKEN := 'KO'; -- DB Link inaccessible donc user hors connexion
 		ELSE RAISE;
 		END IF;
 END;
