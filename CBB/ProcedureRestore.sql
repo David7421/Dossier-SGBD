@@ -16,4 +16,6 @@ BEGIN
 
 	COMMIT;
 
+	LOGEVENT('CBB : Restore');
+
 END;

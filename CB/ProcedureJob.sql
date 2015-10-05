@@ -16,4 +16,6 @@ BEGIN
 
 	COMMIT;
 
+	LOGEVENT('CB : Backup');
+
 END;

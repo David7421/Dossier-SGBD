@@ -22,9 +22,16 @@ BEGIN
 
 EXCEPTION
 	WHEN OTHERS THEN
-		IF SQLCODE = -2291 THEN :NEW.TOKEN := 'KO'; -- Clé étrangère (login) inconnue de l'autre schéma
-		-- ELSE IF SQLCODE = .... THEN :NEW.TOKEN := 'KO'; -- DB Link inaccessible donc user hors connexion
+		IF SQLCODE = -2291 THEN
+			:NEW.TOKEN := 'KO'; -- Clé étrangère (login) inconnue de l'autre schéma
+			LOGEVENT('CBB : COPIECOTESAVIS : Erreur de FK');
+		
+		ELSE IF SQLCODE = -28000 THEN
+			:NEW.TOKEN := 'KO'; -- DB Link inaccessible donc user hors connexion
+			LOGEVENT('CBB : COPIECOTESAVIS : CB inaccessible');
+
 		ELSE RAISE;
+		
 		END IF;
 END;
 /
