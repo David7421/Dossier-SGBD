@@ -19,3 +19,5 @@ BEGIN
 	LOGEVENT('CBB : Restore');
 
 END;
+/
+EXIT;

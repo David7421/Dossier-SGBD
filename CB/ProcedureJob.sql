@@ -19,3 +19,6 @@ BEGIN
 	LOGEVENT('CB : Backup');
 
 END;
+/
+
+EXIT;

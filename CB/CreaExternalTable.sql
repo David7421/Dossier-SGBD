@@ -1,3 +1,5 @@
+DROP TABLE movies_ext;
+
 create table movies_ext (
   id integer,
   title varchar2(2000),
@@ -56,5 +58,6 @@ organization external (
   )
   location('movies.txt')
 )
-reject limit unlimited
-;
+reject limit unlimited;
+
+EXIT;
