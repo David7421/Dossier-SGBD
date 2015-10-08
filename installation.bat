@@ -1,3 +1,4 @@
+@ECHO OFF
 
 sqlplus / as sysdba @Sys/CreateUsers.sql
 sqlplus / as sysdba @Sys/CreaDirectory.sql
