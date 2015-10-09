@@ -16,7 +16,7 @@ DECLARE
   valNull NUMBER;
   valVide NUMBER;
   quantile100 NUMBER;
-  quantile10000 NUMBER;
+  quantile1000 NUMBER;
 BEGIN
   fichierId := utl_file.fopen ('MOVIEDIRECTORY', 'Rapport.txt', 'W');
 
@@ -31,15 +31,11 @@ BEGIN
   SELECT COUNT(*) INTO valNull FROM MOVIES_EXT WHERE TITLE IS NULL;
   SELECT COUNT(*) INTO valVide FROM MOVIES_EXT WHERE LENGTH(TITLE) = 0 OR TITLE = '0';
 
-  SELECT COUNT(*) INTO quantile100
-  FROM  ( SELECT NTILE(100) OVER(ORDER BY LENGTH(TITLE)) AS quantile
-          FROM MOVIES_EXT)
-  WHERE quantile = 99;
+  SELECT PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(TITLE)) INTO quantile100
+  FROM MOVIES_EXT;
 
-  SELECT COUNT(*) INTO quantile10000
-  FROM  ( SELECT NTILE(10000) OVER(ORDER BY LENGTH(TITLE)) AS quantile
-          FROM MOVIES_EXT)
-  WHERE quantile = 9999;
+  SELECT PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(TITLE)) INTO quantile1000
+  FROM MOVIES_EXT;
 
   utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
   utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
@@ -51,7 +47,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || (donnee.totVal - valNull));
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (quantile10000));
+  utl_file.put_line (fichierId, '  1000-QUANTILE:  ' || (quantile1000));
 
   SELECT MAX(LENGTH(ORIGINAL_TITLE)), MIN(LENGTH(ORIGINAL_TITLE)), AVG(LENGTH(ORIGINAL_TITLE)), STDDEV(LENGTH(ORIGINAL_TITLE)), 
   MEDIAN(LENGTH(ORIGINAL_TITLE)), COUNT(ORIGINAL_TITLE) INTO donnee 
@@ -60,15 +56,11 @@ BEGIN
   SELECT COUNT(*) INTO valNull FROM MOVIES_EXT WHERE ORIGINAL_TITLE IS NULL;
   SELECT COUNT(*) INTO valVide FROM MOVIES_EXT WHERE LENGTH(ORIGINAL_TITLE) = 0 OR ORIGINAL_TITLE = '0';
 
-  SELECT COUNT(*) INTO quantile100
-  FROM  ( SELECT NTILE(100) OVER(ORDER BY LENGTH(ORIGINAL_TITLE)) AS quantile
-          FROM MOVIES_EXT)
-  WHERE quantile = 99;
+  SELECT PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(ORIGINAL_TITLE)) INTO quantile100
+  FROM MOVIES_EXT;
 
-  SELECT COUNT(*) INTO quantile10000
-  FROM  ( SELECT NTILE(10000) OVER(ORDER BY LENGTH(ORIGINAL_TITLE)) AS quantile
-          FROM MOVIES_EXT)
-  WHERE quantile = 9999;
+  SELECT PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(ORIGINAL_TITLE)) INTO quantile1000
+  FROM MOVIES_EXT;
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, '                  Titre Originale');
@@ -84,7 +76,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:    ' || (donnee.totVal - valNull));
   utl_file.put_line (fichierId, '   VALEURS VIDES:    ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:    ' || (quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:    ' || (quantile10000));
+  utl_file.put_line (fichierId, '   1000-QUANTILE:    ' || (quantile1000));
 
   utl_file.fclose (fichierId);
 
@@ -96,3 +88,5 @@ EXCEPTION
 
 END;
 /
+
+--ListeAg et XMLAG à utiliser le1er pour la table externe et la liste des genres et ne 2eme au XML
