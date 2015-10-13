@@ -16,13 +16,15 @@ DECLARE
     mediane NUMBER,
     totVal NUMBER,
     quantile100 NUMBER,
-  	quantile1000 NUMBER
+    quantile1000 NUMBER
   );
   donnee result;
   valNull NUMBER;
   valVide NUMBER;
 
   cpt NUMBER;
+
+  requeteBlock varchar2(500);
   
 BEGIN
   fichierId := utl_file.fopen ('MOVIEDIRECTORY', 'Rapport.txt', 'W');
@@ -34,12 +36,21 @@ BEGIN
 
   FOR cpt IN nomColonne.FIRST..nomColonne.LAST LOOP
 
+    utl_file.put_line (fichierId,'');
     utl_file.put_line (fichierId, nomColonne(cpt) || ' :');
 
-    SELECT MAX(LENGTH(nomColonne(cpt))), MIN(LENGTH(nomColonne(cpt))), AVG(LENGTH(nomColonne(cpt))), STDDEV(LENGTH(nomColonne(cpt))), 
-    MEDIAN(LENGTH(nomColonne(cpt))), COUNT(nomColonne(cpt)), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(nomColonne(cpt))), 
-    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(nomColonne(cpt))) INTO donnee 
-    FROM MOVIES_EXT;
+    dbms_output.put_line('Avant execute');
+
+    requeteBlock := 'SELECT MAX(LENGTH(:a)), MIN(LENGTH(:a)), AVG(LENGTH(:a)), STDDEV(LENGTH(:a)), 
+    MEDIAN(LENGTH(:a)), COUNT(:a), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(:a)), 
+    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(:a))
+    FROM MOVIES_EXT';
+
+    dbms_output.put_line(nomColonne(cpt));
+
+    EXECUTE IMMEDIATE requeteBlock INTO donnee USING nomColonne(cpt), nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt);
+
+    dbms_output.put_line('apres execute');
 
     SELECT COUNT(*) INTO valNull FROM MOVIES_EXT WHERE nomColonne(cpt) IS NULL;
     SELECT COUNT(*) INTO valVide FROM MOVIES_EXT WHERE LENGTH(nomColonne(cpt)) = 0 OR nomColonne(cpt) = '0';
@@ -63,9 +74,10 @@ BEGIN
 
 EXCEPTION
   WHEN OTHERS THEN 
-    IF utl_file.is_open(fichierId) then
-	   utl_file.fclose (fichierId);
+    IF utl_file.is_open(fichierId) THEN
+     utl_file.fclose (fichierId);
     END IF;
+    RAISE;
 
 END;
 /
