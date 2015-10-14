@@ -43,23 +43,28 @@ IS
 
 	EXCEPTION
 
-		WHEN DUP_VAL_ON_INDEX THEN ROLLBACK;
+		WHEN DUP_VAL_ON_INDEX THEN
 			MODIFIER(f, l, c, a);
+			ROLLBACK
 
-		WHEN NotNullException THEN ROLLBACK;
+		WHEN NotNullException THEN
 			RAISE_APPLICATION_ERROR(-20001, 'Le film et le login ne peuvent pas ne pas être renseignés !');
+			ROLLBACK;
 
-		WHEN CheckException THEN ROLLBACK;
+		WHEN CheckException THEN
 			IF SQLERRM LIKE '%CK_COTEAVIS_NOTNULL%' THEN RAISE_APPLICATION_ERROR(-20002, 'La cote et l''avis ne peuvent pas être simultanément inconnus !'); END IF;
+			ROLLBACK;
 
-		WHEN ForeignKeyException THEN ROLLBACK;
+		WHEN ForeignKeyException THEN
 			CASE
 				WHEN SQLERRM LIKE '%REF_UTILISATEUR_LOGIN%' THEN RAISE_APPLICATION_ERROR (-20003, 'Le login de l''utilisateur (' || l || ') n''existe pas !');
 				-- FK sur IDFILM à rajouter en temps utile
+				ROLLBACK;
 			END CASE;
 
-		-- WHEN TimeOutException THEN ROLLBACK;
+		-- WHEN TimeOutException THEN
 			-- RAISE_APPLICATION_ERROR(-20005, 'Ajout momentanément impossible, veuillez réessayer d''ici quelques minutes.');
+			--	ROLLBACK;
 
 		WHEN OTHERS THEN ROLLBACK; RAISE;
 
@@ -86,14 +91,17 @@ IS
 
 	EXCEPTION
 
-		WHEN NotNullException THEN ROLLBACK;
+		WHEN NotNullException THEN
 			RAISE_APPLICATION_ERROR(-20001, 'Le film et le login ne peuvent pas ne pas être renseignés !');
+			ROLLBACK;
 
-		WHEN CheckException THEN ROLLBACK;
+		WHEN CheckException THEN
 			IF SQLERRM LIKE '%CK_COTEAVIS_NOTNULL%' THEN RAISE_APPLICATION_ERROR(-20002, 'La cote et l''avis ne peuvent pas être simultanément inconnus !'); END IF;
+			ROLLBACK;
 
-		-- WHEN TimeOutException THEN ROLLBACK;
+		-- WHEN TimeOutException THEN
 			-- RAISE_APPLICATION_ERROR(-20005, 'Ajout momentanément impossible, veuillez réessayer d''ici quelques minutes.');
+			-- ROLLBACK;
 
 		WHEN OTHERS THEN ROLLBACK; RAISE;
 

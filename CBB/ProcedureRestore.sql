@@ -2,6 +2,8 @@ CREATE OR REPLACE PROCEDURE RESTORE
 IS
 BEGIN
 
+	LOGEVENT('CBB : Restore');
+
 	-- On bloque les tables en I/U/D pour être sûr que les tuples ne se modifient pas durant le restore, se termine au commit
 	LOCK TABLE EVALUATION IN SHARE ROW EXCLUSIVE MODE; 
 	LOCK TABLE UTILISATEUR IN SHARE ROW EXCLUSIVE MODE;
@@ -17,6 +19,9 @@ BEGIN
 	COMMIT;
 
 	LOGEVENT('CBB : Restore');
+
+EXCEPTION
+	WHEN OTHERS THEN RAISE;
 
 END;
 /

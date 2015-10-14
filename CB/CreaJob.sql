@@ -9,6 +9,10 @@ BEGIN
 		ENABLED => TRUE,
 		COMMENTS => 'Backup des nouveaux utilisateurs et leurs évaluations du jour de leur création.'
 	);
+
+EXCEPTION
+	WHEN OTHERS THEN LOGEVENT('CB : CREATE JOB_BACKUP', 'Job non créé => ' || SQLCODE || ' : ' || SQLERRM); RAISE;
+
 END;
 /
 

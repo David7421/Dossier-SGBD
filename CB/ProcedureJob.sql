@@ -2,6 +2,8 @@ CREATE OR REPLACE PROCEDURE BACKUP
 IS
 BEGIN
 
+	LOGEVENT('CB : PROCEDURE BACKUP', 'Début du backup');
+
 	-- On bloque les tables en I/U/D pour être sûr que les tuples ne se modifient pas durant le backup, se termine au commit
 	LOCK TABLE EVALUATION IN SHARE ROW EXCLUSIVE MODE; 
 	LOCK TABLE UTILISATEUR IN SHARE ROW EXCLUSIVE MODE;
@@ -16,7 +18,10 @@ BEGIN
 
 	COMMIT;
 
-	LOGEVENT('CB : Backup');
+	LOGEVENT('CB : PROCEDURE BACKUP', 'Backup réussi');
+
+EXCEPTION
+	WHEN OTHERS THEN ROLLBACK; LOGEVENT('CB : PROCEDURE BACKUP', 'Backup raté');
 
 END;
 /
