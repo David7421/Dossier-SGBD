@@ -3,8 +3,15 @@
 DECLARE
   fichierId  utl_file.file_type;
 
-  TYPE tabChar IS TABLE OF varchar2(20) INDEX BY BINARY_INTEGER;
-  nomColonne tabChar;
+
+  TYPE colonne IS RECORD
+  (
+    nom  varchar2(50),
+    type varchar2(50)
+  );
+
+  TYPE tabCol IS TABLE OF colonne INDEX BY BINARY_INTEGER;
+  nomColonne tabCol;
 
 
   TYPE result IS RECORD
@@ -16,11 +23,11 @@ DECLARE
     mediane NUMBER,
     totVal NUMBER,
     quantile100 NUMBER,
-    quantile1000 NUMBER
+    quantile1000 NUMBER,
+    valNull NUMBER,
+    valVide NUMBER
   );
   donnee result;
-  valNull NUMBER;
-  valVide NUMBER;
 
   cpt NUMBER;
 
@@ -32,42 +39,54 @@ BEGIN
   utl_file.put_line (fichierId, 'RAPPORT FILM');
   utl_file.put_line (fichierId, '------------');
 
-  SELECT COLUMN_NAME BULK COLLECT INTO nomColonne FROM user_tab_columns WHERE table_name='MOVIES_EXT';
+  SELECT COLUMN_NAME, DATA_TYPE BULK COLLECT INTO nomColonne FROM user_tab_columns WHERE table_name='MOVIES_EXT';
 
   FOR cpt IN nomColonne.FIRST..nomColonne.LAST LOOP
 
-    utl_file.put_line (fichierId,'');
-    utl_file.put_line (fichierId, nomColonne(cpt) || ' :');
+    IF nomColonne(cpt).type != 'CLOB' THEN
 
-    dbms_output.put_line('Avant execute');
+      utl_file.put_line (fichierId,'');
+      utl_file.put_line (fichierId, nomColonne(cpt).nom || ' :');
 
-    requeteBlock := 'SELECT MAX(LENGTH(:a)), MIN(LENGTH(:a)), AVG(LENGTH(:a)), STDDEV(LENGTH(:a)), 
-    MEDIAN(LENGTH(:a)), COUNT(:a), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(:a)), 
-    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(:a))
-    FROM MOVIES_EXT';
+      IF nomColonne(cpt).type != 'VARCHAR2' THEN
+        requeteBlock := 'SELECT MAX(LENGTH('||nomColonne(cpt).nom ||')), MIN(LENGTH('||nomColonne(cpt).nom ||')), 
+        AVG(LENGTH('||nomColonne(cpt).nom ||')), STDDEV(LENGTH('||nomColonne(cpt).nom ||')), 
+        MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
+        PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
+        PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
+        COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1)), COUNT(NVL2('||nomColonne(cpt).nom||', \'\', 1))
+        FROM MOVIES_EXT';
 
-    dbms_output.put_line(nomColonne(cpt));
+        EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
+      END IF;
 
-    EXECUTE IMMEDIATE requeteBlock INTO donnee USING nomColonne(cpt), nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt),nomColonne(cpt);
+      IF nomColonne(cpt).type != 'NUMBER' THEN
+        requeteBlock := 'SELECT MAX(LENGTH('||nomColonne(cpt).nom ||')), MIN(LENGTH('||nomColonne(cpt).nom ||')), 
+        AVG(LENGTH('||nomColonne(cpt).nom ||')), STDDEV(LENGTH('||nomColonne(cpt).nom ||')), 
+        MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
+        PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
+        PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
+        COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1)), COUNT(NVL2('||nomColonne(cpt).nom||', 0, 1))
+        FROM MOVIES_EXT';
 
-    dbms_output.put_line('apres execute');
+        EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
+      END IF;
 
-    SELECT COUNT(*) INTO valNull FROM MOVIES_EXT WHERE nomColonne(cpt) IS NULL;
-    SELECT COUNT(*) INTO valVide FROM MOVIES_EXT WHERE LENGTH(nomColonne(cpt)) = 0 OR nomColonne(cpt) = '0';
+      --SELECT COUNT(*) INTO valVide FROM MOVIES_EXT WHERE LENGTH(nomColonne(cpt)) = 0 OR nomColonne(cpt) = '0';
 
-    utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
-    utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
-    utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
-    utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
-    utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
-    utl_file.put_line (fichierId, '     NBR VALEURS:  ' || ROUND(donnee.totVal,2));
-    utl_file.put_line (fichierId, '    VALEURS NULL:  ' || valNull);
-    utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || (donnee.totVal - valNull));
-    utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
-    utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+      utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
+      utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
+      utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
+      utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
+      utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
+      utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
+      utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
+      utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
+      utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
+      utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
+      utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
 
-
+    END IF;
   END LOOP;
 
   utl_file.fclose (fichierId);
