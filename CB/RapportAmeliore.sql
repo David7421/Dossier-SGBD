@@ -54,7 +54,7 @@ BEGIN
         MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
         PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
         PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-        COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1)), COUNT(NVL2('||nomColonne(cpt).nom||', \'\', 1))
+        COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1)), COUNT(CASE '||nomColonne(cpt).nom||' WHEN '''' THEN 1 ELSE NULL END)
         FROM MOVIES_EXT';
 
         EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
@@ -66,7 +66,7 @@ BEGIN
         MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
         PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
         PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-        COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1)), COUNT(NVL2('||nomColonne(cpt).nom||', 0, 1))
+        COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1)), COUNT(CASE '||nomColonne(cpt).nom||' WHEN 0 THEN 1 ELSE NULL END)
         FROM MOVIES_EXT';
 
         EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
@@ -82,7 +82,7 @@ BEGIN
       utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
       utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
       utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
-      utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
+      utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (donnee.valVide));
       utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
       utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
 
