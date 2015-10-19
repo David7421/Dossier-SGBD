@@ -1,4 +1,4 @@
-CREATE OR REPLACE LOCAL TEMPORARY TABLE genre_tmp
+CREATE GLOBAL TEMPORARY TABLE productionComp_tmp
 (
 	id varchar2(1000),
 	nom varchar2(1000)
@@ -7,7 +7,7 @@ ON COMMIT DELETE ROWS;
 
 DECLARE
 
-	TYPE tabChaines IS TABLE OF varchar2(500) INDEX BY BINARY_INTEGER;
+	TYPE tabChaines IS TABLE OF varchar2(4000) INDEX BY BINARY_INTEGER;
 
 	chaineRegex tabChaines;
 	id tabChaines;
@@ -17,44 +17,42 @@ DECLARE
 	i NUMBER := 1;
 	parc NUMBER;
 
-	genre varchar2(500);
+	morceauRecup varchar2(400);
 
-	result OWA_TEXT.VC_ARR;
+	resultParse OWA_TEXT.VC_ARR;
 
 BEGIN
 
-	SELECT regexp_substr(genres, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
+	SELECT regexp_substr(PRODUCTION_COMPANIES, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
 
-	FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
+  	FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
 
-		IF(LENGTH(chaineRegex(cpt)) > 0) THEN
-			LOOP
-				genre := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
+    IF(LENGTH(chaineRegex(cpt)) > 0) THEN
+      LOOP
+        morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
 
-				EXIT WHEN genre IS NULL;
+        EXIT WHEN morceauRecup IS NULL;
 
-				IF OWA_PATTERN.MATCH(genre, '^(.*),,(.*)$', result) THEN
-					id(i) := result(1);
-					nom(i) := result(2);
-				END IF;
+        IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*)$', resultParse) THEN
+          id(i) := resultParse(1);
+          nom(i) := resultParse(2);
+        END IF;
 
-				i := i+1;
-			END LOOP;
+        i := i+1;
+      END LOOP;
 
-			FOR parc IN id.FIRST..id.LAST LOOP
-				INSERT INTO genre_tmp VALUES(id(parc), nom(parc));
-			END LOOP;
+      FOR parc IN id.FIRST..id.LAST LOOP
+        INSERT INTO productionComp_tmp VALUES(id(parc), nom(parc));
+      END LOOP;
 
-			i := 1;
-			id.DELETE;
-			nom.DELETE;
+      i := 1;
+      id.DELETE;
+      nom.DELETE;
 
-		END IF;
+    END IF;
 
-	END LOOP;
+  END LOOP;
 
-	SELECT *
-	FROM genre_tmp;
 
 EXCEPTION
 	WHEN OTHERS THEN RAISE;
