@@ -1,18 +1,5 @@
---RAPPORT FILM
-
-CREATE GLOBAL TEMPORARY TABLE genre_tmp
-(
-  id varchar2(1000),--  CONSTRAINT PK_GENRE_TMP PRIMARY KEY,
-  nom varchar2(1000)
-)
-ON COMMIT DELETE ROWS;
-
-CREATE GLOBAL TEMPORARY TABLE productionComp_tmp
-(
-  id varchar2(1000),-- CONSTRAINT PK_PRODCOMP_TMP PRIMARY KEY,
-  nom varchar2(1000)
-)
-ON COMMIT DELETE ROWS;
+create or replace TYPE nestedChar IS TABLE OF varchar2(4000);
+/
 
 DECLARE
   fichierId  utl_file.file_type;
@@ -42,20 +29,25 @@ DECLARE
   );
   donnee result;
 
-  cpt NUMBER;
-  i NUMBER;
   valVide NUMBER;
+
+  cpt NUMBER;
   parc NUMBER;
+  i NUMBER;
 
   TYPE resultChain IS TABLE OF varchar2(4000) INDEX BY BINARY_INTEGER;
   valeursUniques resultChain;
   chaineRegex resultChain;
-  id resultChain;
-  nom resultChain;
 
-  requeteBlock varchar2(4000);
+  id nestedChar := nestedChar();
+  nom nestedChar := nestedChar();
+  image nestedChar := nestedChar();
 
-  morceauRecup varchar2(4000);
+  listeColonne2Champs nestedChar := nestedChar('GENRES', 'PRODUCTION_COMPANIES', 'PRODUCTION_COUNTRIES', 'SPOKEN_LANGUAGES');
+
+  requeteBlock varchar2(500);
+
+  morceauRecup varchar2(500);
 
   resultParse OWA_TEXT.VC_ARR;
   
@@ -130,300 +122,190 @@ BEGIN
 
   END LOOP;
 
-  i := 1;
-  SELECT regexp_substr(genres, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
+  parc := listeColonne2Champs.FIRST;
+
+  WHILE parc IS NOT NULL LOOP
+
+    utl_file.put_line (fichierId, '');
+    utl_file.put_line (fichierId, listeColonne2Champs(parc));
+
+    i:=1;
+    requeteBlock := 'SELECT regexp_substr(' ||listeColonne2Champs(parc) ||', ''^\[\[(.*)\]\]$'', 1, 1, '''', 1) FROM movies_ext';
+    EXECUTE IMMEDIATE requeteBlock BULK COLLECT INTO chaineRegex;
+
+    FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
+      IF(LENGTH(chaineRegex(cpt)) > 0) THEN
+        LOOP
+          morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
+          EXIT WHEN morceauRecup IS NULL;
+
+          IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*)$', resultParse) THEN
+            IF resultParse(1) NOT MEMBER OF id THEN
+              id.extend();
+              nom.extend();
+              id(id.COUNT):=resultParse(1);
+              nom(id.COUNT):=resultParse(2);
+            END IF;            
+          END IF;
+          i:= i + 1;
+        END LOOP;
+        i:= 1;
+      END IF;
+    END LOOP;
+
+    SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
+    MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
+    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
+    FROM TABLE(id);
+
+    SELECT COUNT(*) INTO valVide FROM TABLE(id) WHERE COLUMN_VALUE = '';
+
+    utl_file.put_line (fichierId, '');
+    utl_file.put_line (fichierId, 'id :');
+
+    utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
+    utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
+    utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
+    utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
+    utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
+    utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
+    utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
+    utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
+    utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
+    utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
+    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+
+    SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
+    MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
+    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
+    FROM TABLE(nom);
+
+    SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+
+    utl_file.put_line (fichierId, '');
+    utl_file.put_line (fichierId, 'nom');
+
+    utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
+    utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
+    utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
+    utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
+    utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
+    utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
+    utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
+    utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
+    utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
+    utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
+    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+
+    id.delete;
+    nom.delete;
+    id := nestedChar();
+    nom := nestedChar();
+
+    parc := listeColonne2Champs.NEXT(parc);
+  END LOOP;
+
+  utl_file.put_line (fichierId, '');
+  utl_file.put_line (fichierId, 'DIRECTORS');
+
+  i:=1;
+  SELECT regexp_substr(DIRECTORS , '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
 
   FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
-
     IF(LENGTH(chaineRegex(cpt)) > 0) THEN
       LOOP
         morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
-
         EXIT WHEN morceauRecup IS NULL;
 
-        IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*)$', resultParse) THEN
-          id(i) := resultParse(1);
-          nom(i) := resultParse(2);
+        IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*),{2,}(.*)$', resultParse) THEN
+          IF resultParse(1) NOT MEMBER OF id THEN
+            id.extend();
+            nom.extend();
+            image.extend();
+            id(id.COUNT):=resultParse(1);
+            nom(nom.COUNT):=resultParse(2);
+            image(image.COUNT):= resultParse(3);
+          END IF;            
         END IF;
-
-        i := i+1;
+        i:= i + 1;
       END LOOP;
-
-      FOR parc IN id.FIRST..id.LAST LOOP
-        INSERT INTO genre_tmp VALUES(id(parc), nom(parc));
-      END LOOP;
-
-      i := 1;
-      id.DELETE;
-      nom.DELETE;
-
+      i:= 1;
     END IF;
-
   END LOOP;
 
-  nomColonne.DELETE;
+  SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
+  MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
+  PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
+  FROM TABLE(id);
 
-  SELECT COLUMN_NAME, DATA_TYPE BULK COLLECT INTO nomColonne 
-  FROM user_tab_columns 
-  WHERE table_name='GENRE_TMP';
-  
+  SELECT COUNT(*) INTO valVide FROM TABLE(id) WHERE COLUMN_VALUE = '';
+
   utl_file.put_line (fichierId, '');
+  utl_file.put_line (fichierId, 'id :');
+
+  utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
+  utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
+  utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
+  utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
+  utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
+  utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
+  utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
+  utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
+  utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
+  utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
+  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+
+  SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
+  MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
+  PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
+  FROM TABLE(nom);
+
+  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+
   utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, 'TABLE GENRE : ');
+  utl_file.put_line (fichierId, 'nom');
 
-  FOR cpt IN nomColonne.FIRST..nomColonne.LAST LOOP
+  utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
+  utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
+  utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
+  utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
+  utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
+  utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
+  utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
+  utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
+  utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
+  utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
+  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
 
-    utl_file.put_line (fichierId,'');
-    utl_file.put_line (fichierId, nomColonne(cpt).nom || ' :');
+  SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
+  MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
+  PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
+  FROM TABLE(image);
 
-    requeteBlock := 'SELECT MAX(LENGTH('||nomColonne(cpt).nom ||')), MIN(LENGTH('||nomColonne(cpt).nom ||')), 
-    AVG(LENGTH('||nomColonne(cpt).nom ||')), STDDEV(LENGTH('||nomColonne(cpt).nom ||')), 
-    MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
-    PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1))
-    FROM GENRE_TMP';
+  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
 
-    EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
-
-    requeteBlock := 'SELECT COUNT(*) FROM GENRE_TMP WHERE ' || nomColonne(cpt).nom || ' = '''' ';
-
-    EXECUTE IMMEDIATE (requeteBlock) INTO valVide;
-
-    utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
-    utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
-    utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
-    utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
-    utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
-    utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
-    utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
-    utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
-    utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
-    utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
-
-  END LOOP;
-
-  i := 1;
-  SELECT regexp_substr(PRODUCTION_COMPANIES, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
-
-    FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
-
-    IF(LENGTH(chaineRegex(cpt)) > 0) THEN
-      LOOP
-        morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
-
-        EXIT WHEN morceauRecup IS NULL;
-
-        IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*)$', resultParse) THEN
-          id(i) := resultParse(1);
-          nom(i) := resultParse(2);
-        END IF;
-
-        i := i+1;
-      END LOOP;
-
-      FOR parc IN id.FIRST..id.LAST LOOP
-        INSERT INTO productionComp_tmp VALUES(id(parc), nom(parc));
-      END LOOP;
-
-      i := 1;
-      id.DELETE;
-      nom.DELETE;
-
-    END IF;
-
-  END LOOP;
-
-  nomColonne.DELETE;
-
-  SELECT COLUMN_NAME, DATA_TYPE BULK COLLECT INTO nomColonne 
-  FROM user_tab_columns 
-  WHERE table_name='PRODUCTIONCOMP_TMP';
-  
   utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, 'TABLE PRODUCTION COMPANIES : ');
+  utl_file.put_line (fichierId, 'image');
 
-  FOR cpt IN nomColonne.FIRST..nomColonne.LAST LOOP
+  utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
+  utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
+  utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
+  utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
+  utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
+  utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
+  utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
+  utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
+  utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
+  utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
+  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
 
-    utl_file.put_line (fichierId,'');
-    utl_file.put_line (fichierId, nomColonne(cpt).nom || ' :');
 
-    requeteBlock := 'SELECT MAX(LENGTH('||nomColonne(cpt).nom ||')), MIN(LENGTH('||nomColonne(cpt).nom ||')), 
-    AVG(LENGTH('||nomColonne(cpt).nom ||')), STDDEV(LENGTH('||nomColonne(cpt).nom ||')), 
-    MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
-    PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1))
-    FROM PRODUCTIONCOMP_TMP';
-
-    EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
-
-    requeteBlock := 'SELECT COUNT(*) FROM PRODUCTIONCOMP_TMP WHERE ' || nomColonne(cpt).nom || ' = '''' ';
-
-    EXECUTE IMMEDIATE (requeteBlock) INTO valVide;
-
-    utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
-    utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
-    utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
-    utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
-    utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
-    utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
-    utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
-    utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
-    utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
-    utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
-
-  END LOOP;
-
-  i := 1;
-  SELECT regexp_substr(PRODUCTION_COUNTRIES, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
-
-    FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
-
-    IF(LENGTH(chaineRegex(cpt)) > 0) THEN
-      LOOP
-        morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
-
-        EXIT WHEN morceauRecup IS NULL;
-
-        IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*)$', resultParse) THEN
-          id(i) := resultParse(1);
-          nom(i) := resultParse(2);
-        END IF;
-
-        i := i+1;
-      END LOOP;
-
-      FOR parc IN id.FIRST..id.LAST LOOP
-        INSERT INTO prodCountries_tmp VALUES(id(parc), nom(parc));
-      END LOOP;
-
-      i := 1;
-      id.DELETE;
-      nom.DELETE;
-
-    END IF;
-
-  END LOOP;
-
-  nomColonne.DELETE;
-
-  SELECT COLUMN_NAME, DATA_TYPE BULK COLLECT INTO nomColonne 
-  FROM user_tab_columns 
-  WHERE table_name='PRODCOUNTRIES_TMP';
-  
-  utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, 'TABLE PRODUCTION COUNTRIES : ');
-
-  FOR cpt IN nomColonne.FIRST..nomColonne.LAST LOOP
-
-    utl_file.put_line (fichierId,'');
-    utl_file.put_line (fichierId, nomColonne(cpt).nom || ' :');
-
-    requeteBlock := 'SELECT MAX(LENGTH('||nomColonne(cpt).nom ||')), MIN(LENGTH('||nomColonne(cpt).nom ||')), 
-    AVG(LENGTH('||nomColonne(cpt).nom ||')), STDDEV(LENGTH('||nomColonne(cpt).nom ||')), 
-    MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
-    PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1))
-    FROM PRODCOUNTRIES_TMP';
-
-    EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
-
-    requeteBlock := 'SELECT COUNT(*) FROM PRODCOUNTRIES_TMP WHERE ' || nomColonne(cpt).nom || ' = '''' ';
-
-    EXECUTE IMMEDIATE (requeteBlock) INTO valVide;
-
-    utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
-    utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
-    utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
-    utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
-    utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
-    utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
-    utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
-    utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
-    utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
-    utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
-
-  END LOOP;
-  i := 1;
-  SELECT regexp_substr(SPOKEN_LANGUAGES, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
-
-    FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
-
-    IF(LENGTH(chaineRegex(cpt)) > 0) THEN
-      LOOP
-        morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
-
-        EXIT WHEN morceauRecup IS NULL;
-
-        IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*)$', resultParse) THEN
-          id(i) := resultParse(1);
-          nom(i) := resultParse(2);
-        END IF;
-
-        i := i+1;
-      END LOOP;
-
-      FOR parc IN id.FIRST..id.LAST LOOP
-        INSERT INTO spoken_tmp VALUES(id(parc), nom(parc));
-      END LOOP;
-
-      i := 1;
-      id.DELETE;
-      nom.DELETE;
-
-    END IF;
-
-  END LOOP;
-
-  nomColonne.DELETE;
-
-  SELECT COLUMN_NAME, DATA_TYPE BULK COLLECT INTO nomColonne 
-  FROM user_tab_columns 
-  WHERE table_name='SPOKEN_TMP';
-  
-  utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, 'TABLE SPOKEN LANGUAGES : ');
-
-  FOR cpt IN nomColonne.FIRST..nomColonne.LAST LOOP
-
-    utl_file.put_line (fichierId,'');
-    utl_file.put_line (fichierId, nomColonne(cpt).nom || ' :');
-
-    requeteBlock := 'SELECT MAX(LENGTH('||nomColonne(cpt).nom ||')), MIN(LENGTH('||nomColonne(cpt).nom ||')), 
-    AVG(LENGTH('||nomColonne(cpt).nom ||')), STDDEV(LENGTH('||nomColonne(cpt).nom ||')), 
-    MEDIAN(LENGTH('||nomColonne(cpt).nom ||')), COUNT('||nomColonne(cpt).nom ||'), 
-    PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    PERCENTILE_CONT(0.999) WITHIN GROUP(ORDER BY LENGTH('||nomColonne(cpt).nom ||')), 
-    COUNT(NVL2('||nomColonne(cpt).nom||', NULL, 1))
-    FROM SPOKEN_TMP';
-
-    EXECUTE IMMEDIATE (requeteBlock) INTO donnee;
-
-    requeteBlock := 'SELECT COUNT(*) FROM SPOKEN_TMP WHERE ' || nomColonne(cpt).nom || ' = '''' ';
-
-    EXECUTE IMMEDIATE (requeteBlock) INTO valVide;
-
-    utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
-    utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
-    utl_file.put_line (fichierId, '         MOYENNE:  ' || ROUND(donnee.avg,2));
-    utl_file.put_line (fichierId, '      ECART-TYPE:  ' || ROUND(donnee.ecart,2));
-    utl_file.put_line (fichierId, '         MEDIANE:  ' || ROUND(donnee.mediane,2));
-    utl_file.put_line (fichierId, '     NBR VALEURS:  ' || (donnee.totVal + donnee.valNull));
-    utl_file.put_line (fichierId, '    VALEURS NULL:  ' || donnee.valNull);
-    utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
-    utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
-    utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
-
-  END LOOP;
+  id.delete;
+  nom.delete;
+  image.delete;
+  id := nestedChar();
+  nom := nestedChar();
+  image:= nestedChar();
 
   utl_file.fclose (fichierId);
 
