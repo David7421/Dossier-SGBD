@@ -63,15 +63,16 @@ BEGIN
 
 
   i:=1;
-  SELECT regexp_substr(ACTORS , '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineActeur FROM movies_ext WHERE ROWNUM <= 20;
+  SELECT regexp_substr(ACTORS , '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineActeur FROM movies_ext WHERE ROWNUM <= 1;
 
-  logevent('apres le select');
+  logevent('acteur','apres le select');
 
   FOR cpt IN chaineActeur.FIRST..chaineActeur.LAST LOOP
     IF(LENGTH(chaineActeur(cpt)) > 0) THEN
       LOOP
         --morceauRecup := regexp_substr(chaineActeur(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
-        OWA_PATTERN.MATCH(chaineActeur(cpt), '(\[^\|\|\]*)', resultClob);
+        --([^|]*(\|[^|]+)*)(\|\||$)
+        OWA_PATTERN.MATCH(dbms_lob.substr(chaineActeur(cpt), 12000, 1), '(\[^\|\|\]*)', resultClob);
 
         dbms_output.put_line(resultClob.COUNT);
 
@@ -79,7 +80,7 @@ BEGIN
         
         IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*),,(.*),,(.*),,(.*)$', resultParse) THEN
           IF resultParse(1) NOT MEMBER OF id THEN
-            logevent('ajout d un truc');
+            logevent('acteur','ajout d un truc');
             id.extend();
             nom.extend();
             image.extend();
@@ -98,7 +99,7 @@ BEGIN
     END IF;
   END LOOP;
 
-  logevent('fin du traitement');
+  logevent('acteur','fin du traitement');
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
