@@ -15,10 +15,10 @@ create table movies_ext (
   revenue integer,
   homepage varchar2(1000),
   tagline varchar2(2000),
-  overview clob,
+  overview varchar2(4000),
   genres varchar2(1000),
   directors varchar2(4000),
-  actors clob,
+  actors varchar2(4000),
   production_companies varchar2(1000),
   production_countries varchar2(1000),
   spoken_languages varchar2(1000)
@@ -47,10 +47,10 @@ organization external (
       revenue unsigned integer external,
       homepage char(1000),
       tagline char(2000),
-      overview char(2000),
+      overview char(4000),
       genres char(1000),
       directors char(4000),
-      actors char(20000),
+      actors char(4000),
       production_companies char(1000),
       production_countries char(1000),
       spoken_languages char(1000)
@@ -61,3 +61,4 @@ organization external (
 reject limit unlimited;
 
 EXIT;
+

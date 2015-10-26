@@ -39,9 +39,6 @@ DECLARE
   valeursUniques resultChain;
   chaineRegex resultChain;
 
-  TYPE hugeData IS TABLE OF CLOB INDEX BY BINARY_INTEGER;
-  chaineActeur hugeData;
-
   id nestedChar := nestedChar();
   nom nestedChar := nestedChar();
   image nestedChar := nestedChar();
@@ -53,7 +50,6 @@ DECLARE
   morceauRecup varchar2(500);
 
   resultParse OWA_TEXT.VC_ARR;
-  resultClob OWA_TEXT.VC_ARR;
   
 BEGIN
   fichierId := utl_file.fopen ('MOVIEDIRECTORY', 'Rapport.txt', 'W');
@@ -63,24 +59,17 @@ BEGIN
 
 
   i:=1;
-  SELECT regexp_substr(ACTORS , '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineActeur FROM movies_ext WHERE ROWNUM <= 1;
+  SELECT regexp_substr(ACTORS , '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
 
-  logevent('acteur','apres le select');
-
-  FOR cpt IN chaineActeur.FIRST..chaineActeur.LAST LOOP
-    IF(LENGTH(chaineActeur(cpt)) > 0) THEN
+  FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
+    IF(LENGTH(chaineRegex(cpt)) > 0) THEN
       LOOP
-        --morceauRecup := regexp_substr(chaineActeur(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
-        --([^|]*(\|[^|]+)*)(\|\||$)
-        OWA_PATTERN.MATCH(dbms_lob.substr(chaineActeur(cpt), 12000, 1), '(\[^\|\|\]*)', resultClob);
-
-        dbms_output.put_line(resultClob.COUNT);
+        morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
 
         EXIT WHEN morceauRecup IS NULL;
         
         IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*),,(.*),,(.*),,(.*)$', resultParse) THEN
           IF resultParse(1) NOT MEMBER OF id THEN
-            logevent('acteur','ajout d un truc');
             id.extend();
             nom.extend();
             image.extend();
@@ -98,8 +87,6 @@ BEGIN
       i:= 1;
     END IF;
   END LOOP;
-
-  logevent('acteur','fin du traitement');
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
