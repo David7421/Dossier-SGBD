@@ -1,0 +1,17 @@
+CB =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = Jerome-PC)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = XE)
+    )
+  )
+
+CBB =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = Jerome-PC)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = XE)
+    )
+  )
