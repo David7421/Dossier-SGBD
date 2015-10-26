@@ -35,7 +35,7 @@ DECLARE
   parc NUMBER;
   i NUMBER;
 
-  TYPE resultChain IS TABLE OF varchar2(12000) INDEX BY BINARY_INTEGER;
+  TYPE resultChain IS TABLE OF varchar2(4000) INDEX BY BINARY_INTEGER;
   valeursUniques resultChain;
   chaineRegex resultChain;
 
@@ -45,9 +45,9 @@ DECLARE
   idPerso nestedChar := nestedChar();
   nomPerso nestedChar := nestedChar();
 
-  requeteBlock varchar2(500);
+  requeteBlock varchar2(4000);
 
-  morceauRecup varchar2(500);
+  morceauRecup varchar2(4000);
 
   resultParse OWA_TEXT.VC_ARR;
   
@@ -59,15 +59,14 @@ BEGIN
 
 
   i:=1;
-  SELECT regexp_substr(ACTORS , '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
+  SELECT regexp_substr(ACTORS, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext WHERE ROWNUM <= 1000;
 
   FOR cpt IN chaineRegex.FIRST..chaineRegex.LAST LOOP
     IF(LENGTH(chaineRegex(cpt)) > 0) THEN
       LOOP
         morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
-
         EXIT WHEN morceauRecup IS NULL;
-        
+
         IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*),,(.*),,(.*),,(.*)$', resultParse) THEN
           IF resultParse(1) NOT MEMBER OF id THEN
             id.extend();
@@ -77,8 +76,8 @@ BEGIN
             nomPerso.extend();
             id(id.COUNT):=resultParse(1);
             nom(nom.COUNT):=resultParse(2);
-            idPerso(idPerso.COUNT) := resultParse(3);
-            nomPerso(nomPerso.COUNT) := resultParse(4);
+            idPerso(idPerso.COUNT):= resultParse(3);
+            nomPerso(idPerso.COUNT):= resultParse(4);
             image(image.COUNT):= resultParse(5);
           END IF;            
         END IF;
@@ -140,7 +139,7 @@ BEGIN
   SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
-  utl_file.put_line (fichierId, 'nom');
+  utl_file.put_line (fichierId, 'image');
 
   utl_file.put_line (fichierId, '             MAX:  ' || donnee.max);
   utl_file.put_line (fichierId, '             MIN:  ' || donnee.min);
