@@ -18,6 +18,8 @@ DROP TABLE EVALUATION;
 DROP TABLE FILM;
 DROP TABLE UTILISATEUR;
 
+
+--Les truncates des valeurs trop longues seront traitées dans des procédures d'ajout.
 CREATE TABLE FILM
 (
 	ID				NUMBER(6) CONSTRAINT PK_FILM_ID PRIMARY KEY,
@@ -26,7 +28,7 @@ CREATE TABLE FILM
 	DATE_SORTIE		DATE,
 	STATUS			VARCHAR2(15) CONSTRAINT CK_FILM_STATUS CHECK(STATUS IN ('POST PRODUCTION', 'RUMORED', 'RELEASED', 'IN PRODUCTION', 'PLANNED', 'CANCELED')),
 	NOTE_MOYENNE	NUMBER(2,1),
-	NOMBRE_NOTE		NUMBER,	--Rapport non respecté : pas de plafond sur nbr de notes.
+	NOMBRE_NOTE		NUMBER,	--Rapport non respecté : pas de plafond sur nbr de notes car trop de valeurs vide pour que le resultat du rapport soit fiable.
 	RUNTIME 		NUMBER(3), 
 	CERTIFICATION	VARCHAR2(5),
 	LIEN_POSTER		VARCHAR2(32), 
