@@ -24,7 +24,7 @@ DECLARE
     mediane NUMBER,
     totVal NUMBER,
     quantile100 NUMBER,
-    quantile1000 NUMBER,
+    quantile10000 NUMBER,
     valNull NUMBER
   );
   donnee result;
@@ -49,8 +49,8 @@ DECLARE
   listeColonne2Champs nestedChar := nestedChar('GENRES', 'PRODUCTION_COMPANIES', 'PRODUCTION_COUNTRIES', 'SPOKEN_LANGUAGES');
 
   requeteBlock varchar2(500);
-  morceauRecup varchar2(1000);
-  tmpChaine varchar2(1000);
+  morceauRecup varchar2(10000);
+  tmpChaine varchar2(10000);
 
   resultParse OWA_TEXT.VC_ARR;
   
@@ -105,7 +105,7 @@ BEGIN
     utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
     utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
     utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+    utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
     IF(nomColonne(cpt).nom = 'STATUS' OR nomColonne(cpt).nom = 'CERTIFICATION') THEN
 
@@ -175,7 +175,7 @@ BEGIN
     utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
     utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
     utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+    utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
     SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
     MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -197,7 +197,7 @@ BEGIN
     utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
     utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
     utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+    utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
     id.delete;
     nom.delete;
@@ -255,7 +255,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -277,7 +277,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -299,7 +299,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
 
   id.delete;
@@ -374,7 +374,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -396,7 +396,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -418,7 +418,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -440,7 +440,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -462,7 +462,7 @@ BEGIN
   utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
   utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
   utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-  utl_file.put_line (fichierId, '   1000-QUANTILE:  ' || (donnee.quantile1000));
+  utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
 
   utl_file.fclose (fichierId);
 
