@@ -106,7 +106,7 @@ BEGIN
     utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
     utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
     utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
-
+    --traitement des colonnes dont on veut connaitre les valeurs
     IF(nomColonne(cpt).nom = 'STATUS' OR nomColonne(cpt).nom = 'CERTIFICATION') THEN
 
       requeteBlock := 'SELECT DISTINCT '|| nomColonne(cpt).nom || ' FROM MOVIES_EXT';
@@ -141,14 +141,21 @@ BEGIN
           morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
           EXIT WHEN morceauRecup IS NULL;
 
-          IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*)$', resultParse) THEN
-            IF resultParse(1) NOT MEMBER OF id THEN
+          j:=1;
+          LOOP
+            tmpChaine:=regexp_substr(morceauRecup, '(.*?)(,{2,}|$)', 1, j, '', 1);
+            EXIT WHEN tmpChaine IS NULL;
+
+            IF j=1 THEN
               id.extend();
               nom.extend();
-              id(id.COUNT):=resultParse(1);
-              nom(id.COUNT):=resultParse(2);
-            END IF;            
-          END IF;
+              id(id.COUNT):=tmpChaine;
+            ELSIF j=2 THEN
+              nom(nom.COUNT):=tmpChaine;
+              EXIT;
+            END IF;
+            j:=j+1;
+          END LOOP;
           i:= i + 1;
         END LOOP;
         i:= 1;
@@ -158,9 +165,9 @@ BEGIN
     SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
     MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
     PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-    FROM TABLE(id);
+    FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(id));
 
-    SELECT COUNT(*) INTO valVide FROM TABLE(id) WHERE COLUMN_VALUE = '';
+    SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(id)) WHERE COLUMN_VALUE = '';
 
     utl_file.put_line (fichierId, '');
     utl_file.put_line (fichierId, 'id :');
@@ -180,9 +187,9 @@ BEGIN
     SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
     MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
     PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-    FROM TABLE(nom);
+    FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nom));
 
-    SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+    SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nom)) WHERE COLUMN_VALUE = '';
 
     utl_file.put_line (fichierId, '');
     utl_file.put_line (fichierId, 'nom');
@@ -219,16 +226,25 @@ BEGIN
         morceauRecup := regexp_substr(chaineRegex(cpt), '(.*?)(\|\||$)', 1, i, '', 1);
         EXIT WHEN morceauRecup IS NULL;
 
-        IF OWA_PATTERN.MATCH(morceauRecup, '^(.*),,(.*),{2,}(.*)$', resultParse) THEN
-          IF resultParse(1) NOT MEMBER OF id THEN
+        j:=1;
+        LOOP
+          tmpChaine:=regexp_substr(morceauRecup, '(.*?)(,{2,}|$)', 1, j, '', 1);
+          EXIT WHEN tmpChaine IS NULL;
+
+          IF j=1 THEN
             id.extend();
             nom.extend();
             image.extend();
-            id(id.COUNT):=resultParse(1);
-            nom(nom.COUNT):=resultParse(2);
-            image(image.COUNT):= resultParse(3);
-          END IF;            
-        END IF;
+            id(id.COUNT):=tmpChaine;
+          ELSIF j=2 THEN
+            nom(nom.COUNT):=tmpChaine;
+          ELSIF j=3 THEN
+            image(image.COUNT):=tmpChaine;
+            EXIT;
+          END IF;
+          j:=j+1;
+
+        END LOOP;
         i:= i + 1;
       END LOOP;
       i:= 1;
@@ -238,9 +254,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(id);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(id));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(id) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(id)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'id :');
@@ -260,9 +276,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(nom);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nom));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nom)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'nom');
@@ -282,9 +298,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(image);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(image));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(image)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'image');
@@ -309,6 +325,10 @@ BEGIN
   nom := nestedChar();
   image:= nestedChar();
 
+
+  utl_file.put_line (fichierId, '');
+  utl_file.put_line (fichierId, 'ACTORS');
+
   i:=1;
     SELECT regexp_substr(actors, '^\[\[(.*)\]\]$', 1, 1, '', 1) BULK COLLECT INTO chaineRegex FROM movies_ext;
 
@@ -324,10 +344,6 @@ BEGIN
           tmpChaine:=regexp_substr(morceauRecup, '(.*?)(,{2,}|$)', 1, j, '', 1);
           EXIT WHEN tmpChaine IS NULL;
 
-          IF j=1 AND tmpChaine MEMBER OF id THEN
-            EXIT;
-          END IF;
-
           IF j=1 THEN
             id.extend();
             nom.extend();
@@ -338,11 +354,12 @@ BEGIN
           ELSIF j=2 THEN
             nom(nom.COUNT):=tmpChaine;
           ELSIF j=3 THEN
-            image(image.COUNT):=tmpChaine;
-          ELSIF j=4 THEN
             idPerso(idPerso.COUNT):=tmpChaine;
-          ELSIF j=5 THEN
+          ELSIF j=4 THEN
             nomPerso(nomPerso.COUNT):= tmpChaine;
+          ELSIF j=5 THEN
+            image(image.COUNT):=tmpChaine;
+            EXIT;
           END IF;
  
           j:=j+1;
@@ -357,9 +374,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(id);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(id));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(id) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(id)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'id :');
@@ -379,9 +396,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(nom);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nom));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nom)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'nom');
@@ -401,9 +418,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(image);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(image));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(image)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'image');
@@ -423,9 +440,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(idPerso);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(idPerso));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(idPerso)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'id personnage');
@@ -445,9 +462,9 @@ BEGIN
   SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
   MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
   PERCENTILE_CONT(0.9999) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), COUNT(NVL2(COLUMN_VALUE, NULL, 1)) INTO donnee
-  FROM TABLE(nomPerso);
+  FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nomPerso));
 
-  SELECT COUNT(*) INTO valVide FROM TABLE(nom) WHERE COLUMN_VALUE = '';
+  SELECT COUNT(*) INTO valVide FROM (SELECT DISTINCT COLUMN_VALUE FROM TABLE(nomPerso)) WHERE COLUMN_VALUE = '';
 
   utl_file.put_line (fichierId, '');
   utl_file.put_line (fichierId, 'nom personnage');
