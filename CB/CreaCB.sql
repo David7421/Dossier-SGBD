@@ -24,8 +24,10 @@ DROP TABLE FILM;
 DROP TABLE UTILISATEUR;
 
 
---Les truncates des valeurs trop longues seront traitées dans des procédures d'ajout.
+-- Les truncates des valeurs trop longues seront traitées dans des procédures d'ajout.
 -- La vérification du 9999éme quantile rejeté sera vérifié dans la procédure
+-- le troncage d'un nombre modifie drastiquement l'information qu'apporte celui-ci. Cela revient à stocker des information incohérentes j'ai donc décidé de laisser la taille max
+-- pour la plupart des nombres stockés
 CREATE TABLE FILM
 (
 	ID				NUMBER CONSTRAINT PK_FILM_ID PRIMARY KEY,
@@ -45,6 +47,7 @@ CREATE TABLE FILM
 	TAGLINE			VARCHAR2(172),
 	OVERVIEW		VARCHAR2(949)
 );
+
 
 CREATE TABLE GENRE
 (
@@ -131,7 +134,7 @@ CREATE TABLE ROLE
 (
 	ID 				NUMBER,
 	FILM_ASSOCIE	NUMBER CONSTRAINT REF_FILM_ROLE_ID REFERENCES FILM (ID),
-	NOM 			VARCHAR2(23),
+	NOM 			VARCHAR2(39),
 	CONSTRAINT PK_ROLE  PRIMARY KEY (ID, FILM_ASSOCIE)
 );
 

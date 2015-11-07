@@ -43,7 +43,7 @@ IS
 	EXCEPTION
 
 		WHEN DUP_VAL_ON_INDEX THEN
-			MODIFIER(f, l, c, a);
+			MODIFIER_EVALUATION(f, l, c, a);
 			ROLLBACK;
 
 		WHEN NotNullException THEN
@@ -109,65 +109,110 @@ IS
 
 	PROCEDURE AJOUTER_FILM(id IN NUMBER, titre IN VARCHAR2, titre_original IN VARCHAR2, date_sortie IN FILM.DATE_SORTIE%TYPE, status IN VARCHAR2, note_moyenne IN NUMBER, 
 		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN VARCHAR2, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
-		tagline IN VARCHAR2, overview IN VARCHAR2);
+		tagline IN VARCHAR2, overview IN VARCHAR2)
 	AS
 		tmp VARCHAR2(4000);
 
-		TitreException EXCEPTION;
-			PRAGMA EXCEPTION_INIT (TitreException, -20011);
-		TitreOriginalException EXCEPTION;
-			PRAGMA EXCEPTION_INIT (TitreOriginalException, -20012);
-		TitreOriginalException EXCEPTION;
-			PRAGMA EXCEPTION_INIT (TitreOriginalException, -20013);
-		noteMoyenneException EXCEPTION;
-			PRAGMA EXCEPTION_INIT (TitreOriginalException, -20014);
+		CheckException				EXCEPTION;
+			PRAGMA EXCEPTION_INIT (CheckException, -2290);
+
+		new_titre VARCHAR2(4000);
+		new_titre_original VARCHAR2(4000);
+		new_certification VARCHAR2(4000);
+		new_homepage VARCHAR2(4000);
+		new_tagline VARCHAR2(4000);
+		new_overview VARCHAR2(4000);
+
 	BEGIN
 
-		IF LENGTH(t) > 58 THEN
-			tmp := SUBSTR(t,0,58);
-			LOGEVENT('FILM', 'TITRE ' || t || ' TRUNCATE AS ' || tmp);
-			t := tmp;
+		new_titre := titre;
+		IF LENGTH(titre) > 112 THEN
+			RAISE_APPLICATION_ERROR(-20011, 'Champs titre trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs titre trop long');
+		ELSIF LENGTH(titre) > 58 THEN
+			tmp := SUBSTR(titre,0,58);
+			LOGEVENT('AJOUTER_FILM', 'TITRE ' || titre || ' TRUNCATE AS ' || tmp);
+			new_titre := tmp;
 		END IF;
 
-		IF LENGTH(t_o) > 59 THEN
-			tmp := SUBSTR(t_o,0,59);
-			LOGEVENT('FILM', 'TITRE_ORIGINAL ' || t_o || ' TRUNCATE AS ' || tmp);
-			t_o := tmp;
+		new_titre_original := titre_original;
+		IF LENGTH(titre_original) > 113 THEN
+			RAISE_APPLICATION_ERROR(-20012, 'Champs titre original trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs titre original trop long');
+		ELSIF LENGTH(titre_original) > 59 THEN
+			tmp := SUBSTR(titre_original,0,59);
+			LOGEVENT('AJOUTER_FILM', 'TITRE_ORIGINAL ' || titre_original || ' TRUNCATE AS ' || tmp);
+			new_titre_original := tmp;
 		END IF;
 
-		IF LENGTH(c) > 5 THEN
-			tmp := SUBSTR(c,0,5);
-			LOGEVENT('FILM', 'CERTIFICATION ' || c || ' TRUNCATE AS ' || tmp);
-			c := tmp;
+		new_certification := certification;
+		IF LENGTH(certification) > 9 THEN
+			RAISE_APPLICATION_ERROR(-20013, 'Champs certification trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs certification trop long');
+		ELSIF LENGTH(certification) > 5 THEN
+			tmp := SUBSTR(certification,0,5);
+			LOGEVENT('AJOUTER_FILM', 'CERTIFICATION ' || certification || ' TRUNCATE AS ' || tmp);
+			new_certification := tmp;
 		END IF;
 
-		IF LENGTH(ta) > 172 THEN
-			tmp := SUBSTR(ta,0,172);
-			LOGEVENT('FILM', 'TAGLINE ' || ta || ' TRUNCATE AS ' || tmp);
-			ta := tmp;
+		IF LENGTH(lien_poster) > 32 THEN
+			RAISE_APPLICATION_ERROR(-20014, 'Champs lien_poster trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs lien_poster trop long');
 		END IF;
 
-		IF LENGTH(o) > 949 THEN
-			tmp := SUBSTR(o,0,949);
-			LOGEVENT('FILM', 'OVERVIEW ' || o || ' TRUNCATE AS ' || tmp);
-			o := tmp;
+		new_homepage := homepage;
+		IF LENGTH(homepage) > 359 THEN
+			RAISE_APPLICATION_ERROR(-20015, 'Champs homepage trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs homepage trop long');
+		ELSIF LENGTH(homepage) > 122 THEN
+			tmp := SUBSTR(homepage,0,122);
+			LOGEVENT('AJOUTER_FILM', 'CERTIFICATION ' || homepage || ' TRUNCATE AS ' || tmp);
+			new_homepage := tmp;
 		END IF;
 
-		IF LENGTH(nm) > 3 THEN
-			IF nm > 10 THEN
-				LOGEVENT('FILM', 'NOTE_MOYENNE = '|| nm||' VALUE TRUNCATE TO 10');
-				nm := 10;
-			ELSE
-				LOGEVENT('FILM', 'NOTE_MOYENNE = '|| nm||' VALUE TRUNCATE TO ' || TRUNC(nm, 1));
-				nm := TRUNC(nm, 1);
-			END IF;
+		new_tagline := tagline;
+		IF LENGTH(tagline) > 871 THEN
+			RAISE_APPLICATION_ERROR(-20016, 'Champs tagline trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs tagline trop long');
+		ELSIF LENGTH(tagline) > 172 THEN
+			tmp := SUBSTR(tagline,0,172);
+			LOGEVENT('AJOUTER_FILM', 'TAGLINE ' || tagline || ' TRUNCATE AS ' || tmp);
+			new_tagline := tmp;
 		END IF;
 
-		INSERT INTO FILM VALUES(i, t, t_o, d, s, nm, nn, r, c, lp, b, re, h, ta, o);
+		new_overview := overview;
+		IF LENGTH(overview) > 1000 THEN
+			RAISE_APPLICATION_ERROR(-20017, 'Champs overview trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs overview trop long');
+		ELSIF LENGTH(overview) > 949 THEN
+			tmp := SUBSTR(overview,0,949);
+			LOGEVENT('AJOUTER_FILM', 'OVERVIEW ' || overview || ' TRUNCATE AS ' || tmp);
+			new_overview := tmp;
+		END IF;
+
+		IF LENGTH(note_moyenne) > 3 THEN
+			RAISE_APPLICATION_ERROR(-20018, 'Champs note_moyenne trop long');
+			LOGEVENT('AJOUTER_FILM', 'Erreur: champs note_moyenne trop long');
+		END IF;
+
+		INSERT INTO FILM VALUES(id, new_titre, new_titre_original, date_sortie, status, note_moyenne, nbr_note, runtime, new_certification, 
+			lien_poster, budget, revenus, new_homepage, new_tagline, new_overview);
 		COMMIT;
 
 	EXCEPTION
-		WHEN OTHERS THEN ROLLBACK; RAISE;
+
+		WHEN CheckException THEN
+			IF SQLERRM LIKE '%CK_FILM_STATUS%' THEN RAISE_APPLICATION_ERROR(-20019, 'Valeur invalide pour le status du film'); 
+			ELSIF SQLERRM LIKE '%CK_FILM_TITRE%' THEN RAISE_APPLICATION_ERROR(-20020, 'Le titre du film doit être renseigné');
+			ELSIF SQLERRM LIKE '%CK_FILM_ORI_TITRE%' THEN RAISE_APPLICATION_ERROR(-20021, 'Le titre original du film doit être renseigné');
+			END IF;
+			ROLLBACK;
+
+		WHEN DUP_VAL_ON_INDEX THEN 
+			RAISE_APPLICATION_ERROR(-20022, 'Le film '||id||' existe déjà dans la base de donnée');
+			ROLLBACK;
+
+		WHEN OTHERS THEN RAISE; ROLLBACK;
 	END;
 
 END;
