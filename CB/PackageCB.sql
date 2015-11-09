@@ -133,6 +133,8 @@ IS
 		new_nbr_note NUMBER;
 		new_runtime NUMBER;
 		new_budget NUMBER;
+		new_revenus NUMBER;
+
 
 		returnValue film%ROWTYPE;
 
@@ -159,7 +161,7 @@ IS
 		END IF;
 
 		new_certification := certification;
-		IF certification IN ('tt2058001', 'None', 'Not Rated', 'Unrated', '2009', 'undefined', '-', ' ')
+		IF certification IN ('tt2058001', 'None', 'Not Rated', 'Unrated', '2009', 'undefined', '-', ' ') THEN
 			new_certification := NULL;
 			LOGEVENT('VERIF_FILM_FIELD', 'Valeur certification invalide. Champ mis à NULL');
 		ELSIF LENGTH(certification) > 9 THEN
@@ -172,19 +174,15 @@ IS
 		END IF;
 
 		new_homepage := homepage;
-		IF LENGTH(homepage) > 359 THEN
-			RAISE_APPLICATION_ERROR(-20015, 'Champ homepage trop long');
-			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ homepage trop long');
-		ELSIF LENGTH(homepage) > 122 THEN
-			tmp := SUBSTR(homepage,0,122);
-			LOGEVENT('VERIF_FILM_FIELD', 'CERTIFICATION ' || homepage || ' TRUNCATE AS ' || tmp);
-			new_homepage := tmp;
+		IF LENGTH(homepage) > 122 THEN
+			LOGEVENT('VERIF_FILM_FIELD', 'Home page trop longue. Valeur mise à null');
+			new_homepage := NULL;
 		END IF;
 
 		new_tagline := tagline;
 		IF LENGTH(tagline) > 871 THEN
-			RAISE_APPLICATION_ERROR(-20016, 'Champ tagline trop long');
-			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ tagline trop long');
+			new_tagline := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'champ tagline trop long. Mis à NULL');
 		ELSIF LENGTH(tagline) > 172 THEN
 			tmp := SUBSTR(tagline,0,172);
 			LOGEVENT('VERIF_FILM_FIELD', 'TAGLINE ' || tagline || ' TRUNCATE AS ' || tmp);
@@ -193,8 +191,8 @@ IS
 
 		new_overview := overview;
 		IF LENGTH(overview) > 1000 THEN
-			RAISE_APPLICATION_ERROR(-20017, 'Champ overview trop long');
-			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ overview trop long');
+			new_overview := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'champ overview trop long. Mis à');
 		ELSIF LENGTH(overview) > 949 THEN
 			tmp := SUBSTR(overview,0,949);
 			LOGEVENT('VERIF_FILM_FIELD', 'OVERVIEW ' || overview || ' TRUNCATE AS ' || tmp);
@@ -219,6 +217,19 @@ IS
 			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: runtime négatif ou 0 valeur mise à NULL');
 		END IF;
 
+		new_budget := budget;
+		IF LENGTH(budget)>9 THEN
+			new_budget := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'Budget trop gros pour '||id||' Budget mis à NULL');
+		END IF;
+
+		new_revenus := revenus;
+		IF LENGTH(revenus)>10 THEN
+			new_revenus := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'Revenus trop gros pour '||id||' Revenus mis à NULL');
+		END IF;
+
+
 		returnValue.id := id;
 		returnValue.titre := new_titre;
 		returnValue.titre_original := new_titre_original;
@@ -229,8 +240,8 @@ IS
 		returnValue.runtime := new_runtime;
 		returnValue.certification := new_certification;
 		returnValue.affiche := lien_poster;
-		returnValue.budget := budget;
-		returnValue.revenu := revenus;
+		returnValue.budget := new_budget;
+		returnValue.revenu := new_revenus;
 		returnValue.homepage := new_homepage;
 		returnValue.tagline :=new_tagline;
 		returnValue.overview := new_overview;
@@ -304,8 +315,8 @@ IS
 	BEGIN
 		new_nom := nom;
 		IF LENGTH(nom) > 38 THEN
-			RAISE_APPLICATION_ERROR(-20023, 'Champ nom trop long');
-			LOGEVENT('VERIF_PAYS_FIELDS', 'Erreur: champ nom trop long');
+			new_nom := NULL;
+			LOGEVENT('VERIF_PAYS_FIELDS', 'Nom du champ pays trop long. Nom = null');
 		ELSIF LENGTH(nom) > 31 THEN
 			tmp := SUBSTR(nom,0,31);
 			LOGEVENT('VERIF_PAYS_FIELDS', 'NOM ' || nom || ' TRUNCATE AS ' || tmp);
@@ -331,8 +342,8 @@ IS
 
 		new_nom := nom;
 		IF LENGTH(nom) > 16 THEN
-			RAISE_APPLICATION_ERROR(-20024, 'Champ nom trop long');
-			LOGEVENT('VERIF_LANGUE_FIELDS', 'Erreur: champ nom trop long');
+			new_nom := NULL;
+			LOGEVENT('VERIF_PAYS_FIELDS', 'Nom du champ langue trop long. Nom = null');
 		ELSIF LENGTH(nom) > 15 THEN
 			tmp := SUBSTR(nom,0,15);
 			LOGEVENT('VERIF_LANGUE_FIELDS', 'NOM: ' || nom || ' TRUNCATE AS ' || tmp);
