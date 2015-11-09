@@ -203,7 +203,7 @@ IS
 		returnValue.titre := new_titre;
 		returnValue.titre_original := new_titre_original;
 		returnValue.date_sortie := date_sortie;
-		returnValue.status := UPPER(status);
+		returnValue.statut := UPPER(status);
 		returnValue.note_moyenne := note_moyenne;
 		returnValue.nombre_note := nbr_note;
 		returnValue.runtime := runtime;
@@ -214,7 +214,7 @@ IS
 		returnValue.homepage := new_homepage;
 		returnValue.tagline :=new_tagline;
 		returnValue.overview := new_overview;
-		returnValue.nbr_copy := nbr_copy;
+		returnValue.nbr_copie := nbr_copy;
 
 		RETURN returnValue;
 

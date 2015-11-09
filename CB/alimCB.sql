@@ -22,39 +22,61 @@ AS
   	found boolean;
   	idImage number;
   	lienImage varchar2(4000);
+
+  	movieExist NUMBER;
 BEGIN
 	--faire autrement
-	select * into s 
-	from (select * from movies_ext order by dbms_random.value)
-	where rownum = 1;
-
-	while i < nombreAjout
+	
+	FOR s IN (select * from (select * from movies_ext order by dbms_random.value))
 	loop
+		dbms_output.put_line(s.id);
 
-		idImage := null;
-		dbms_output.put_line(s.poster_path);
-
-		IF s.poster_path <> null THEN
-			lienImage := 'http://image.tmdb.org/t/p/w185' || s.poster_path;
-			idImage := IDAFFICHE.NEXTVAL;
-		END IF;
+		EXIT WHEN i > nombreAjout;
 
 		nbrCopie := FLOOR(dbms_random.normal * 2 + 5);
-
-		dbms_output.put_line(s.poster_path);
-
-		newFilm := 	PACKAGECB.verif_film_fields(s.id, s.title, s.original_title, s.release_date, s.status, s.vote_average,
-					s.vote_count, s.runtime, s.certification, idImage, s.budget, s.revenue, s.homepage, s.tagline,
-					s.overview, nbrCopie);
+		movieExist := 0;
 
 		BEGIN
-			IF idImage <> null THEN
-				insert into affiche values(idImage, httpuritype (lienImage).getblob ());
-			END IF;
+			newFilm := 	PACKAGECB.verif_film_fields(s.id, s.title, s.original_title, s.release_date, s.status, s.vote_average,
+						s.vote_count, s.runtime, s.certification, null, s.budget, s.revenue, s.homepage, s.tagline,
+						s.overview, nbrCopie);
 			insert into film values newFilm;
 		EXCEPTION
-			WHEN OTHERS THEN LOGEVENT('Ajout film', 'TUPLE REJETE : ' ||SQLERRM); --NOTE IL FAUT FAIRE UN TRUC POUR QUE L'INSERTION SOIT MARQUEE RATEE
+			WHEN dup_val_on_index THEN
+				movieExist := 1;
+			WHEN OTHERS THEN 
+				LOGEVENT('Ajout film', 'ERREUR FILM '|| s.id||' REJETE  : ' ||SQLERRM);
+				movieExist := 2;
 		END;
+
+		--Cas si il y a eu une erreur qui a rejeté le film
+		IF movieExist = 2 THEN CONTINUE;
+		--Si le film existe déjà
+		ELSIF movieExist = 1 THEN
+			LOGEVENT('MAJ FILM', 'Mise à jour des copies d''un film existent');
+			BEGIN
+				UPDATE film SET nbr_copie = nbrCopie WHERE id = s.id;
+			EXCEPTION
+				WHEN OTHERS THEN LOGEVENT('UPDATE nbr_copie', 'ERREUR FILM '||s.id||' : ' ||SQLERRM);
+			END;
+			i:=i+1;
+			CONTINUE;
+		--Le film n'existe pas
+		ELSIF movieExist = 0 THEN
+			IF s.poster_path <> NULL THEN --Si il a un poster
+				LOGEVENT('Ajout poster', 'Ajout d''un poster');
+				idImage := IDAFFICHE.NEXTVAL;
+				lienImage := 'http://image.tmdb.org/t/p/w185'||s.poster_path;
+
+				BEGIN
+					insert into affiche values(idImage, httpuritype (lienImage).getblob ());
+					UPDATE film SET affiche = idImage WHERE id = s.id;
+				EXCEPTION
+					WHEN OTHERS THEN
+						LOGEVENT('Ajout affiche', 'ERREUR AFFICHE FILM '|| s.id||' REJETE  : ' ||SQLERRM);
+				END;
+			END IF;
+		END IF;
 
 		--GENRES
 		chaine := regexp_substr(s.genres, '^\[\[(.*)\]\]$', 1, 1, '', 1);
@@ -183,8 +205,6 @@ BEGIN
 	        end if;
 	        j := j +1;
 		end loop;
-
-
 		i := i+1;
 	COMMIT;
 	end loop;
