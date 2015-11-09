@@ -129,6 +129,10 @@ IS
 		new_homepage VARCHAR2(4000);
 		new_tagline VARCHAR2(4000);
 		new_overview VARCHAR2(4000);
+		new_note_moyenne NUMBER;
+		new_nbr_note NUMBER;
+		new_runtime NUMBER;
+		new_budget NUMBER;
 
 		returnValue film%ROWTYPE;
 
@@ -155,9 +159,12 @@ IS
 		END IF;
 
 		new_certification := certification;
-		IF LENGTH(certification) > 9 THEN
-			RAISE_APPLICATION_ERROR(-20013, 'Champ certification trop long');
-			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ certification trop long');
+		IF certification IN ('tt2058001', 'None', 'Not Rated', 'Unrated', '2009', 'undefined', '-', ' ')
+			new_certification := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'Valeur certification invalide. Champ mis à NULL');
+		ELSIF LENGTH(certification) > 9 THEN
+			new_certification := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ certification trop long. Champ mis à NULL');
 		ELSIF LENGTH(certification) > 5 THEN
 			tmp := SUBSTR(certification,0,5);
 			LOGEVENT('VERIF_FILM_FIELD', 'CERTIFICATION ' || certification || ' TRUNCATE AS ' || tmp);
@@ -194,9 +201,22 @@ IS
 			new_overview := tmp;
 		END IF;
 
+		new_note_moyenne := note_moyenne;
 		IF LENGTH(note_moyenne) > 3 THEN
-			RAISE_APPLICATION_ERROR(-20018, 'Champ note_moyenne trop long');
-			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ note_moyenne trop long');
+			new_note_moyenne := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ note moyenne incorrecte valeur mise à NULL');
+		END IF;
+
+		new_nbr_note := nbr_note;
+		IF nbr_note < 0 THEN
+			new_nbr_note := 0;
+			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: Nombre de notes négatif. Valeur mise à 0');
+		END IF;
+
+		new_runtime := runtime;
+		IF runtime <= 0 THEN
+			new_runtime := NULL;
+			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: runtime négatif ou 0 valeur mise à NULL');
 		END IF;
 
 		returnValue.id := id;
@@ -204,9 +224,9 @@ IS
 		returnValue.titre_original := new_titre_original;
 		returnValue.date_sortie := date_sortie;
 		returnValue.statut := UPPER(status);
-		returnValue.note_moyenne := note_moyenne;
-		returnValue.nombre_note := nbr_note;
-		returnValue.runtime := runtime;
+		returnValue.note_moyenne := new_note_moyenne;
+		returnValue.nombre_note := new_nbr_note;
+		returnValue.runtime := new_runtime;
 		returnValue.certification := new_certification;
 		returnValue.affiche := lien_poster;
 		returnValue.budget := budget;

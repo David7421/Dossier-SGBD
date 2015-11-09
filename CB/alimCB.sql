@@ -14,8 +14,6 @@ AS
 	id varchar2(4000);
 	valeur varchar2(4000);
 	image varchar2(4000);
-	id_role varchar2(4000);
-	nom_role varchar2(4000);
 
 	i number := 0;
 	j number := 1;
@@ -29,6 +27,8 @@ AS
   	lienImage varchar2(4000);
   	tmpChaine varchar2(4000);
 
+  	found boolean;
+  	res owa_text.vc_arr;
   	movieExist NUMBER;
 BEGIN
 	--faire autrement
@@ -246,34 +246,18 @@ BEGIN
 			decompVirgule := regexp_substr(chaine, '(.*?)(\|\||$)', 1, j, '', 1);
 	        exit when decompVirgule is null;
 
-	        k:=1;
-	        LOOP
-	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
-	          EXIT WHEN tmpChaine IS NULL;
-
-	          IF k=1 THEN
-	            id := tmpChaine;
-	          ELSIF k=2 THEN
-	            valeur:=tmpChaine;
-	          ELSIF k=3 THEN
-	            id_role:=tmpChaine;
-	          ELSIF k=4 THEN
-	            nom_role:=tmpChaine;
-	          ELSIF k=5 THEN
-	            image:=tmpChaine;
-	          END IF;
-	          k:=k+1;
-	        END LOOP;
-	        
-	        BEGIN
-		        newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(id), valeur, image);
-		        newRole := PACKAGECB.verif_role_fields(TO_NUMBER(id_role), newFilm.id, nom_role);
-		        insert into personne values newPersonne;
-		        insert into role values newRole;
-		        insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
-		    EXCEPTION
-		        WHEN OTHERS THEN LOGEVENT('inserer acteur', 'TUPLE REJETE : ' ||SQLERRM);
-		    END;
+	        found := owa_pattern.match(decompVirgule, '^(.*),{2,}(.*),{2,}(.*),{2,}(.*),{2,}(.*)$', res);
+	        if found then
+	            BEGIN
+			        newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(res(1)), res(2), res(5));
+			        newRole := PACKAGECB.verif_role_fields(TO_NUMBER(res(3)), newFilm.id, res(4));
+			        insert into personne values newPersonne;
+			        insert into role values newRole;
+			        insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
+			    EXCEPTION
+			        WHEN OTHERS THEN LOGEVENT('inserer acteur', 'TUPLE REJETE : ' ||SQLERRM);
+			    END;
+	        end if;
 		    j := j+1;
 		end loop;
 		i := i+1;
