@@ -35,7 +35,7 @@ CREATE TABLE FILM
 	TITRE_ORIGINAL	VARCHAR2(59) CONSTRAINT CK_FILM_ORI_TITRE CHECK(TITRE_ORIGINAL IS NOT NULL),
 	DATE_SORTIE		DATE,
 	STATUS			VARCHAR2(15) CONSTRAINT CK_FILM_STATUS CHECK(STATUS IN ('POST PRODUCTION', 'RUMORED', 'RELEASED', 'IN PRODUCTION', 'PLANNED', 'CANCELED')), 
-	--Je ne tiens pas compte du 99ème 100-quantile pour le status comme je vérifie la valeur avec un check.
+	--Je ne tiens pas compte du 99ème 100-quantile pour le statut comme je vérifie la valeur avec un check.
 	NOTE_MOYENNE	NUMBER(2,1),
 	NOMBRE_NOTE		NUMBER,	
 	RUNTIME 		NUMBER, 

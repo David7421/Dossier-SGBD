@@ -483,8 +483,6 @@ BEGIN
 
   utl_file.fclose (fichierId);
 
-  utl_file.fclose (fichierId);
-
 EXCEPTION
   WHEN OTHERS THEN 
     IF utl_file.is_open(fichierId) THEN
