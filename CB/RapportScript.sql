@@ -182,7 +182,7 @@ BEGIN
     utl_file.put_line (fichierId, 'VALEURS NON NULL:  ' || donnee.totVal);
     utl_file.put_line (fichierId, '   VALEURS VIDES:  ' || (valVide));
     utl_file.put_line (fichierId, '    100-QUANTILE:  ' || (donnee.quantile100));
-    utl_file.put_line (fichierId, '   10000-QUANTILE:  ' || (donnee.quantile10000));
+    utl_file.put_line (fichierId, '  10000-QUANTILE:  ' || (donnee.quantile10000));
 
     SELECT MAX(LENGTH(COLUMN_VALUE)), MIN(LENGTH(COLUMN_VALUE)), AVG(LENGTH(COLUMN_VALUE)), STDDEV(LENGTH(COLUMN_VALUE)), 
     MEDIAN(LENGTH(COLUMN_VALUE)), COUNT(COLUMN_VALUE), PERCENTILE_CONT(0.99) WITHIN GROUP(ORDER BY LENGTH(COLUMN_VALUE)), 
@@ -487,6 +487,7 @@ EXCEPTION
   WHEN OTHERS THEN 
     IF utl_file.is_open(fichierId) THEN
      utl_file.fclose (fichierId);
+     LOGEVENT('script rapport', SQLERRM);
     END IF;
     RAISE;
 
