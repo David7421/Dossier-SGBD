@@ -403,7 +403,10 @@ IS
 	BEGIN
 
 		new_nom := nom;
-		IF LENGTH(nom) > 35 THEN
+		IF nom IS NULL THEN
+			RAISE_APPLICATION_ERROR(-20024, 'le nom est null');
+			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'nom null : rejeté');
+		ELSIF LENGTH(nom) > 35 THEN
 			RAISE_APPLICATION_ERROR(-20024, 'Champ nom trop long');
 			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Erreur: champ nom trop long');
 		ELSIF LENGTH(nom) > 23 THEN
