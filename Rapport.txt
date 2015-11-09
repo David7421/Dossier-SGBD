@@ -1,0 +1,469 @@
+RAPPORT FILM
+------------
+TABLE FILM : 
+
+ID :
+             MAX:  6
+             MIN:  1
+         MOYENNE:  5,69
+      ECART-TYPE:  ,52
+         MEDIANE:  6
+     NBR VALEURS:  249814
+    VALEURS NULL:  0
+VALEURS NON NULL:  249814
+   VALEURS VIDES:  0
+    100-QUANTILE:  6
+   10000-QUANTILE:  6
+
+TITLE :
+             MAX:  393
+             MIN:  1
+         MOYENNE:  19,69
+      ECART-TYPE:  11,6
+         MEDIANE:  17
+     NBR VALEURS:  249814
+    VALEURS NULL:  0
+VALEURS NON NULL:  249814
+   VALEURS VIDES:  0
+    100-QUANTILE:  58
+   10000-QUANTILE:  112,0187
+
+ORIGINAL_TITLE :
+             MAX:  393
+             MIN:  1
+         MOYENNE:  19,6
+      ECART-TYPE:  11,7
+         MEDIANE:  17
+     NBR VALEURS:  249814
+    VALEURS NULL:  0
+VALEURS NON NULL:  249814
+   VALEURS VIDES:  0
+    100-QUANTILE:  59
+   10000-QUANTILE:  113
+
+RELEASE_DATE :
+             MAX:  8
+             MIN:  8
+         MOYENNE:  8
+      ECART-TYPE:  0
+         MEDIANE:  8
+     NBR VALEURS:  249814
+    VALEURS NULL:  23948
+VALEURS NON NULL:  225866
+   VALEURS VIDES:  0
+    100-QUANTILE:  8
+   10000-QUANTILE:  8
+
+STATUS :
+             MAX:  15
+             MIN:  7
+         MOYENNE:  8,02
+      ECART-TYPE:  ,44
+         MEDIANE:  8
+     NBR VALEURS:  249814
+    VALEURS NULL:  5592
+VALEURS NON NULL:  244222
+   VALEURS VIDES:  0
+    100-QUANTILE:  8
+   10000-QUANTILE:  15
+NOMBRE VALEURS UNIQUES : 7
+               VALEURS : 
+                      
+                      Post Production
+                      Rumored
+                      Released
+                      In Production
+                      Planned
+                      Canceled
+
+VOTE_AVERAGE :
+             MAX:  3
+             MIN:  1
+         MOYENNE:  1,25
+      ECART-TYPE:  ,65
+         MEDIANE:  1
+     NBR VALEURS:  249814
+    VALEURS NULL:  0
+VALEURS NON NULL:  249814
+   VALEURS VIDES:  190796
+    100-QUANTILE:  3
+   10000-QUANTILE:  3
+
+VOTE_COUNT :
+             MAX:  4
+             MIN:  1
+         MOYENNE:  1,03
+      ECART-TYPE:  ,19
+         MEDIANE:  1
+     NBR VALEURS:  249814
+    VALEURS NULL:  0
+VALEURS NON NULL:  249814
+   VALEURS VIDES:  190738
+    100-QUANTILE:  2
+   10000-QUANTILE:  4
+
+RUNTIME :
+             MAX:  5
+             MIN:  1
+         MOYENNE:  1,84
+      ECART-TYPE:  ,72
+         MEDIANE:  2
+     NBR VALEURS:  249814
+    VALEURS NULL:  28232
+VALEURS NON NULL:  221582
+   VALEURS VIDES:  67741
+    100-QUANTILE:  3
+   10000-QUANTILE:  4
+
+CERTIFICATION :
+             MAX:  12
+             MIN:  1
+         MOYENNE:  2,17
+      ECART-TYPE:  1,5
+         MEDIANE:  2
+     NBR VALEURS:  249814
+    VALEURS NULL:  223238
+VALEURS NON NULL:  26576
+   VALEURS VIDES:  0
+    100-QUANTILE:  5
+   10000-QUANTILE:  9
+NOMBRE VALEURS UNIQUES : 40
+               VALEURS : 
+                      
+                      tt2058001
+                      None
+                      TV-14
+                      R
+                      NC-17
+                      Not Rated
+                      Unrated
+                      USA:Approved
+                      2009
+                      PG-13
+                      P
+                      TV-MA
+                      nr
+                      18
+                      undefined
+                      MA
+                       USA:R
+                      16
+                      UR
+                      Day to GO!
+                      NR
+                      PG
+                      Y
+                      M
+                      R18
+                      IMDB
+                      X
+                      -
+                      A
+                      15
+                      TV-PG
+                      TV Movie
+                      adult
+                      G
+                       
+                      TV-G
+                      Exempt
+                      Approved
+                      XXX
+
+POSTER_PATH :
+             MAX:  32
+             MIN:  30
+         MOYENNE:  31,97
+      ECART-TYPE:  ,17
+         MEDIANE:  32
+     NBR VALEURS:  249814
+    VALEURS NULL:  76422
+VALEURS NON NULL:  173392
+   VALEURS VIDES:  0
+    100-QUANTILE:  32
+   10000-QUANTILE:  32
+
+BUDGET :
+             MAX:  15
+             MIN:  1
+         MOYENNE:  1,21
+      ECART-TYPE:  1,11
+         MEDIANE:  1
+     NBR VALEURS:  249814
+    VALEURS NULL:  0
+VALEURS NON NULL:  249814
+   VALEURS VIDES:  239482
+    100-QUANTILE:  8
+   10000-QUANTILE:  9
+
+REVENUE :
+             MAX:  12
+             MIN:  1
+         MOYENNE:  1,13
+      ECART-TYPE:  ,93
+         MEDIANE:  1
+     NBR VALEURS:  249814
+    VALEURS NULL:  0
+VALEURS NON NULL:  249814
+   VALEURS VIDES:  244388
+    100-QUANTILE:  8
+   10000-QUANTILE:  9
+
+HOMEPAGE :
+             MAX:  394
+             MIN:  1
+         MOYENNE:  41,04
+      ECART-TYPE:  21,21
+         MEDIANE:  35
+     NBR VALEURS:  249814
+    VALEURS NULL:  225758
+VALEURS NON NULL:  24056
+   VALEURS VIDES:  0
+    100-QUANTILE:  122
+   10000-QUANTILE:  359,1615
+
+TAGLINE :
+             MAX:  954
+             MIN:  1
+         MOYENNE:  47,07
+      ECART-TYPE:  35,81
+         MEDIANE:  39
+     NBR VALEURS:  249814
+    VALEURS NULL:  212752
+VALEURS NON NULL:  37062
+   VALEURS VIDES:  0
+    100-QUANTILE:  172
+   10000-QUANTILE:  871,939
+
+OVERVIEW :
+             MAX:  1412
+             MIN:  1
+         MOYENNE:  305,36
+      ECART-TYPE:  231,18
+         MEDIANE:  250
+     NBR VALEURS:  249814
+    VALEURS NULL:  38901
+VALEURS NON NULL:  210913
+   VALEURS VIDES:  0
+    100-QUANTILE:  949
+   10000-QUANTILE:  1000
+
+GENRES
+
+id :
+             MAX:  5
+             MIN:  2
+         MOYENNE:  3,72
+      ECART-TYPE:  1,39
+         MEDIANE:  4
+     NBR VALEURS:  39
+    VALEURS NULL:  0
+VALEURS NON NULL:  39
+   VALEURS VIDES:  0
+    100-QUANTILE:  5
+   10000-QUANTILE:  5
+
+nom
+             MAX:  16
+             MIN:  3
+         MOYENNE:  7,6
+      ECART-TYPE:  2,74
+         MEDIANE:  7
+     NBR VALEURS:  40
+    VALEURS NULL:  0
+VALEURS NON NULL:  40
+   VALEURS VIDES:  0
+    100-QUANTILE:  15,61
+   10000-QUANTILE:  15,9961
+
+PRODUCTION_COMPANIES
+
+id :
+             MAX:  5
+             MIN:  1
+         MOYENNE:  4,66
+      ECART-TYPE:  ,55
+         MEDIANE:  5
+     NBR VALEURS:  28084
+    VALEURS NULL:  0
+VALEURS NON NULL:  28084
+   VALEURS VIDES:  0
+    100-QUANTILE:  5
+   10000-QUANTILE:  5
+
+nom
+             MAX:  128
+             MIN:  1
+         MOYENNE:  18,15
+      ECART-TYPE:  8,33
+         MEDIANE:  17
+     NBR VALEURS:  27929
+    VALEURS NULL:  0
+VALEURS NON NULL:  27929
+   VALEURS VIDES:  0
+    100-QUANTILE:  45
+   10000-QUANTILE:  90,8648
+
+PRODUCTION_COUNTRIES
+
+id :
+             MAX:  2
+             MIN:  2
+         MOYENNE:  2
+      ECART-TYPE:  0
+         MEDIANE:  2
+     NBR VALEURS:  224
+    VALEURS NULL:  0
+VALEURS NON NULL:  224
+   VALEURS VIDES:  0
+    100-QUANTILE:  2
+   10000-QUANTILE:  2
+
+nom
+             MAX:  38
+             MIN:  4
+         MOYENNE:  9,73
+      ECART-TYPE:  5,84
+         MEDIANE:  8
+     NBR VALEURS:  226
+    VALEURS NULL:  0
+VALEURS NON NULL:  226
+   VALEURS VIDES:  0
+    100-QUANTILE:  31,5
+   10000-QUANTILE:  37,955
+
+SPOKEN_LANGUAGES
+
+id :
+             MAX:  2
+             MIN:  2
+         MOYENNE:  2
+      ECART-TYPE:  0
+         MEDIANE:  2
+     NBR VALEURS:  149
+    VALEURS NULL:  0
+VALEURS NON NULL:  149
+   VALEURS VIDES:  0
+    100-QUANTILE:  2
+   10000-QUANTILE:  2
+
+nom
+             MAX:  16
+             MIN:  2
+         MOYENNE:  7,15
+      ECART-TYPE:  2,52
+         MEDIANE:  7
+     NBR VALEURS:  75
+    VALEURS NULL:  1
+VALEURS NON NULL:  74
+   VALEURS VIDES:  0
+    100-QUANTILE:  14,54
+   10000-QUANTILE:  15,9854
+
+DIRECTORS
+
+id :
+             MAX:  7
+             MIN:  1
+         MOYENNE:  6,42
+      ECART-TYPE:  ,81
+         MEDIANE:  7
+     NBR VALEURS:  68729
+    VALEURS NULL:  0
+VALEURS NON NULL:  68729
+   VALEURS VIDES:  0
+    100-QUANTILE:  7
+   10000-QUANTILE:  7
+
+nom
+             MAX:  49
+             MIN:  2
+         MOYENNE:  13,74
+      ECART-TYPE:  3,28
+         MEDIANE:  13
+     NBR VALEURS:  66677
+    VALEURS NULL:  0
+VALEURS NON NULL:  66677
+   VALEURS VIDES:  0
+    100-QUANTILE:  23
+   10000-QUANTILE:  35
+
+image
+             MAX:  32
+             MIN:  30
+         MOYENNE:  31,97
+      ECART-TYPE:  ,17
+         MEDIANE:  32
+     NBR VALEURS:  7266
+    VALEURS NULL:  1
+VALEURS NON NULL:  7265
+   VALEURS VIDES:  0
+    100-QUANTILE:  32
+   10000-QUANTILE:  32
+
+ACTORS
+
+id :
+             MAX:  7
+             MIN:  1
+         MOYENNE:  6,37
+      ECART-TYPE:  ,8
+         MEDIANE:  7
+     NBR VALEURS:  323553
+    VALEURS NULL:  0
+VALEURS NON NULL:  323553
+   VALEURS VIDES:  0
+    100-QUANTILE:  7
+   10000-QUANTILE:  7
+
+nom
+             MAX:  283
+             MIN:  1
+         MOYENNE:  13,48
+      ECART-TYPE:  3,36
+         MEDIANE:  13
+     NBR VALEURS:  312049
+    VALEURS NULL:  0
+VALEURS NON NULL:  312049
+   VALEURS VIDES:  0
+    100-QUANTILE:  23
+   10000-QUANTILE:  48
+
+image
+             MAX:  32
+             MIN:  30
+         MOYENNE:  31,97
+      ECART-TYPE:  ,17
+         MEDIANE:  32
+     NBR VALEURS:  58268
+    VALEURS NULL:  1
+VALEURS NON NULL:  58267
+   VALEURS VIDES:  0
+    100-QUANTILE:  32
+   10000-QUANTILE:  32
+
+id personnage
+             MAX:  4
+             MIN:  1
+         MOYENNE:  1,44
+      ECART-TYPE:  ,72
+         MEDIANE:  1
+     NBR VALEURS:  1059560
+    VALEURS NULL:  1
+VALEURS NON NULL:  1059559
+   VALEURS VIDES:  0
+    100-QUANTILE:  4
+   10000-QUANTILE:  4
+
+nom personnage
+             MAX:  312
+             MIN:  1
+         MOYENNE:  15,47
+      ECART-TYPE:  8,42
+         MEDIANE:  13
+     NBR VALEURS:  502599
+    VALEURS NULL:  1
+VALEURS NON NULL:  502598
+   VALEURS VIDES:  0
+    100-QUANTILE:  39
+   10000-QUANTILE:  138
