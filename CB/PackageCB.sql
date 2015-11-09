@@ -15,8 +15,8 @@ IS
 	FUNCTION VERIF_PRODUCTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2) RETURN producteur%ROWTYPE;
 	FUNCTION VERIF_PAYS_FIELDS(id IN VARCHAR2, nom IN VARCHAR2) RETURN pays%ROWTYPE;
 	FUNCTION VERIF_LANGUE_FIELDS(id IN VARCHAR2, nom IN VARCHAR2) RETURN langue%ROWTYPE;
-	FUNCTION VERIF_ACTEUR_FIELDS() RETURN acteur%ROWTYPE;
-	FUNCTION VERIF_ROLE_FIELDS() RETURN role%ROWTYPE;
+	FUNCTION VERIF_ACTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN acteur%ROWTYPE;
+	FUNCTION VERIF_ROLE_FIELDS(id IN NUMBER,id_film IN FILM.ID%TYPE ,nom IN VARCHAR2) RETURN role%ROWTYPE;
 	FUNCTION VERIF_REALISATEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN realisateur%ROWTYPE;
 END;
 
@@ -336,7 +336,6 @@ IS
 
 
 
-
 	FUNCTION VERIF_REALISATEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN realisateur%ROWTYPE
 	AS
 		tmp VARCHAR2(4000);
@@ -369,5 +368,68 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN RAISE;
 	END;
+
+
+	FUNCTION VERIF_ACTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN acteur%ROWTYPE
+	AS
+		tmp VARCHAR2(4000);
+		new_nom VARCHAR2(4000);
+		returnValue acteur%ROWTYPE;
+	BEGIN
+
+
+		IF LENGTH(image) > 32 THEN
+			RAISE_APPLICATION_ERROR(-20014, 'Champ image trop long');
+			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Erreur: champ image trop long');
+		END IF;
+
+		new_nom := nom;
+		IF LENGTH(nom) > 35 THEN
+			RAISE_APPLICATION_ERROR(-20024, 'Champ nom trop long');
+			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Erreur: champ nom trop long');
+		ELSIF LENGTH(nom) > 23 THEN
+			tmp := SUBSTR(nom,0,23);
+			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'NOM: ' || nom || ' TRUNCATE AS ' || tmp);
+			new_nom := tmp;
+		END IF;
+
+		returnValue.id := id;
+		returnValue.nom := new_nom;
+		returnValue.photo := image;
+
+		RETURN returnValue;
+		
+	EXCEPTION
+		WHEN OTHERS THEN RAISE;
+	END;
+
+
+	FUNCTION VERIF_ROLE_FIELDS(id IN NUMBER, id_film IN FILM.ID%TYPE ,nom IN VARCHAR2) RETURN role%ROWTYPE
+	AS
+		tmp VARCHAR2(4000);
+		new_nom VARCHAR2(4000);
+		returnValue role%ROWTYPE;
+	BEGIN
+
+		new_nom := nom;
+		IF LENGTH(nom) > 35 THEN
+			RAISE_APPLICATION_ERROR(-20024, 'Champ nom trop long');
+			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Erreur: champ nom trop long');
+		ELSIF LENGTH(nom) > 23 THEN
+			tmp := SUBSTR(nom,0,23);
+			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'NOM: ' || nom || ' TRUNCATE AS ' || tmp);
+			new_nom := tmp;
+		END IF;
+
+		returnValue.id := id;
+		returnValue.FILM_ASSOCIE := id_film;
+		returnValue.nom := new_nom;
+
+		RETURN returnValue;
+		
+	EXCEPTION
+		WHEN OTHERS THEN RAISE;
+	END;
+
 
 END;
