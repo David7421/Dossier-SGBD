@@ -11,17 +11,23 @@ AS
 	newPersonne personne%ROWTYPE;
 	newRole role%ROWTYPE;
 
+	id varchar2(4000);
+	valeur varchar2(4000);
+	image varchar2(4000);
+	id_role varchar2(4000);
+	nom_role varchar2(4000);
+
 	i number := 0;
 	j number := 1;
+	k number;
 
 	nbrCopie number;
 
   	chaine varchar2(4000);
   	decompVirgule varchar2(4000);
-  	res owa_text.vc_arr;
-  	found boolean;
   	idImage number;
   	lienImage varchar2(4000);
+  	tmpChaine varchar2(4000);
 
   	movieExist NUMBER;
 BEGIN
@@ -30,8 +36,9 @@ BEGIN
 	FOR s IN (select * from (select * from movies_ext order by dbms_random.value))
 	loop
 		dbms_output.put_line(s.id);
+		dbms_output.put_line(s.poster_path);
 
-		EXIT WHEN i > nombreAjout;
+		EXIT WHEN i >= nombreAjout;
 
 		nbrCopie := FLOOR(dbms_random.normal * 2 + 5);
 		movieExist := 0;
@@ -63,7 +70,7 @@ BEGIN
 			CONTINUE;
 		--Le film n'existe pas
 		ELSIF movieExist = 0 THEN
-			IF s.poster_path <> NULL THEN --Si il a un poster
+			IF LENGTH(s.poster_path) > 0 THEN --Il a un poster
 				LOGEVENT('Ajout poster', 'Ajout d''un poster');
 				idImage := IDAFFICHE.NEXTVAL;
 				lienImage := 'http://image.tmdb.org/t/p/w185'||s.poster_path;
@@ -83,17 +90,27 @@ BEGIN
 		loop
 			decompVirgule := regexp_substr(chaine, '(.*?)(\|\||$)', 1, j, '', 1);
 	        exit when decompVirgule is null;
-	        
-	        found := owa_pattern.match(decompVirgule, '^(.*),,(.*)$', res);
-	        if found then        	
-	        	BEGIN
-	        		newGenre := PACKAGECB.verif_genre_fields(TO_NUMBER(res(1)), res(2));
-		            insert into genre values newGenre;
-		            insert into film_genre values (newFilm.id, newGenre.id);
-		        EXCEPTION
-		        	WHEN OTHERS THEN LOGEVENT('insertion genre', 'TUPLE REJETE : ' ||SQLERRM);
-		       	END;
-	        end if;
+
+	        k:=1;
+	        LOOP
+	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
+	          EXIT WHEN tmpChaine IS NULL;
+
+	          IF k=1 THEN
+	            id := tmpChaine;
+	          ELSIF k=2 THEN
+	            valeur:=tmpChaine;
+	          END IF;
+	          k:=k+1;
+	        END LOOP;
+	        dbms_output.put_line(id ||'   '|| valeur);
+	        BEGIN
+	        	newGenre := PACKAGECB.verif_genre_fields(TO_NUMBER(id), valeur);
+		        insert into genre values newGenre;
+		        insert into film_genre values (newFilm.id, newGenre.id);
+		    EXCEPTION
+		    	WHEN OTHERS THEN LOGEVENT('insertion genre', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
 	        j := j +1;
 		end loop;
 
@@ -104,18 +121,27 @@ BEGIN
 			decompVirgule := regexp_substr(chaine, '(.*?)(\|\||$)', 1, j, '', 1);
 	        exit when decompVirgule is null;
 	        
-	        found := owa_pattern.match(decompVirgule, '^(.*),,(.*)$', res);
-	        if found then
+	        k:=1;
+	        LOOP
+	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
+	          EXIT WHEN tmpChaine IS NULL;
+
+	          IF k=1 THEN
+	            id := tmpChaine;
+	          ELSIF k=2 THEN
+	            valeur:=tmpChaine;
+	          END IF;
+	          k:=k+1;
+	        END LOOP;
 	        	
-	        	BEGIN
-	        		newProducteur := PACKAGECB.verif_producteur_fields(TO_NUMBER(res(1)), res(2));
-		            insert into producteur values newProducteur;
-		            insert into film_producteur values (newFilm.id, newProducteur.id);
-		        EXCEPTION
-		        	WHEN OTHERS THEN LOGEVENT('insérer producteur', 'TUPLE REJETE : ' ||SQLERRM);
-		        END;
+	        BEGIN
+	        	newProducteur := PACKAGECB.verif_producteur_fields(TO_NUMBER(id), valeur);
+		        insert into producteur values newProducteur;
+		        insert into film_producteur values (newFilm.id, newProducteur.id);
+		    EXCEPTION
+		        WHEN OTHERS THEN LOGEVENT('insérer producteur', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
 		        
-	        end if;
 	        j := j +1;
 		end loop;
 
@@ -126,17 +152,26 @@ BEGIN
 			decompVirgule := regexp_substr(chaine, '(.*?)(\|\||$)', 1, j, '', 1);
 	        exit when decompVirgule is null;
 	        
-	        found := owa_pattern.match(decompVirgule, '^(.*),,(.*)$', res);
-	        if found then
+	        k:=1;
+	        LOOP
+	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
+	          EXIT WHEN tmpChaine IS NULL;
+
+	          IF k=1 THEN
+	            id := tmpChaine;
+	          ELSIF k=2 THEN
+	            valeur:=tmpChaine;
+	          END IF;
+	          k:=k+1;
+	        END LOOP;
 	        	
-	        	BEGIN
-	        		newPays := PACKAGECB.verif_pays_fields(res(1), res(2));
-		            insert into pays values newPays;
-		            insert into film_pays values (newFilm.id, newPays.id);
-		        EXCEPTION
-		        	WHEN OTHERS THEN LOGEVENT('inserer pays', 'TUPLE REJETE : ' ||SQLERRM);
-		        END;
-	        end if;
+	        BEGIN
+	        	newPays := PACKAGECB.verif_pays_fields(id, valeur);
+		        insert into pays values newPays;
+		        insert into film_pays values (newFilm.id, newPays.id);
+		    EXCEPTION
+		       	WHEN OTHERS THEN LOGEVENT('inserer pays', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
 	        j := j +1;
 		end loop;
 
@@ -147,18 +182,27 @@ BEGIN
 			decompVirgule := regexp_substr(chaine, '(.*?)(\|\||$)', 1, j, '', 1);
 	        exit when decompVirgule is null;
 	        
-	        found := owa_pattern.match(decompVirgule, '^(.*),,(.*)$', res);
-	        if found then
-	        	
-	        	BEGIN
-	        		newLangue := PACKAGECB.verif_langue_fields(res(1), res(2));
-		            insert into langue values newLangue;
-		            insert into film_langue values (newFilm.id, newPays.id);
-		        EXCEPTION
-		        	WHEN OTHERS THEN LOGEVENT('inserer langue', 'TUPLE REJETE : ' ||SQLERRM);
-		        END;
+	        k:=1;
+	        LOOP
+	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
+	          EXIT WHEN tmpChaine IS NULL;
 
-	        end if;
+	          IF k=1 THEN
+	            id := tmpChaine;
+	          ELSIF k=2 THEN
+	            valeur:=tmpChaine;
+	          END IF;
+	          k:=k+1;
+	        END LOOP;
+	        	
+	        BEGIN
+	        	newLangue := PACKAGECB.verif_langue_fields(id, valeur);
+		        insert into langue values newLangue;
+		        insert into film_langue values (newFilm.id, newLangue.id);
+		    EXCEPTION
+		        WHEN OTHERS THEN LOGEVENT('inserer langue', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
 	        j := j +1;
 		end loop;
 
@@ -168,42 +212,69 @@ BEGIN
 		loop
 			decompVirgule := regexp_substr(chaine, '(.*?)(\|\||$)', 1, j, '', 1);
 	        exit when decompVirgule is null;
-	        
-	        found := owa_pattern.match(decompVirgule, '^(.*),{2,}(.*),{2,}(.*)$', res);
-	        if found then
-	        	BEGIN
-	        		newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(res(1)), res(2), res(3));
-		            insert into personne values newPersonne;
-		            insert into EST_REALISATEUR values (newFilm.id, newPersonne.id);
-		        EXCEPTION
-		        	WHEN OTHERS THEN LOGEVENT('inserer realisateur', 'TUPLE REJETE : ' ||SQLERRM);
-		        END;
 
-	        end if;
+	        k:=1;
+	        LOOP
+	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
+	          EXIT WHEN tmpChaine IS NULL;
+
+	          IF k=1 THEN
+	            id := tmpChaine;
+	          ELSIF k=2 THEN
+	            valeur:=tmpChaine;
+	          ELSIF k=3 THEN
+	            image:=tmpChaine;
+	          END IF;
+	          k:=k+1;
+	        END LOOP;
+	        BEGIN
+	        	newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(id), valeur, image);
+		        insert into personne values newPersonne;
+		        insert into EST_REALISATEUR values (newFilm.id, newPersonne.id);
+		    EXCEPTION
+		        WHEN OTHERS THEN LOGEVENT('inserer realisateur', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
 	        j := j +1;
 		end loop;
 
-
+		dbms_output.put_line(s.actors);
 		j:=1;
 		--ACTEUR
 		chaine := regexp_substr(s.actors, '^\[\[(.*)\]\]$', 1, 1, '', 1);
 		loop
 			decompVirgule := regexp_substr(chaine, '(.*?)(\|\||$)', 1, j, '', 1);
 	        exit when decompVirgule is null;
+
+	        k:=1;
+	        LOOP
+	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
+	          EXIT WHEN tmpChaine IS NULL;
+
+	          IF k=1 THEN
+	            id := tmpChaine;
+	          ELSIF k=2 THEN
+	            valeur:=tmpChaine;
+	          ELSIF k=3 THEN
+	            id_role:=tmpChaine;
+	          ELSIF k=4 THEN
+	            nom_role:=tmpChaine;
+	          ELSIF k=5 THEN
+	            image:=tmpChaine;
+	          END IF;
+	          k:=k+1;
+	        END LOOP;
 	        
-	        found := owa_pattern.match(decompVirgule, '^(.*),{2,}(.*),{2,}(.*),{2,}(.*),{2,}(.*)$', res);
-	        if found then
-	        	BEGIN
-		        	newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(res(1)), res(2), res(5));
-		        	newRole := PACKAGECB.verif_role_fields(TO_NUMBER(res(3)), newFilm.id, res(4));
-		            insert into personne values newPersonne;
-		            insert into role values newRole;
-		            insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
-		        EXCEPTION
-		        	WHEN OTHERS THEN LOGEVENT('inserer acteur', 'TUPLE REJETE : ' ||SQLERRM);
-		        END;
-	        end if;
-	        j := j +1;
+	        BEGIN
+		        newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(id), valeur, image);
+		        newRole := PACKAGECB.verif_role_fields(TO_NUMBER(id_role), newFilm.id, nom_role);
+		        insert into personne values newPersonne;
+		        insert into role values newRole;
+		        insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
+		    EXCEPTION
+		        WHEN OTHERS THEN LOGEVENT('inserer acteur', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+		    j := j+1;
 		end loop;
 		i := i+1;
 	COMMIT;
