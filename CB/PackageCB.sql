@@ -8,16 +8,15 @@ IS
 	PROCEDURE MODIFIER_EVALUATION (f IN EVALUATION.IDFILM%TYPE, l IN EVALUATION.LOGIN%TYPE, c IN EVALUATION.COTE%TYPE, a IN EVALUATION.AVIS%TYPE);
 
 	FUNCTION VERIF_FILM_FIELDS(id IN NUMBER, titre IN VARCHAR2, titre_original IN VARCHAR2, date_sortie IN FILM.DATE_SORTIE%TYPE, status IN VARCHAR2, note_moyenne IN NUMBER, 
-		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN VARCHAR2, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
+		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN NUMBER, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
 		tagline IN VARCHAR2, overview IN VARCHAR2, nbr_copy IN NUMBER) RETURN film%ROWTYPE;
 
 	FUNCTION VERIF_GENRE_FIELDS(id IN NUMBER, nom IN VARCHAR2) RETURN genre%ROWTYPE;
 	FUNCTION VERIF_PRODUCTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2) RETURN producteur%ROWTYPE;
 	FUNCTION VERIF_PAYS_FIELDS(id IN VARCHAR2, nom IN VARCHAR2) RETURN pays%ROWTYPE;
 	FUNCTION VERIF_LANGUE_FIELDS(id IN VARCHAR2, nom IN VARCHAR2) RETURN langue%ROWTYPE;
-	FUNCTION VERIF_ACTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN acteur%ROWTYPE;
+	FUNCTION VERIF_PERSONNE_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN personne%ROWTYPE;
 	FUNCTION VERIF_ROLE_FIELDS(id IN NUMBER,id_film IN FILM.ID%TYPE ,nom IN VARCHAR2) RETURN role%ROWTYPE;
-	FUNCTION VERIF_REALISATEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN realisateur%ROWTYPE;
 END;
 
 
@@ -116,7 +115,7 @@ IS
 
 
 	FUNCTION VERIF_FILM_FIELDS(id IN NUMBER, titre IN VARCHAR2, titre_original IN VARCHAR2, date_sortie IN FILM.DATE_SORTIE%TYPE, status IN VARCHAR2, note_moyenne IN NUMBER, 
-		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN VARCHAR2, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
+		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN NUMBER, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
 		tagline IN VARCHAR2, overview IN VARCHAR2, nbr_copy IN NUMBER) RETURN film%ROWTYPE
 	AS
 		tmp VARCHAR2(4000);
@@ -165,11 +164,6 @@ IS
 			new_certification := tmp;
 		END IF;
 
-		IF LENGTH(lien_poster) > 32 THEN
-			RAISE_APPLICATION_ERROR(-20014, 'Champ lien_poster trop long');
-			LOGEVENT('VERIF_FILM_FIELD', 'Erreur: champ lien_poster trop long');
-		END IF;
-
 		new_homepage := homepage;
 		IF LENGTH(homepage) > 359 THEN
 			RAISE_APPLICATION_ERROR(-20015, 'Champ homepage trop long');
@@ -214,7 +208,7 @@ IS
 		returnValue.nombre_note := nbr_note;
 		returnValue.runtime := runtime;
 		returnValue.certification := new_certification;
-		returnValue.lien_poster := lien_poster;
+		returnValue.affiche := lien_poster;
 		returnValue.budget := budget;
 		returnValue.revenu := revenus;
 		returnValue.homepage := new_homepage;
@@ -335,18 +329,18 @@ IS
 	END;
 
 
-
-	FUNCTION VERIF_REALISATEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN realisateur%ROWTYPE
+	FUNCTION VERIF_PERSONNE_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN personne%ROWTYPE
 	AS
 		tmp VARCHAR2(4000);
 		new_nom VARCHAR2(4000);
-		returnValue realisateur%ROWTYPE;
+		new_image VARCHAR2(4000);
+		returnValue personne%ROWTYPE;
 	BEGIN
 
-
+		new_image := image;
 		IF LENGTH(image) > 32 THEN
-			RAISE_APPLICATION_ERROR(-20014, 'Champ image trop long');
-			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Erreur: champ image trop long');
+			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Lien trop grand : NULL');
+			new_image := NULL;
 		END IF;
 
 		new_nom := nom;
@@ -361,41 +355,7 @@ IS
 
 		returnValue.id := id;
 		returnValue.nom := new_nom;
-		returnValue.photo := image;
-
-		RETURN returnValue;
-		
-	EXCEPTION
-		WHEN OTHERS THEN RAISE;
-	END;
-
-
-	FUNCTION VERIF_ACTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN acteur%ROWTYPE
-	AS
-		tmp VARCHAR2(4000);
-		new_nom VARCHAR2(4000);
-		returnValue acteur%ROWTYPE;
-	BEGIN
-
-
-		IF LENGTH(image) > 32 THEN
-			RAISE_APPLICATION_ERROR(-20014, 'Champ image trop long');
-			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Erreur: champ image trop long');
-		END IF;
-
-		new_nom := nom;
-		IF LENGTH(nom) > 35 THEN
-			RAISE_APPLICATION_ERROR(-20024, 'Champ nom trop long');
-			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Erreur: champ nom trop long');
-		ELSIF LENGTH(nom) > 23 THEN
-			tmp := SUBSTR(nom,0,23);
-			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'NOM: ' || nom || ' TRUNCATE AS ' || tmp);
-			new_nom := tmp;
-		END IF;
-
-		returnValue.id := id;
-		returnValue.nom := new_nom;
-		returnValue.photo := image;
+		returnValue.photo := new_image;
 
 		RETURN returnValue;
 		
