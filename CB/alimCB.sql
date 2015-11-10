@@ -302,14 +302,18 @@ BEGIN
 				    	newRole := PACKAGECB.verif_role_fields(TO_NUMBER(res(3)), newFilm.id, res(4));
 			    		insert into role values newRole;
 				    EXCEPTION
-				    	WHEN OTHERS THEN LOGEVENT('insertion est_realisateur', 'TUPLE REJETE : ' ||SQLERRM);
+				    	WHEN OTHERS THEN 
+				    		LOGEVENT('insertion est_realisateur', 'TUPLE REJETE : ' ||SQLERRM);
+				    		flag := false;
 				    END;
 
-				    BEGIN
-			    		insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
-				    EXCEPTION
-				    	WHEN OTHERS THEN LOGEVENT('insertion est_realisateur', 'TUPLE REJETE : ' ||SQLERRM);
-				    END;
+				    IF flag THEN
+					    BEGIN
+				    		insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
+					    EXCEPTION
+					    	WHEN OTHERS THEN LOGEVENT('insertion est_realisateur', 'TUPLE REJETE : ' ||SQLERRM);
+					    END;
+					END IF;
 				END IF;
 	        end if;
 		    j := j+1;
