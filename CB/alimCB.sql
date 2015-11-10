@@ -30,15 +30,19 @@ AS
   	found boolean;
   	res owa_text.vc_arr;
   	movieExist NUMBER;
+  	flag boolean;
 BEGIN
 	--faire autrement
 	
 	FOR s IN (select * from (select * from movies_ext order by dbms_random.value))
-	loop
-		dbms_output.put_line(s.id);
-		dbms_output.put_line(s.poster_path);
-
+	LOOP
 		EXIT WHEN i >= nombreAjout;
+
+		dbms_output.put_line(s.id || '--' || s.title || '--' || s.ORIGINAL_TITLE|| '--' || s.RELEASE_DATE|| '--' || s.STATUS
+			|| '--' || s.VOTE_AVERAGE|| '--' || s.VOTE_COUNT|| '--' || s.RUNTIME|| '--' || s.CERTIFICATION|| '--' || s.POSTER_PATH
+			|| '--' || s.BUDGET|| '--' || s.REVENUE|| '--' || s.HOMEPAGE|| '--' || s.TAGLINE|| '--' || s.OVERVIEW|| '--' || s.GENRES
+			|| '--' || s.DIRECTORS|| '--' || s.ACTORS|| '--' || s.PRODUCTION_COMPANIES|| '--' || s.PRODUCTION_COUNTRIES|| '--' || s.SPOKEN_LANGUAGES);
+		dbms_output.put_line('');
 
 		nbrCopie := FLOOR(dbms_random.normal * 2 + 5);
 		movieExist := 0;
@@ -95,7 +99,7 @@ BEGIN
 	        LOOP
 	          tmpChaine:=regexp_substr(decompVirgule, '(.*?)(,{2,}|$)', 1, k, '', 1);
 	          EXIT WHEN tmpChaine IS NULL;
-
+	          --récupération des valeurs
 	          IF k=1 THEN
 	            id := tmpChaine;
 	          ELSIF k=2 THEN
@@ -103,14 +107,21 @@ BEGIN
 	          END IF;
 	          k:=k+1;
 	        END LOOP;
-	        dbms_output.put_line(id ||'   '|| valeur);
+	        
 	        BEGIN
 	        	newGenre := PACKAGECB.verif_genre_fields(TO_NUMBER(id), valeur);
 		        insert into genre values newGenre;
-		        insert into film_genre values (newFilm.id, newGenre.id);
 		    EXCEPTION
+		    	WHEN dup_val_on_index THEN LOGEVENT('Insertion genre', 'Le genre '||valeur||' existe déjà');
 		    	WHEN OTHERS THEN LOGEVENT('insertion genre', 'TUPLE REJETE : ' ||SQLERRM);
 		    END;
+
+		    BEGIN
+		    	insert into film_genre values (newFilm.id, newGenre.id);
+		    EXCEPTION
+		    	WHEN OTHERS THEN LOGEVENT('insertion film_genre', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
 	        j := j +1;
 		end loop;
 
@@ -137,9 +148,15 @@ BEGIN
 	        BEGIN
 	        	newProducteur := PACKAGECB.verif_producteur_fields(TO_NUMBER(id), valeur);
 		        insert into producteur values newProducteur;
-		        insert into film_producteur values (newFilm.id, newProducteur.id);
 		    EXCEPTION
+		    	WHEN dup_val_on_index THEN LOGEVENT('Insertion producteur', 'Le producteur '||valeur||' existe déjà');
 		        WHEN OTHERS THEN LOGEVENT('insérer producteur', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
+		    BEGIN
+		    	insert into film_producteur values (newFilm.id, newProducteur.id);
+		    EXCEPTION
+		    	WHEN OTHERS THEN LOGEVENT('insertion film_producteur', 'TUPLE REJETE : ' ||SQLERRM);
 		    END;
 		        
 	        j := j +1;
@@ -168,10 +185,17 @@ BEGIN
 	        BEGIN
 	        	newPays := PACKAGECB.verif_pays_fields(id, valeur);
 		        insert into pays values newPays;
-		        insert into film_pays values (newFilm.id, newPays.id);
 		    EXCEPTION
+		    	WHEN dup_val_on_index THEN LOGEVENT('Insertion pays', 'Le pays '||valeur||' existe déjà');
 		       	WHEN OTHERS THEN LOGEVENT('inserer pays', 'TUPLE REJETE : ' ||SQLERRM);
 		    END;
+
+		    BEGIN
+		    	insert into film_pays values (newFilm.id, newPays.id);
+		    EXCEPTION
+		    	WHEN OTHERS THEN LOGEVENT('insertion film_pays', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
 	        j := j +1;
 		end loop;
 
@@ -198,9 +222,15 @@ BEGIN
 	        BEGIN
 	        	newLangue := PACKAGECB.verif_langue_fields(id, valeur);
 		        insert into langue values newLangue;
-		        insert into film_langue values (newFilm.id, newLangue.id);
 		    EXCEPTION
+		    	WHEN dup_val_on_index THEN LOGEVENT('Insertion langue', 'La langue '||valeur||' existe déjà');
 		        WHEN OTHERS THEN LOGEVENT('inserer langue', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
+		    BEGIN
+		    	insert into film_langue values (newFilm.id, newLangue.id);
+		    EXCEPTION
+		    	WHEN OTHERS THEN LOGEVENT('insertion film_pays', 'TUPLE REJETE : ' ||SQLERRM);
 		    END;
 
 	        j := j +1;
@@ -230,9 +260,15 @@ BEGIN
 	        BEGIN
 	        	newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(id), valeur, image);
 		        insert into personne values newPersonne;
-		        insert into EST_REALISATEUR values (newFilm.id, newPersonne.id);
 		    EXCEPTION
+		    	WHEN dup_val_on_index THEN LOGEVENT('Insertion realisateur', 'Le realisateur '||valeur||' existe déjà');
 		        WHEN OTHERS THEN LOGEVENT('inserer realisateur', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
+		    BEGIN
+		    	insert into EST_REALISATEUR values (newFilm.id, newPersonne.id);
+		    EXCEPTION
+		    	WHEN OTHERS THEN LOGEVENT('insertion est_realisateur', 'TUPLE REJETE : ' ||SQLERRM);
 		    END;
 
 	        j := j +1;
@@ -248,23 +284,39 @@ BEGIN
 
 	        found := owa_pattern.match(decompVirgule, '^(.*),{2,}(.*),{2,}(.*),{2,}(.*),{2,}(.*)$', res);
 	        if found then
+
+	        	flag := true;
+
 	            BEGIN
 			        newPersonne := PACKAGECB.verif_personne_fields(TO_NUMBER(res(1)), res(2), res(5));
-			        newRole := PACKAGECB.verif_role_fields(TO_NUMBER(res(3)), newFilm.id, res(4));
 			        insert into personne values newPersonne;
-			        insert into role values newRole;
-			        insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
 			    EXCEPTION
-			        WHEN OTHERS THEN LOGEVENT('inserer acteur', 'TUPLE REJETE : ' ||SQLERRM);
+			    	WHEN dup_val_on_index THEN LOGEVENT('Insertion acteur', 'L''acteur '||valeur||' existe déjà');
+			        WHEN OTHERS THEN 
+			        	LOGEVENT('inserer acteur', 'TUPLE REJETE : ' ||SQLERRM);
+			        	flag := false;
 			    END;
+
+			    IF flag THEN
+				    BEGIN
+				    	newRole := PACKAGECB.verif_role_fields(TO_NUMBER(res(3)), newFilm.id, res(4));
+			    		insert into role values newRole;
+				    EXCEPTION
+				    	WHEN OTHERS THEN LOGEVENT('insertion est_realisateur', 'TUPLE REJETE : ' ||SQLERRM);
+				    END;
+
+				    BEGIN
+			    		insert into personne_role values (newPersonne.id, newRole.FILM_ASSOCIE, newRole.id);
+				    EXCEPTION
+				    	WHEN OTHERS THEN LOGEVENT('insertion est_realisateur', 'TUPLE REJETE : ' ||SQLERRM);
+				    END;
+				END IF;
 	        end if;
 		    j := j+1;
 		end loop;
 		i := i+1;
-	COMMIT;
-	end loop;
+		COMMIT;
+	END LOOP;
 EXCEPTION
-
 	WHEN OTHERS THEN ROLLBACK; RAISE;
-
 END;
