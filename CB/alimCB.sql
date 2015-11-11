@@ -38,12 +38,6 @@ BEGIN
 	LOOP
 		EXIT WHEN i >= nombreAjout;
 
-		dbms_output.put_line(s.id || '--' || s.title || '--' || s.ORIGINAL_TITLE|| '--' || s.RELEASE_DATE|| '--' || s.STATUS
-			|| '--' || s.VOTE_AVERAGE|| '--' || s.VOTE_COUNT|| '--' || s.RUNTIME|| '--' || s.CERTIFICATION|| '--' || s.POSTER_PATH
-			|| '--' || s.BUDGET|| '--' || s.REVENUE|| '--' || s.HOMEPAGE|| '--' || s.TAGLINE|| '--' || s.OVERVIEW|| '--' || s.GENRES
-			|| '--' || s.DIRECTORS|| '--' || s.ACTORS|| '--' || s.PRODUCTION_COMPANIES|| '--' || s.PRODUCTION_COUNTRIES|| '--' || s.SPOKEN_LANGUAGES);
-		dbms_output.put_line('');
-
 		nbrCopie := FLOOR(dbms_random.normal * 2 + 5);
 		movieExist := 0;
 
