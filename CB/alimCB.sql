@@ -267,8 +267,7 @@ BEGIN
 
 	        j := j +1;
 		end loop;
-
-		dbms_output.put_line(s.actors);
+		
 		j:=1;
 		--ACTEUR
 		chaine := regexp_substr(s.actors, '^\[\[(.*)\]\]$', 1, 1, '', 1);
