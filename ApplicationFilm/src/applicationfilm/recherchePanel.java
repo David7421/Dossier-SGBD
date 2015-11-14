@@ -5,6 +5,8 @@
  */
 package applicationfilm;
 
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author John
@@ -30,22 +32,34 @@ public class recherchePanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         ListFilmTrouve = new javax.swing.JList();
         recherchFilmLabel = new javax.swing.JLabel();
+        menuButton = new javax.swing.JButton();
 
         jScrollPane1.setViewportView(ListFilmTrouve);
 
+        recherchFilmLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         recherchFilmLabel.setText("Rechercher un film");
+
+        menuButton.setText("Accueil");
+        menuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 705, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(329, 329, 329)
-                        .addComponent(recherchFilmLabel)))
+                        .addGap(290, 290, 290)
+                        .addComponent(recherchFilmLabel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(menuButton)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 705, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(44, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -53,16 +67,24 @@ public class recherchePanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(recherchFilmLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 103, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addComponent(menuButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(42, 42, 42))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void menuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuButtonActionPerformed
+        GUI Gpere = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
+        Gpere.changeLayout("card2");
+    }//GEN-LAST:event_menuButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList ListFilmTrouve;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton menuButton;
     private javax.swing.JLabel recherchFilmLabel;
     // End of variables declaration//GEN-END:variables
 }
