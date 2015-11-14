@@ -3,38 +3,27 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package applicationfilm;
+package GUIapplicationFilm;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import javax.swing.JPanel;
 
 /**
  *
- * @author John
+ * @author Jerome
  */
 public class GUI extends javax.swing.JFrame {
-    
-    private JPanel curDisplay;
-    
-    
+
     /**
      * Creates new form GUI
      */
     public GUI() {
         initComponents();
-        setTitle("The movie database");
-        curDisplay = new accueilPanel();
-        this.getContentPane().add(curDisplay);
-        curDisplay.setVisible(true);
-        invalidate();
-        repaint();
     }
     
-    public void changeLayout(String cardName)
+    public void changeLayout(String nomCard)
     {
-        CardLayout card = (CardLayout) mainPanel.getLayout();
-        card.show(mainPanel, cardName);
+        CardLayout card = (CardLayout) this.getContentPane().getLayout();
+        card.show(this.getContentPane(), nomCard);
     }
 
     /**
@@ -46,32 +35,19 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainPanel = new javax.swing.JPanel();
-        accueil = new applicationfilm.accueilPanel();
-        chercher = new applicationfilm.recherchePanel();
+        accueil = new GUIapplicationFilm.accueilPanel();
+        formulaireRecherche = new GUIapplicationFilm.formulaireRecherche();
+        rechercheResult = new GUIapplicationFilm.rechercheResult();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(780, 500));
-
-        mainPanel.setLayout(new java.awt.CardLayout());
-        mainPanel.add(accueil, "card2");
-        mainPanel.add(chercher, "card3");
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        getContentPane().setLayout(new java.awt.CardLayout());
+        getContentPane().add(accueil, "card2");
+        getContentPane().add(formulaireRecherche, "card3");
+        getContentPane().add(rechercheResult, "card4");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    
     /**
      * @param args the command line arguments
      */
@@ -108,8 +84,8 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private applicationfilm.accueilPanel accueil;
-    private applicationfilm.recherchePanel chercher;
-    private javax.swing.JPanel mainPanel;
+    private GUIapplicationFilm.accueilPanel accueil;
+    private GUIapplicationFilm.formulaireRecherche formulaireRecherche;
+    private GUIapplicationFilm.rechercheResult rechercheResult;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,4 +1,4 @@
-package applicationfilm;
+package GUIapplicationFilm;
 
 import javax.swing.SwingUtilities;
 
@@ -70,8 +70,8 @@ public class accueilPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void rechercherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rechercherButtonActionPerformed
-        GUI Gpere = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
-        Gpere.changeLayout("card3");
+        GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
+        container.changeLayout("card3");
     }//GEN-LAST:event_rechercherButtonActionPerformed
 
 
