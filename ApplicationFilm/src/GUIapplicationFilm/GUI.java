@@ -6,24 +6,46 @@
 package GUIapplicationFilm;
 
 import java.awt.CardLayout;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import newBean.BeanBDAccess;
+import newBean.connexionException;
 
 /**
  *
  * @author Jerome
  */
 public class GUI extends javax.swing.JFrame {
-
+    
+    private BeanBDAccess connexionBD;
+    
     /**
      * Creates new form GUI
      */
     public GUI() {
         initComponents();
+        connexionBD = new BeanBDAccess();
+        try {
+            connexionBD.connexionOracle("localhost", 1521, "CB", "CB", "XE");
+        } catch (ClassNotFoundException ex) {
+            System.err.println(ex);
+        } catch (SQLException ex) {
+            System.err.println(ex);
+        } catch (connexionException ex) {
+            System.err.println(ex);
+        }
     }
     
     public void changeLayout(String nomCard)
     {
         CardLayout card = (CardLayout) this.getContentPane().getLayout();
         card.show(this.getContentPane(), nomCard);
+    }
+    
+    public BeanBDAccess getConnexion()
+    {
+        return connexionBD;
     }
 
     /**

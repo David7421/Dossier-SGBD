@@ -5,6 +5,10 @@
  */
 package GUIapplicationFilm;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
 
 /**
@@ -87,6 +91,18 @@ public class formulaireRecherche extends javax.swing.JPanel {
 
     private void RechercherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RechercherButtonActionPerformed
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
+        
+        ResultSet test = container.getConnexion().procedure(null, null);
+        
+        try {
+            while(test.next())
+            {
+                System.out.println(test.getString("id") + "   " + test.getString("TITRE"));
+            }
+        } catch (SQLException ex) {
+            System.err.println("erreur");
+        }
+        
         container.changeLayout("card4");
     }//GEN-LAST:event_RechercherButtonActionPerformed
 
