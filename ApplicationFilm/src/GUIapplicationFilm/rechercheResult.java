@@ -19,10 +19,6 @@ public class rechercheResult extends javax.swing.JPanel {
      */
     public rechercheResult() {
         initComponents();
-        GUI container = (GUI)SwingUtilities.getWindowAncestor(this);
-        DefaultListModel dlm = new DefaultListModel();
-        ListFilmTrouve.setModel(dlm);
-        //container.setResult(dlm);
     }
 
     /**
@@ -117,7 +113,11 @@ public class rechercheResult extends javax.swing.JPanel {
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
         container.changeLayout("formulaireRecherche");
     }//GEN-LAST:event_newsearchButton1ActionPerformed
-
+    
+    public void setListModel(DefaultListModel d)
+    {
+        ListFilmTrouve.setModel(d);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList ListFilmTrouve;

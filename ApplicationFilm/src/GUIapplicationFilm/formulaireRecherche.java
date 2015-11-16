@@ -10,6 +10,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -153,7 +154,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
                                 .addGap(163, 163, 163)
                                 .addComponent(TitreLabel)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(titreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(titreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 372, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(anneeSortieLabel)
@@ -172,7 +173,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
                                         .addComponent(RechercherButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(49, 49, 49)
                                         .addComponent(menuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(31, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -223,7 +224,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(supprimerActeurButton)
                     .addComponent(supprimerRealButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(anneeSortieLabel)
                     .addComponent(apresLabel)
@@ -243,23 +244,90 @@ public class formulaireRecherche extends javax.swing.JPanel {
 
     private void RechercherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RechercherButtonActionPerformed
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
-        
-        Connection test = container.getBeanbd().getConnexion();
+        CallableStatement cs = null;
+        Connection conDB = container.getBeanbd().getConnexion();
         ResultSet rs = null;
-        try {
-            CallableStatement cs =  test.prepareCall("{? = call PACKAGERECHERCHE.recherche(?)}");
-            cs.registerOutParameter(1, OracleTypes.CURSOR);
-            cs.setInt(2, Integer.parseInt(idTextField.getText()));
-            cs.executeQuery();
-            rs = (ResultSet)cs.getObject(1);
+        
+        if(!idTextField.getText().isEmpty())
+        {
+            try {
+                cs =  conDB.prepareCall("{? = call PACKAGERECHERCHE.recherche_id(?)}");
+                cs.registerOutParameter(1, OracleTypes.CURSOR);
+                cs.setInt(2, Integer.parseInt(idTextField.getText()));
+                cs.executeQuery();
+                rs = (ResultSet)cs.getObject(1);
+            } catch (SQLException ex) {
+                System.err.println("err " + ex);
+            }
+        }
+        else
+        {
+            ArrayList<String> listElem = new ArrayList();
             
-        } catch (SQLException ex) {
-            System.err.println("err " + ex);
+            String statement = "{? = call PACKAGERECHERCHE.recherche(";
+            
+            //Si on recherche sur le titre
+            if(!titreTextField.getText().isEmpty())
+            {
+                statement += "p_titre => ?,";
+                listElem.add(titreTextField.getText().toUpperCase());
+            }
+            DefaultListModel lmActeur = (DefaultListModel)listActeur.getModel();
+            //Parcours des acteurs
+            if(lmActeur.size() > 0)
+            {
+                statement += "p_acteurs => PACKAGERECHERCHE.tabChar(?";
+                listElem.add(lmActeur.get(0).toString());
+                for(int cpt = 1; cpt < lmActeur.size();cpt++)
+                {
+                    statement += ",?";
+                    listElem.add(lmActeur.get(cpt).toString());
+                }
+                statement += "),";
+            }
+            
+            DefaultListModel lmReal = (DefaultListModel)listReal.getModel();
+            //parcours des real
+            if(lmReal.size() > 0)
+            {
+                statement += "p_real => PACKAGERECHERCHE.tabChar(?";
+                listElem.add(lmReal.get(0).toString());
+                for(int cpt = 1; cpt < lmReal.size();cpt++)
+                {
+                    statement += ",?";
+                    listElem.add(lmReal.get(cpt).toString());
+                }
+                statement += "),";
+            }
+            
+            if(!anneeSortieTextField.getText().isEmpty())
+            {
+                
+            }
+            
+            statement = statement.substring(0, statement.length()-1) + ")}";//On supprime la virgule qui traine
+
+            try {
+                System.out.println(statement);
+                cs = conDB.prepareCall(statement);
+                cs.registerOutParameter(1, OracleTypes.CURSOR);
+                
+                int i = 2;
+                for(String s : listElem)//On parcours les éléments à ajouter
+                {
+                    cs.setString(i, s);
+                    i++;
+                }
+                
+                cs.execute();
+                rs = (ResultSet)cs.getObject(1);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
         
         DefaultListModel listMod = container.getResult();
         listMod.clear();
-        
         try {
             while(rs.next())
             {

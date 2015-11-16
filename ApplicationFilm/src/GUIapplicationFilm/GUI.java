@@ -19,13 +19,14 @@ import newBean.connexionException;
 public class GUI extends javax.swing.JFrame {
     
     private BeanBDAccess connexionBD;
-    private DefaultListModel listResult;
+    private DefaultListModel listResult = new DefaultListModel();
     
     /**
      * Creates new form GUI
      */
     public GUI() {
         initComponents();
+        rechercheResult.setListModel(listResult);
         connexionBD = new BeanBDAccess();
         try {
             connexionBD.connexionOracle("localhost", 1521, "CB", "CB", "XE");
