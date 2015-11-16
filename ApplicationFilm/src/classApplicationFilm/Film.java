@@ -12,6 +12,7 @@ package classApplicationFilm;
 public class Film {
     private int id;
     private String titre;
+    private String dateSortie;
     
     public Film(String t, int i)
     {
@@ -19,9 +20,14 @@ public class Film {
         titre = t;
     }
     
+    public void setDateSortie(String d)
+    {
+        dateSortie = d;
+    }
+    
     @Override
     public String toString()
     {
-        return id + "-----" + titre;
+        return id + "    " + titre + "    "+ dateSortie;
     }
 }

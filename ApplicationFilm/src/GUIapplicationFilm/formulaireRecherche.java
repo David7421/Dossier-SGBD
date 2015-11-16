@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -263,6 +264,9 @@ public class formulaireRecherche extends javax.swing.JPanel {
         else
         {
             ArrayList<String> listElem = new ArrayList();
+            int anneeSortie = -1;
+            int anneeAvant = -1;
+            int anneeApres = -1;
             
             String statement = "{? = call PACKAGERECHERCHE.recherche(";
             
@@ -277,11 +281,11 @@ public class formulaireRecherche extends javax.swing.JPanel {
             if(lmActeur.size() > 0)
             {
                 statement += "p_acteurs => PACKAGERECHERCHE.tabChar(?";
-                listElem.add(lmActeur.get(0).toString());
+                listElem.add(lmActeur.get(0).toString().toUpperCase());
                 for(int cpt = 1; cpt < lmActeur.size();cpt++)
                 {
                     statement += ",?";
-                    listElem.add(lmActeur.get(cpt).toString());
+                    listElem.add(lmActeur.get(cpt).toString().toUpperCase());
                 }
                 statement += "),";
             }
@@ -291,18 +295,34 @@ public class formulaireRecherche extends javax.swing.JPanel {
             if(lmReal.size() > 0)
             {
                 statement += "p_real => PACKAGERECHERCHE.tabChar(?";
-                listElem.add(lmReal.get(0).toString());
+                listElem.add(lmReal.get(0).toString().toUpperCase());
                 for(int cpt = 1; cpt < lmReal.size();cpt++)
                 {
                     statement += ",?";
-                    listElem.add(lmReal.get(cpt).toString());
+                    listElem.add(lmReal.get(cpt).toString().toUpperCase());
                 }
                 statement += "),";
             }
             
+            //Date sortie
             if(!anneeSortieTextField.getText().isEmpty())
             {
+                statement += "p_anneeSortie => ?,";
+                anneeSortie = Integer.parseInt(anneeSortieTextField.getText());
+            }
+            else//Si aucune année précise n'a été demandée pour la recherche on regarde si il y a un interval.
+            {
+                if(!apresTextField.getText().isEmpty())
+                {
+                    statement += "p_apres => ?,";
+                    anneeApres = Integer.parseInt(apresTextField.getText());
+                }
                 
+                if(!avantTextField.getText().isEmpty())
+                {
+                    statement += "p_avant => ?,";
+                    anneeAvant = Integer.parseInt(avantTextField.getText());
+                }
             }
             
             statement = statement.substring(0, statement.length()-1) + ")}";//On supprime la virgule qui traine
@@ -319,6 +339,26 @@ public class formulaireRecherche extends javax.swing.JPanel {
                     i++;
                 }
                 
+                if(anneeSortie > 0)
+                {
+                    cs.setInt(i, anneeSortie);
+                    i++;
+                }
+                else
+                {
+                    if(anneeApres > 0)
+                    {
+                        cs.setInt(i, anneeApres);
+                        i++;
+                    }
+                    
+                    if(anneeAvant > 0)
+                    {
+                        cs.setInt(i, anneeAvant);
+                        i++;
+                    }
+                }
+                
                 cs.execute();
                 rs = (ResultSet)cs.getObject(1);
             } catch (SQLException ex) {
@@ -332,6 +372,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
             while(rs.next())
             {
                 Film f = new Film(rs.getString("Titre"),rs.getInt("id"));
+                f.setDateSortie(rs.getString("date_sortie"));
                 listMod.addElement(f);
             }
         } catch (SQLException ex) {

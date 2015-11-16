@@ -36,4 +36,16 @@ while (rs.next()) {
 	String userName = rs.getString("USERNAME");
 }			
 
+SELECT film.id, film.titre, personne.nom FROM film 
+INNER JOIN role ON film.id = role.film_associe
+INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
+INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
+INNER JOIN personne ON personne_role.id_personne = personne.id OR personne.id = est_realisateur.id_personne;
 
+
+"SELECT id, Titre FROM film WHERE UPPER(film.Titre) LIKE 'E%' 
+	INTERSECT 
+	SELECT id, Titre FROM film WHERE id IN (SELECT DISTINCT film.id FROM film INNER JOIN role ON film.id = role.film_associe
+				 INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
+				 INNER JOIN personne ON personne_role.id_personne = personne.id 
+				 WHERE UPPER(personne.nom) IN ( 'PETER CUSHING' ))"

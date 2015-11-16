@@ -36,19 +36,85 @@ IS
 		p_apres IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
-		StringSelect varchar2(4000);
-		StringFrom varchar2(4000);
-		StringWhere varchar2(4000);
+		StringRequest varchar2(4000);
+		v_index NUMBER;
 	BEGIN
-		StringSelect := 'SELECT id, Titre ';
-		StringFrom := 'FROM FILM ';
-		StringWhere := 'WHERE ';
 
 		IF p_titre IS NOT NULL THEN
-			StringWhere := StringWhere || 'UPPER(Titre) LIKE ''' || p_titre || '%''';
+			StringRequest := 'SELECT id, Titre, date_sortie FROM film WHERE UPPER(film.Titre) LIKE ''' || p_titre || '%''';
 		END IF;
 
-		OPEN result FOR StringSelect || StringFrom || StringWhere;
+		--TRAITEMENT DE LA REQUETE DES ACTEURS
+		IF p_acteurs IS NOT NULL THEN
+			IF StringRequest IS NOT NULL THEN
+				StringRequest := StringRequest || ' INTERSECT ';
+			END IF;
+
+			StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE id IN (SELECT DISTINCT film.id FROM film INNER JOIN role ON film.id = role.film_associe
+				 INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
+				 INNER JOIN personne ON personne_role.id_personne = personne.id 
+				 WHERE UPPER(personne.nom) IN ( ';
+			v_index := p_acteurs.FIRST;
+			StringRequest := StringRequest || '''' || p_acteurs(v_index) || '''';
+			v_index := p_acteurs.NEXT(v_index);
+			WHILE v_index IS NOT NULL
+			LOOP
+				StringRequest := StringRequest || ',''' || p_acteurs(v_index) || '''';
+				v_index := p_acteurs.NEXT(v_index);
+			END LOOP;
+			StringRequest := StringRequest || ' ))';
+		END IF;
+
+
+		IF p_real IS NOT NULL THEN
+			IF StringRequest IS NOT NULL THEN
+				StringRequest := StringRequest || ' INTERSECT ';
+			END IF;
+
+			StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE id IN (SELECT DISTINCT film.id FROM film
+				 INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
+				 INNER JOIN personne ON personne.id = est_realisateur.id_personne
+				 WHERE UPPER(personne.nom) IN ( ';
+			v_index := p_real.FIRST;
+			StringRequest := StringRequest || '''' || p_real(v_index) || '''';
+			v_index := p_real.NEXT(v_index);
+			WHILE v_index IS NOT NULL
+			LOOP
+				StringRequest := StringRequest || ',''' || p_real(v_index) || '''';
+				v_index := p_real.NEXT(v_index);
+			END LOOP;
+			StringRequest := StringRequest || ' ))';
+		END IF;
+
+		IF p_anneeSortie IS NOT NULL THEN
+			IF StringRequest IS NOT NULL THEN
+				StringRequest := StringRequest || ' INTERSECT ';
+			END IF;
+
+			StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE EXTRACT(YEAR FROM date_sortie) = '|| p_anneeSortie || ' AND date_sortie IS NOT NULL';
+
+		ELSE
+			IF p_apres IS NOT NULL THEN --Si on a une date apres
+				IF StringRequest IS NOT NULL THEN
+					StringRequest := StringRequest || ' INTERSECT ';
+				END IF;
+
+				StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE EXTRACT(YEAR FROM date_sortie) > '|| p_apres || ' AND date_sortie IS NOT NULL';
+			END IF;
+
+			IF p_avant IS NOT NULL THEN --Si on a une date apres
+				IF StringRequest IS NOT NULL THEN
+					StringRequest := StringRequest || ' INTERSECT ';
+				END IF;
+
+				StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE EXTRACT(YEAR FROM date_sortie) < '|| p_avant || ' AND date_sortie IS NOT NULL';
+			END IF;
+
+		END IF;
+
+		LOGEVENT('package recherche ', StringRequest);
+
+		OPEN result FOR StringRequest;
 		RETURN result;
 
 	EXCEPTION
@@ -58,3 +124,12 @@ END;
 /
 
 EXIT;
+
+-- SELECT film.id, film.titre, personne.nom FROM film 
+-- INNER JOIN role ON film.id = role.film_associe
+-- INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
+-- INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
+-- INNER JOIN personne ON personne_role.id_personne = personne.id OR personne.id = est_realisateur.id_personne;
+
+--Albert Brooks The muse
+-- Peter Zadek
