@@ -5,6 +5,7 @@
  */
 package GUIapplicationFilm;
 
+import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
 /**
@@ -18,6 +19,10 @@ public class rechercheResult extends javax.swing.JPanel {
      */
     public rechercheResult() {
         initComponents();
+        GUI container = (GUI)SwingUtilities.getWindowAncestor(this);
+        DefaultListModel dlm = new DefaultListModel();
+        ListFilmTrouve.setModel(dlm);
+        //container.setResult(dlm);
     }
 
     /**
@@ -41,7 +46,7 @@ public class rechercheResult extends javax.swing.JPanel {
         recherchFilmLabel.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         recherchFilmLabel.setText("Résultat de la recherche");
 
-        accueilButton.setText("Accueil");
+        accueilButton.setText("Menu");
         accueilButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 accueilButtonActionPerformed(evt);
@@ -101,7 +106,7 @@ public class rechercheResult extends javax.swing.JPanel {
 
     private void accueilButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_accueilButtonActionPerformed
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
-        container.changeLayout("card2");
+        container.changeLayout("accueil");
     }//GEN-LAST:event_accueilButtonActionPerformed
 
     private void showMovieButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showMovieButtonActionPerformed
@@ -110,7 +115,7 @@ public class rechercheResult extends javax.swing.JPanel {
 
     private void newsearchButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newsearchButton1ActionPerformed
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
-        container.changeLayout("card3");
+        container.changeLayout("formulaireRecherche");
     }//GEN-LAST:event_newsearchButton1ActionPerformed
 
 

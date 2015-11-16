@@ -5,23 +5,32 @@
  */
 package GUIapplicationFilm;
 
+import classApplicationFilm.Film;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
+import oracle.jdbc.OracleTypes;
 
 /**
  *
  * @author Jerome
  */
 public class formulaireRecherche extends javax.swing.JPanel {
-
+    
     /**
      * Creates new form formulaireRecherche
      */
     public formulaireRecherche() {
         initComponents();
+        DefaultListModel lmActeur = new DefaultListModel();
+        DefaultListModel lmReal = new DefaultListModel();
+        listReal.setModel(lmReal);
+        listActeur.setModel(lmActeur);
     }
 
     /**
@@ -36,7 +45,28 @@ public class formulaireRecherche extends javax.swing.JPanel {
         RechercheLabel = new javax.swing.JLabel();
         RechercherButton = new javax.swing.JButton();
         idLabel = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        idTextField = new javax.swing.JTextField();
+        TitreLabel = new javax.swing.JLabel();
+        titreTextField = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        listActeur = new javax.swing.JList();
+        acteurLabel = new javax.swing.JLabel();
+        acteurTextField = new javax.swing.JTextField();
+        ajouterActeurButton = new javax.swing.JButton();
+        supprimerActeurButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        realisateursTexteField = new javax.swing.JTextField();
+        ajouterRealButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        listReal = new javax.swing.JList();
+        supprimerRealButton = new javax.swing.JButton();
+        anneeSortieLabel = new javax.swing.JLabel();
+        anneeSortieTextField = new javax.swing.JTextField();
+        apresLabel = new javax.swing.JLabel();
+        apresTextField = new javax.swing.JTextField();
+        avantLabel = new javax.swing.JLabel();
+        avantTextField = new javax.swing.JTextField();
+        menuButton = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(780, 500));
 
@@ -53,7 +83,56 @@ public class formulaireRecherche extends javax.swing.JPanel {
 
         idLabel.setText("ID :");
 
-        jTextField1.setText("jTextField1");
+        TitreLabel.setText("Titre :");
+
+        jScrollPane1.setViewportView(listActeur);
+
+        acteurLabel.setText("Acteurs : ");
+
+        ajouterActeurButton.setText("Ajouter");
+        ajouterActeurButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ajouterActeurButtonActionPerformed(evt);
+            }
+        });
+
+        supprimerActeurButton.setText("Supprimer");
+        supprimerActeurButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                supprimerActeurButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Réalisateurs :");
+
+        ajouterRealButton.setText("Ajouter");
+        ajouterRealButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ajouterRealButtonActionPerformed(evt);
+            }
+        });
+
+        jScrollPane2.setViewportView(listReal);
+
+        supprimerRealButton.setText("Supprimer");
+        supprimerRealButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                supprimerRealButtonActionPerformed(evt);
+            }
+        });
+
+        anneeSortieLabel.setText("Année de sortie : ");
+
+        apresLabel.setText("Sortis après (année) :");
+
+        avantLabel.setText("Sortis avant (année) :");
+
+        menuButton.setText("Menu");
+        menuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -65,14 +144,53 @@ public class formulaireRecherche extends javax.swing.JPanel {
                         .addGap(220, 220, 220)
                         .addComponent(RechercheLabel))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(305, 305, 305)
-                        .addComponent(RechercherButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addComponent(idLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(246, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(idLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(idTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(163, 163, 163)
+                                .addComponent(TitreLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(titreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(anneeSortieLabel)
+                                    .addComponent(anneeSortieTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(99, 99, 99)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(apresLabel)
+                                            .addComponent(apresTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(86, 86, 86)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(avantLabel)
+                                            .addComponent(avantTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(RechercherButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(49, 49, 49)
+                                        .addComponent(menuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(acteurLabel)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(supprimerActeurButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ajouterActeurButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(acteurTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(61, 61, 61)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(supprimerRealButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(ajouterRealButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(realisateursTexteField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(96, 96, 96))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -82,35 +200,145 @@ public class formulaireRecherche extends javax.swing.JPanel {
                 .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(idLabel)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 308, Short.MAX_VALUE)
-                .addComponent(RechercherButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                    .addComponent(idTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(TitreLabel)
+                    .addComponent(titreTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(acteurLabel)
+                    .addComponent(jLabel1))
+                .addGap(2, 2, 2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(acteurTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(realisateursTexteField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(3, 3, 3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ajouterActeurButton)
+                    .addComponent(ajouterRealButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(supprimerActeurButton)
+                    .addComponent(supprimerRealButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(anneeSortieLabel)
+                    .addComponent(apresLabel)
+                    .addComponent(avantLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(anneeSortieTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(apresTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(avantTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(46, 46, 46)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(menuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(RechercherButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(51, 51, 51))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void RechercherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RechercherButtonActionPerformed
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
         
-        ResultSet test = container.getConnexion().procedure(null, null);
-        
+        Connection test = container.getBeanbd().getConnexion();
+        ResultSet rs = null;
         try {
-            while(test.next())
-            {
-                System.out.println(test.getString("id") + "   " + test.getString("TITRE"));
-            }
+            CallableStatement cs =  test.prepareCall("{? = call PACKAGERECHERCHE.recherche(?)}");
+            cs.registerOutParameter(1, OracleTypes.CURSOR);
+            cs.setInt(2, Integer.parseInt(idTextField.getText()));
+            cs.executeQuery();
+            rs = (ResultSet)cs.getObject(1);
+            
         } catch (SQLException ex) {
-            System.err.println("erreur");
+            System.err.println("err " + ex);
         }
         
-        container.changeLayout("card4");
+        DefaultListModel listMod = container.getResult();
+        listMod.clear();
+        
+        try {
+            while(rs.next())
+            {
+                Film f = new Film(rs.getString("Titre"),rs.getInt("id"));
+                listMod.addElement(f);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(formulaireRecherche.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        container.changeLayout("result");
     }//GEN-LAST:event_RechercherButtonActionPerformed
+
+    private void menuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuButtonActionPerformed
+        GUI container = (GUI)SwingUtilities.getWindowAncestor(this);
+        container.changeLayout("accueil");
+    }//GEN-LAST:event_menuButtonActionPerformed
+
+    private void ajouterActeurButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ajouterActeurButtonActionPerformed
+        
+        if(acteurTextField.getText().isEmpty())
+            return;
+        
+        DefaultListModel lm = (DefaultListModel)listActeur.getModel();
+        lm.addElement(acteurTextField.getText());
+        acteurTextField.setText("");
+    }//GEN-LAST:event_ajouterActeurButtonActionPerformed
+
+    private void supprimerActeurButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_supprimerActeurButtonActionPerformed
+        if(listActeur.getSelectedIndex() == -1)
+            return;
+        
+        DefaultListModel lm = (DefaultListModel)listActeur.getModel();
+        lm.remove(listActeur.getSelectedIndex());
+    }//GEN-LAST:event_supprimerActeurButtonActionPerformed
+
+    private void ajouterRealButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ajouterRealButtonActionPerformed
+        if(realisateursTexteField.getText().isEmpty())
+            return;
+        
+        DefaultListModel lm = (DefaultListModel)listReal.getModel();
+        lm.addElement(realisateursTexteField.getText());
+        realisateursTexteField.setText("");
+    }//GEN-LAST:event_ajouterRealButtonActionPerformed
+
+    private void supprimerRealButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_supprimerRealButtonActionPerformed
+        if(listReal.getSelectedIndex() == -1)
+            return;
+        
+        DefaultListModel lm = (DefaultListModel)listReal.getModel();
+        lm.remove(listReal.getSelectedIndex());
+    }//GEN-LAST:event_supprimerRealButtonActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel RechercheLabel;
     private javax.swing.JButton RechercherButton;
+    private javax.swing.JLabel TitreLabel;
+    private javax.swing.JLabel acteurLabel;
+    private javax.swing.JTextField acteurTextField;
+    private javax.swing.JButton ajouterActeurButton;
+    private javax.swing.JButton ajouterRealButton;
+    private javax.swing.JLabel anneeSortieLabel;
+    private javax.swing.JTextField anneeSortieTextField;
+    private javax.swing.JLabel apresLabel;
+    private javax.swing.JTextField apresTextField;
+    private javax.swing.JLabel avantLabel;
+    private javax.swing.JTextField avantTextField;
     private javax.swing.JLabel idLabel;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField idTextField;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList listActeur;
+    private javax.swing.JList listReal;
+    private javax.swing.JButton menuButton;
+    private javax.swing.JTextField realisateursTexteField;
+    private javax.swing.JButton supprimerActeurButton;
+    private javax.swing.JButton supprimerRealButton;
+    private javax.swing.JTextField titreTextField;
     // End of variables declaration//GEN-END:variables
 }

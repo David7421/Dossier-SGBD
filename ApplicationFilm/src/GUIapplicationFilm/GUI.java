@@ -6,9 +6,9 @@
 package GUIapplicationFilm;
 
 import java.awt.CardLayout;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
 
@@ -19,6 +19,7 @@ import newBean.connexionException;
 public class GUI extends javax.swing.JFrame {
     
     private BeanBDAccess connexionBD;
+    private DefaultListModel listResult;
     
     /**
      * Creates new form GUI
@@ -43,7 +44,7 @@ public class GUI extends javax.swing.JFrame {
         card.show(this.getContentPane(), nomCard);
     }
     
-    public BeanBDAccess getConnexion()
+    public BeanBDAccess getBeanbd()
     {
         return connexionBD;
     }
@@ -63,9 +64,9 @@ public class GUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
-        getContentPane().add(accueil, "card2");
-        getContentPane().add(formulaireRecherche, "card3");
-        getContentPane().add(rechercheResult, "card4");
+        getContentPane().add(accueil, "accueil");
+        getContentPane().add(formulaireRecherche, "formulaireRecherche");
+        getContentPane().add(rechercheResult, "result");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -103,6 +104,16 @@ public class GUI extends javax.swing.JFrame {
                 new GUI().setVisible(true);
             }
         });
+    }
+    
+    public void setResult(DefaultListModel res)
+    {
+        listResult = res;
+    }
+    
+    public DefaultListModel getResult()
+    {
+        return listResult;
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -18,4 +18,10 @@ public class Film {
         id = i;
         titre = t;
     }
+    
+    @Override
+    public String toString()
+    {
+        return id + "-----" + titre;
+    }
 }

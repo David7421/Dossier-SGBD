@@ -34,7 +34,7 @@ AS
 BEGIN
 	--faire autrement
 	
-	FOR s IN (select * from (select * from movies_ext order by dbms_random.value))
+	FOR s IN (select * from movies_ext order by dbms_random.value)
 	LOOP
 		EXIT WHEN i >= nombreAjout;
 

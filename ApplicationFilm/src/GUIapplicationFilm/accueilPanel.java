@@ -71,7 +71,7 @@ public class accueilPanel extends javax.swing.JPanel {
 
     private void rechercherButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rechercherButtonActionPerformed
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
-        container.changeLayout("card3");
+        container.changeLayout("formulaireRecherche");
     }//GEN-LAST:event_rechercherButtonActionPerformed
 
 

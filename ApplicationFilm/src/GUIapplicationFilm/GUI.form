@@ -26,21 +26,21 @@
     <Component class="GUIapplicationFilm.accueilPanel" name="accueil">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-          <CardConstraints cardName="card2"/>
+          <CardConstraints cardName="accueil"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="GUIapplicationFilm.formulaireRecherche" name="formulaireRecherche">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-          <CardConstraints cardName="card3"/>
+          <CardConstraints cardName="formulaireRecherche"/>
         </Constraint>
       </Constraints>
     </Component>
     <Component class="GUIapplicationFilm.rechercheResult" name="rechercheResult">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignCardLayout" value="org.netbeans.modules.form.compat2.layouts.DesignCardLayout$CardConstraintsDescription">
-          <CardConstraints cardName="card4"/>
+          <CardConstraints cardName="result"/>
         </Constraint>
       </Constraints>
     </Component>
