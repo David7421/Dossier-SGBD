@@ -11,6 +11,11 @@ IS
 	FUNCTION recherche_id(p_id IN NUMBER) RETURN SYS_REFCURSOR;
 	FUNCTION recherche(p_titre IN varchar2 default NULL, p_acteurs IN tabChar default NULL, p_real IN tabChar default NULL,
 	 p_anneeSortie IN number default NULL, p_avant IN number default NULL, p_apres IN number default NULL) RETURN SYS_REFCURSOR;
+	FUNCTION getAfficheFilm(p_id IN number) RETURN SYS_REFCURSOR;
+	FUNCTION getNoteUtilisateurFilm(p_id IN number) RETURN SYS_REFCURSOR;
+	FUNCTION getActeursFilm(p_id IN number) RETURN SYS_REFCURSOR;
+	FUNCTION getRealisateursFilm(p_id IN number) RETURN SYS_REFCURSOR;
+	FUNCTION getAvisFilm(p_id IN number, p_page IN number) RETURN SYS_REFCURSOR;
 END;
 /
 
@@ -29,7 +34,7 @@ IS
 		OPEN result FOR SELECT id, Titre FROM FILM WHERE id=p_id;
 		RETURN result;
 	EXCEPTION
-		WHEN OTHERS THEN RAISE; --TO DO LOG
+		WHEN OTHERS THEN LOGEVENT('Package recherche function recherche_id', SQLERRM);
 	END;
 
 	FUNCTION recherche(p_titre IN varchar2, p_acteurs IN tabChar, p_real IN tabChar, p_anneeSortie IN number, p_avant IN number, 
@@ -41,7 +46,7 @@ IS
 	BEGIN
 
 		IF p_titre IS NOT NULL THEN
-			StringRequest := 'SELECT id, Titre, date_sortie FROM film WHERE UPPER(film.Titre) LIKE ''' || p_titre || '%''';
+			StringRequest := 'SELECT * FROM film WHERE UPPER(film.Titre) LIKE ''' || p_titre || '%''';
 		END IF;
 
 		--TRAITEMENT DE LA REQUETE DES ACTEURS
@@ -50,7 +55,7 @@ IS
 				StringRequest := StringRequest || ' INTERSECT ';
 			END IF;
 
-			StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE id IN (SELECT DISTINCT film.id FROM film INNER JOIN role ON film.id = role.film_associe
+			StringRequest := StringRequest || 'SELECT * FROM film WHERE id IN (SELECT DISTINCT film.id FROM film INNER JOIN role ON film.id = role.film_associe
 				 INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
 				 INNER JOIN personne ON personne_role.id_personne = personne.id 
 				 WHERE UPPER(personne.nom) IN ( ';
@@ -71,7 +76,7 @@ IS
 				StringRequest := StringRequest || ' INTERSECT ';
 			END IF;
 
-			StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE id IN (SELECT DISTINCT film.id FROM film
+			StringRequest := StringRequest || 'SELECT * FROM film WHERE id IN (SELECT DISTINCT film.id FROM film
 				 INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
 				 INNER JOIN personne ON personne.id = est_realisateur.id_personne
 				 WHERE UPPER(personne.nom) IN ( ';
@@ -91,7 +96,7 @@ IS
 				StringRequest := StringRequest || ' INTERSECT ';
 			END IF;
 
-			StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE EXTRACT(YEAR FROM date_sortie) = '|| p_anneeSortie || ' AND date_sortie IS NOT NULL';
+			StringRequest := StringRequest || 'SELECT * FROM film WHERE EXTRACT(YEAR FROM date_sortie) = '|| p_anneeSortie || ' AND date_sortie IS NOT NULL';
 
 		ELSE
 			IF p_apres IS NOT NULL THEN --Si on a une date apres
@@ -99,7 +104,7 @@ IS
 					StringRequest := StringRequest || ' INTERSECT ';
 				END IF;
 
-				StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE EXTRACT(YEAR FROM date_sortie) > '|| p_apres || ' AND date_sortie IS NOT NULL';
+				StringRequest := StringRequest || 'SELECT * FROM film WHERE EXTRACT(YEAR FROM date_sortie) > '|| p_apres || ' AND date_sortie IS NOT NULL';
 			END IF;
 
 			IF p_avant IS NOT NULL THEN --Si on a une date apres
@@ -107,7 +112,7 @@ IS
 					StringRequest := StringRequest || ' INTERSECT ';
 				END IF;
 
-				StringRequest := StringRequest || 'SELECT id, Titre, date_sortie FROM film WHERE EXTRACT(YEAR FROM date_sortie) < '|| p_avant || ' AND date_sortie IS NOT NULL';
+				StringRequest := StringRequest || 'SELECT * FROM film WHERE EXTRACT(YEAR FROM date_sortie) < '|| p_avant || ' AND date_sortie IS NOT NULL';
 			END IF;
 
 		END IF;
@@ -118,7 +123,73 @@ IS
 		RETURN result;
 
 	EXCEPTION
-		WHEN OTHERS THEN RAISE; --TO DO LOG
+		WHEN OTHERS THEN LOGEVENT('Package recherche function recherche', SQLERRM);
+	END;
+
+	FUNCTION getAfficheFilm(p_id IN number) RETURN SYS_REFCURSOR
+	AS
+		result SYS_REFCURSOR;
+	BEGIN
+		OPEN result FOR SELECT image FROM FILM INNER JOIN AFFICHE ON film.affiche = affiche.id WHERE film.id=p_id;
+		RETURN result;
+	EXCEPTION
+		WHEN OTHERS THEN LOGEVENT('Package recherche function getAfficheFilm', SQLERRM);
+	END;
+
+	--RETOURNE LA SOMME ET LA MOYENNE DES NOTES STOCKEES DANS LA TABLE EVALUATION POUR UN FILM DONNE
+	FUNCTION getNoteUtilisateurFilm(p_id IN number) RETURN SYS_REFCURSOR
+	AS
+		result SYS_REFCURSOR;
+	BEGIN
+		OPEN result FOR SELECT COUNT(cote), AVG(cote) FROM film INNER JOIN evaluation ON film.id = evaluation.idfilm WHERE id=p_id;
+		RETURN result;
+	EXCEPTION
+		WHEN OTHERS THEN LOGEVENT('Package recherche function getNoteFilm', SQLERRM);
+	END;
+
+	--RETOURNE TOUS LES ACTEURS POUR UN FILM DONNE
+	FUNCTION getActeursFilm(p_id IN number) RETURN SYS_REFCURSOR
+	AS
+		result SYS_REFCURSOR;
+	BEGIN
+		OPEN result FOR SELECT personne.nom FROM film INNER JOIN role ON film.id = role.film_associe 
+						INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
+						INNER JOIN personne ON personne_role.id_personne = personne.id
+						WHERE film.id=p_id;
+		RETURN result;
+	EXCEPTION
+		WHEN OTHERS THEN LOGEVENT('Package recherche function getActeursFilm', SQLERRM);
+	END;
+
+
+
+	FUNCTION getRealisateursFilm(p_id IN number) RETURN SYS_REFCURSOR
+	AS
+		result SYS_REFCURSOR;
+	BEGIN
+		OPEN result FOR SELECT personne.nom FROM film INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
+						INNER JOIN personne ON personne.id = est_realisateur.id_personne
+						WHERE film.id=p_id;
+		RETURN result;
+	EXCEPTION
+		WHEN OTHERS THEN LOGEVENT('Package recherche function getRealisateursFilm', SQLERRM);
+	END;
+
+	--RECUPERE LES AVIS 5 PAR 5 SELON LE NUMERO DE PAGE OU L'ON SE TROUVE
+	FUNCTION getAvisFilm(p_id IN number, p_page IN number) RETURN SYS_REFCURSOR
+	AS
+		result SYS_REFCURSOR;
+		debut number;
+		fin number;
+	BEGIN
+		debut := p_page*5 - 4;
+		fin := debut + 5;
+		OPEN result FOR SELECT login, avis FROM
+							(SELECT login, avis, ROWNUM r FROM film INNER JOIN evaluation ON film.id = evaluation.idfilm WHERE film.id=p_id) 
+						WHERE r >= debut AND r < fin;
+		RETURN result;
+	EXCEPTION
+		WHEN OTHERS THEN LOGEVENT('Package recherche function getAvisFilm', SQLERRM);
 	END;
 END;
 /
@@ -130,6 +201,3 @@ EXIT;
 -- INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
 -- INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
 -- INNER JOIN personne ON personne_role.id_personne = personne.id OR personne.id = est_realisateur.id_personne;
-
---Albert Brooks The muse
--- Peter Zadek

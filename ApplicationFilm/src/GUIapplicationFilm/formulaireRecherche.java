@@ -6,6 +6,7 @@
 package GUIapplicationFilm;
 
 import classApplicationFilm.Film;
+import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -373,6 +374,12 @@ public class formulaireRecherche extends javax.swing.JPanel {
             {
                 Film f = new Film(rs.getString("Titre"),rs.getInt("id"));
                 f.setDateSortie(rs.getString("date_sortie"));
+                f.setTitreOriginale(rs.getString("TITRE_ORIGINAL"));
+                f.setStatus(rs.getString("statut"));
+                f.setNoteMoyenne(rs.getFloat("NOTE_MOYENNE"));
+                f.setNbrNote(rs.getInt("NOMBRE_NOTE"));
+                f.setRuntime(rs.getInt("runtime"));
+                f.setOverview(rs.getString("overview"));
                 listMod.addElement(f);
             }
         } catch (SQLException ex) {

@@ -5,6 +5,7 @@
  */
 package GUIapplicationFilm;
 
+import classApplicationFilm.Film;
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
 
@@ -106,7 +107,17 @@ public class rechercheResult extends javax.swing.JPanel {
     }//GEN-LAST:event_accueilButtonActionPerformed
 
     private void showMovieButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showMovieButtonActionPerformed
-        // TODO add your handling code here:
+        
+        if(ListFilmTrouve.getSelectedIndex() == -1)
+            return;
+        
+        DefaultListModel lm = (DefaultListModel) ListFilmTrouve.getModel();
+        
+        Film f = (Film) lm.getElementAt(ListFilmTrouve.getSelectedIndex());
+        
+        GUI container = (GUI)SwingUtilities.getWindowAncestor(this); // on prend son grand pere
+        container.setFilm(f);
+        container.changeLayout("affichage");
     }//GEN-LAST:event_showMovieButtonActionPerformed
 
     private void newsearchButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newsearchButton1ActionPerformed

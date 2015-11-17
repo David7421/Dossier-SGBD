@@ -5,47 +5,20 @@ EXCEPTION
 END;
 
 
-BEGIN
-  PACKAGERECHERCHE.recherche(p_titre=>'Nu');
-EXCEPTION
-  WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE(SQLERRM);
-END;
+INSERT INTO UTILISATEUR (LOGIN, PASSWORD, TOKEN) VALUES ('JEROME', 'FINK', 'OK');
+INSERT INTO UTILISATEUR (LOGIN, PASSWORD, TOKEN) VALUES ('OCEANE', 'SEEL', 'OK');
+INSERT INTO UTILISATEUR (LOGIN, PASSWORD, TOKEN) VALUES ('AAA', 'AAA', 'OK');
+INSERT INTO UTILISATEUR (LOGIN, PASSWORD, TOKEN) VALUES ('BBB', 'BBB', 'OK');
+INSERT INTO UTILISATEUR (LOGIN, PASSWORD, TOKEN) VALUES ('CCC', 'CCC', 'OK');
+INSERT INTO UTILISATEUR (LOGIN, PASSWORD, TOKEN) VALUES ('DDD', 'DDD', 'OK');
+COMMIT;
 
+INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN) VALUES (635, 'JEROME', 5, 'avis1', to_timestamp('23/09/15 17:24:00','DD/MM/RR HH24:MI:SSXFF'), 'OK');
+INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN) VALUES (635, 'OCEANE', NULL, 'Film génial', to_timestamp('22/09/15 15:20:00','DD/MM/RR HH24:MI:SSXFF'), 'OK');
+INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN) VALUES (635, 'BBB', 7, 'avis2', to_timestamp('21/09/15 18:04:00','DD/MM/RR HH24:MI:SSXFF'), 'OK');
+INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN) VALUES (635, 'CCC', 7, 'avis3', to_timestamp('21/09/15 18:04:00','DD/MM/RR HH24:MI:SSXFF'), 'OK');
+INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN) VALUES (635, 'DDD', 7, 'avis4', to_timestamp('21/09/15 18:04:00','DD/MM/RR HH24:MI:SSXFF'), 'OK');
+INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN) VALUES (635, 'AAA', 7, 'avis5', to_timestamp('21/09/15 18:04:00','DD/MM/RR HH24:MI:SSXFF'), 'OK');
 
-SELECT id, titre FROM FILM INNER JOIN 
-
-
-insert into AFFICHE(image) values (httpuritype ('http://image.tmdb.org/t/p/w185/uU9R1byS3USozpzWJ5oz7YAkXyk.jpg').getblob ());
-
-
-//getDBUSERCursor is a stored procedure
-String getDBUSERCursorSql = "{call getDBUSERCursor(?,?)}";
-callableStatement = dbConnection.prepareCall(getDBUSERCursorSql);
-callableStatement.setString(1, "mkyong");
-callableStatement.registerOutParameter(2, OracleTypes.CURSOR);
-
-// execute getDBUSERCursor store procedure
-callableStatement.executeUpdate();
-
-// get cursor and cast it to ResultSet
-rs = (ResultSet) callableStatement.getObject(2);
-
-// loop it like normal
-while (rs.next()) {
-	String userid = rs.getString("USER_ID");
-	String userName = rs.getString("USERNAME");
-}			
-
-SELECT film.id, film.titre, personne.nom FROM film 
-INNER JOIN role ON film.id = role.film_associe
-INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
-INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
-INNER JOIN personne ON personne_role.id_personne = personne.id OR personne.id = est_realisateur.id_personne;
-
-
-"SELECT id, Titre FROM film WHERE UPPER(film.Titre) LIKE 'E%' 
-	INTERSECT 
-	SELECT id, Titre FROM film WHERE id IN (SELECT DISTINCT film.id FROM film INNER JOIN role ON film.id = role.film_associe
-				 INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
-				 INNER JOIN personne ON personne_role.id_personne = personne.id 
-				 WHERE UPPER(personne.nom) IN ( 'PETER CUSHING' ))"
+SELECT image, cote, avis FROM film INNER JOIN affiche ON affiche.id = film.affiche INNER JOIN evaluation ON film.id = evaluation.idfilm
+WHERE film.id = 635;

@@ -5,6 +5,7 @@
  */
 package GUIapplicationFilm;
 
+import classApplicationFilm.Film;
 import java.awt.CardLayout;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,6 +50,11 @@ public class GUI extends javax.swing.JFrame {
     {
         return connexionBD;
     }
+    
+    public void setFilm(Film f)
+    {
+        affichageFilm.setFilm(f);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -62,12 +68,14 @@ public class GUI extends javax.swing.JFrame {
         accueil = new GUIapplicationFilm.accueilPanel();
         formulaireRecherche = new GUIapplicationFilm.formulaireRecherche();
         rechercheResult = new GUIapplicationFilm.rechercheResult();
+        affichageFilm = new GUIapplicationFilm.affichageFilm();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
         getContentPane().add(accueil, "accueil");
         getContentPane().add(formulaireRecherche, "formulaireRecherche");
         getContentPane().add(rechercheResult, "result");
+        getContentPane().add(affichageFilm, "affichage");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -119,6 +127,7 @@ public class GUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private GUIapplicationFilm.accueilPanel accueil;
+    private GUIapplicationFilm.affichageFilm affichageFilm;
     private GUIapplicationFilm.formulaireRecherche formulaireRecherche;
     private GUIapplicationFilm.rechercheResult rechercheResult;
     // End of variables declaration//GEN-END:variables
