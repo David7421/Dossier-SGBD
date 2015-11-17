@@ -31,7 +31,7 @@ IS
 	AS
 		result SYS_REFCURSOR;
 	BEGIN
-		OPEN result FOR SELECT id, Titre FROM FILM WHERE id=p_id;
+		OPEN result FOR SELECT * FROM FILM WHERE id=p_id;
 		RETURN result;
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('Package recherche function recherche_id', SQLERRM);
