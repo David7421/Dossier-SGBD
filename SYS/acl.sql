@@ -1,17 +1,17 @@
 BEGIN
-  DBMS_NETWORK_ACL_ADMIN.CREATE_ACL(acl         => 'http_permission.xml',
+  DBMS_NETWORK_ACL_ADMIN.CREATE_ACL(acl         => 'http.xml',
                                     description => 'WWW ACL',
                                     principal   => 'CB',
                                     is_grant    => true,
-                                    privilege   => 'connect');
+                                    privilege   => 'resolve');
  
-  DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(acl       => 'http_permission.xml',
+  DBMS_NETWORK_ACL_ADMIN.ADD_PRIVILEGE(acl       => 'http.xml',
                                        principal => 'CB',
                                        is_grant  => true,
-                                       privilege => 'resolve');
+                                       privilege => 'connect');
  
-  DBMS_NETWORK_ACL_ADMIN.ASSIGN_ACL(acl  => 'http_permission.xml',
-                                    host => 'image.tmdb.org');
+  DBMS_NETWORK_ACL_ADMIN.ASSIGN_ACL(acl  => 'http.xml',
+                                    host => '*');
 END;
 /
 COMMIT;
