@@ -31,16 +31,18 @@ AS
   	res owa_text.vc_arr;
   	movieExist NUMBER;
   	flag boolean;
+  	lastNbrCopy number;
 BEGIN
 	--faire autrement
-	
-	FOR s IN (select * from movies_ext order by dbms_random.value)
+	--order by dbms_random.value
+	FOR s IN (select * from movies_ext WHERE rownum = 1)
 	LOOP
 		EXIT WHEN i >= nombreAjout;
 
 		nbrCopie := FLOOR(dbms_random.normal * 2 + 5);
 		movieExist := 0;
-
+		lastNbrCopy := 0;
+		flag := false;
 		BEGIN
 			newFilm := 	PACKAGECB.verif_film_fields(s.id, s.title, s.original_title, s.release_date, s.status, s.vote_average,
 						s.vote_count, s.runtime, s.certification, null, s.budget, s.revenue, s.homepage, s.tagline,
@@ -60,12 +62,14 @@ BEGIN
 		ELSIF movieExist = 1 THEN
 			LOGEVENT('MAJ FILM', 'Mise à jour des copies d''un film existent');
 			BEGIN
+				SELECT nbr_copie INTO lastNbrCopy FROM film WHERE id = s.id;
+				nbrCopie := nbrCopie + lastNbrCopy;
 				UPDATE film SET nbr_copie = nbrCopie WHERE id = s.id;
 			EXCEPTION
 				WHEN OTHERS THEN LOGEVENT('UPDATE nbr_copie', 'ERREUR FILM '||s.id||' : ' ||SQLERRM);
 			END;
 			i:=i+1;
-			CONTINUE;
+			flag := true;
 		--Le film n'existe pas
 		ELSIF movieExist = 0 THEN
 			IF LENGTH(s.poster_path) > 0 THEN --Il a un poster
@@ -81,6 +85,26 @@ BEGIN
 						LOGEVENT('Ajout affiche', 'ERREUR AFFICHE FILM '|| s.id||' REJETE  : ' ||SQLERRM);
 				END;
 			END IF;
+		END IF;
+
+		--INSERTION DES NOUVELLES COPIES DE FILM
+		k:=lastNbrCopy;
+
+		LOOP
+			k:= k+1;
+			BEGIN
+		        insert into film_copie values (s.id, k);
+		    EXCEPTION
+		    	WHEN dup_val_on_index THEN LOGEVENT('Insertion film_copie', 'Doublon dans les copies');
+		    	WHEN OTHERS THEN LOGEVENT('insertion film_copie', 'TUPLE REJETE : ' ||SQLERRM);
+		    END;
+
+		    EXIT WHEN k >= nbrCopie;
+		END LOOP;
+
+		IF flag THEN
+			COMMIT;
+			CONTINUE;
 		END IF;
 
 		--GENRES
