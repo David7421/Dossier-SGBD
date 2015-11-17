@@ -74,7 +74,7 @@ BEGIN
 				lienImage := 'http://image.tmdb.org/t/p/w185'||s.poster_path;
 
 				BEGIN
-					insert into affiche values(idImage, httpuritype (lienImage).getblob ());
+					insert into affiche values(idImage, httpuritype(lienImage).getblob());
 					UPDATE film SET affiche = idImage WHERE id = s.id;
 				EXCEPTION
 					WHEN OTHERS THEN

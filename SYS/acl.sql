@@ -1,4 +1,9 @@
+
+
 BEGIN
+  
+  DBMS_NETWORK_ACL_ADMIN.drop_acl('http.xml');
+
   DBMS_NETWORK_ACL_ADMIN.CREATE_ACL(acl         => 'http.xml',
                                     description => 'WWW ACL',
                                     principal   => 'CB',
@@ -11,7 +16,9 @@ BEGIN
                                        privilege => 'connect');
  
   DBMS_NETWORK_ACL_ADMIN.ASSIGN_ACL(acl  => 'http.xml',
-                                    host => '*');
+                                    host => '*'
+                                    lower_port=>80
+                                    upper_port=>80);
 END;
 /
 COMMIT;
