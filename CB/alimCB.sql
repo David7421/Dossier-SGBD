@@ -33,9 +33,7 @@ AS
   	flag boolean;
   	lastNbrCopy number;
 BEGIN
-	--faire autrement
-	--order by dbms_random.value
-	FOR s IN (select * from movies_ext WHERE rownum = 1)
+	FOR s IN (select * from movies_ext order by dbms_random.value)
 	LOOP
 		EXIT WHEN i >= nombreAjout;
 

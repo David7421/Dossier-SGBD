@@ -1,7 +1,4 @@
-@ECHO OFF
-
 sqlplus / as sysdba @Sys/CreateUsers.sql
-sqlplus / as sysdba @Sys/CreaDirectory.sql
 sqlplus / as sysdba @Sys/acl.sql
 
 sqlplus CB/CB@localhost:1521/xe @CB/CreaCB.sql

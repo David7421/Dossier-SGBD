@@ -46,7 +46,7 @@ public class Film {
         dateSortie = d;
     }
     
-    public String getDateSorti()
+    public String getDateSortie()
     {
         return dateSortie;
     }

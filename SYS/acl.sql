@@ -2,7 +2,11 @@
 
 BEGIN
   
-  DBMS_NETWORK_ACL_ADMIN.drop_acl('http.xml');
+  BEGIN
+    DBMS_NETWORK_ACL_ADMIN.drop_acl('http.xml');
+  EXCEPTION
+    WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('ACL not exist');
+  END;
 
   DBMS_NETWORK_ACL_ADMIN.CREATE_ACL(acl         => 'http.xml',
                                     description => 'WWW ACL',
@@ -16,9 +20,7 @@ BEGIN
                                        privilege => 'connect');
  
   DBMS_NETWORK_ACL_ADMIN.ASSIGN_ACL(acl  => 'http.xml',
-                                    host => '*'
-                                    lower_port=>80
-                                    upper_port=>80);
+                                    host => '*');
 END;
 /
 COMMIT;
