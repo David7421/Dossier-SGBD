@@ -139,6 +139,8 @@ public class ConnexionPanel extends javax.swing.JPanel {
                 {
                     container.setUser(loginTextField.getText());
                     container.changeLayout("accueil");
+                    passwordField.setText("");
+                    loginTextField.setText("");
                     return;
                 }
                 

@@ -18,7 +18,8 @@ import newBean.connexionException;
  */
 public class GUI extends javax.swing.JFrame {
     
-    private BeanBDAccess connexionBD;
+    private BeanBDAccess connexionCB;
+    private BeanBDAccess connexionCBB;
     private DefaultListModel listResult = new DefaultListModel();
     private String curUser;
     
@@ -28,9 +29,9 @@ public class GUI extends javax.swing.JFrame {
     public GUI() {
         initComponents();
         rechercheResult.setListModel(listResult);
-        connexionBD = new BeanBDAccess();
+        connexionCB = new BeanBDAccess();
         try {
-            connexionBD.connexionOracle("localhost", 1521, "CB", "CB", "XE");
+            connexionCB.connexionOracle("localhost", 1521, "CB", "CB", "XE");
         } catch (ClassNotFoundException ex) {
             System.err.println(ex);
         } catch (SQLException ex) {
@@ -48,7 +49,7 @@ public class GUI extends javax.swing.JFrame {
     
     public BeanBDAccess getBeanbd()
     {
-        return connexionBD;
+        return connexionCB;
     }
     
     public void setFilm(Film f)

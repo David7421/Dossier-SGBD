@@ -6,6 +6,7 @@
 package GUIapplicationFilm;
 
 import classApplicationFilm.Film;
+import java.awt.Frame;
 import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -197,6 +198,7 @@ public class affichageFilm extends javax.swing.JPanel {
         suivantButton = new javax.swing.JButton();
         pageNumberLabel = new javax.swing.JLabel();
         dateSortieLabel = new javax.swing.JLabel();
+        evaluerButton = new javax.swing.JButton();
 
         afficheLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/GUIapplicationFilm/Untitled.png"))); // NOI18N
         afficheLabel.setToolTipText("");
@@ -262,6 +264,13 @@ public class affichageFilm extends javax.swing.JPanel {
 
         dateSortieLabel.setText("DateSortie");
 
+        evaluerButton.setText("Evaluer le film");
+        evaluerButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                evaluerButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -274,14 +283,15 @@ public class affichageFilm extends javax.swing.JPanel {
                             .addComponent(moyTmdbLabel)
                             .addComponent(nbrVoteTmdbLabel)
                             .addComponent(moyenneVoteLabel)
-                            .addComponent(nbrVoteLabel)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(afficheLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(titreOriginalLabel)
-                                    .addComponent(runtimeLabel))
+                                    .addComponent(runtimeLabel)
+                                    .addComponent(nbrVoteLabel))
                                 .addGap(64, 64, 64)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(acteursLabel)
@@ -293,23 +303,22 @@ public class affichageFilm extends javax.swing.JPanel {
                                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(TitreLabel)
-                                    .addComponent(dateSortieLabel)))))
+                                    .addComponent(dateSortieLabel)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                .addComponent(precedentButton)
+                                                .addGap(55, 55, 55)
+                                                .addComponent(pageNumberLabel)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(suivantButton))
+                                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(evaluerButton))))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(menuButton)
-                        .addGap(272, 272, 272)
-                        .addComponent(precedentButton)
-                        .addGap(55, 55, 55)
-                        .addComponent(pageNumberLabel)))
+                        .addComponent(menuButton)))
                 .addContainerGap(93, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(suivantButton)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel2)
-                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(176, 176, 176))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -352,15 +361,16 @@ public class affichageFilm extends javax.swing.JPanel {
                         .addComponent(menuButton))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(4, 4, 4)
-                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2)
+                        .addGap(4, 4, 4)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(precedentButton)
                             .addComponent(suivantButton)
-                            .addComponent(pageNumberLabel))
+                            .addComponent(pageNumberLabel)
+                            .addComponent(evaluerButton))
                         .addGap(0, 1, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -437,6 +447,11 @@ public class affichageFilm extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_suivantButtonActionPerformed
 
+    private void evaluerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evaluerButtonActionPerformed
+        noterDialog dial = new noterDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
+        dial.setVisible(true);
+    }//GEN-LAST:event_evaluerButtonActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel TitreLabel;
@@ -445,6 +460,7 @@ public class affichageFilm extends javax.swing.JPanel {
     private javax.swing.JLabel afficheLabel;
     private javax.swing.JTextArea avisArea;
     private javax.swing.JLabel dateSortieLabel;
+    private javax.swing.JButton evaluerButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
