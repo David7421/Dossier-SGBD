@@ -8,6 +8,9 @@ package GUIapplicationFilm;
 import classApplicationFilm.Film;
 import java.awt.CardLayout;
 import java.sql.SQLException;
+import java.sql.SQLTransientException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
@@ -29,16 +32,7 @@ public class GUI extends javax.swing.JFrame {
     public GUI() {
         initComponents();
         rechercheResult.setListModel(listResult);
-        connexionCB = new BeanBDAccess();
-        try {
-            connexionCB.connexionOracle("localhost", 1521, "CB", "CB", "XE");
-        } catch (ClassNotFoundException ex) {
-            System.err.println(ex);
-        } catch (SQLException ex) {
-            System.err.println(ex);
-        } catch (connexionException ex) {
-            System.err.println(ex);
-        }
+        setConnexion();
     }
     
     public void changeLayout(String nomCard)
@@ -131,6 +125,48 @@ public class GUI extends javax.swing.JFrame {
     public DefaultListModel getResult()
     {
         return listResult;
+    }
+    
+    public synchronized void setConnexion()
+    {
+        int nbrEssais = 0;
+        connexionCB = new BeanBDAccess();
+        
+        while(nbrEssais < 3)
+        {        
+            try {
+                connexionCB.connexionOracle("localhost", 1521, "CB", "CB", "XE");
+                break; // la connexion s'est bien passée.
+            } catch (ClassNotFoundException ex) {
+                System.err.println("Connexion CB " +ex);
+                break;
+            } 
+            catch (SQLException ex) 
+            {
+                if(ex instanceof SQLTransientException && nbrEssais < 2)
+                {
+                    nbrEssais++;
+                    continue;
+                }
+                try {
+                    connexionCB.connexionOracle("localhost", 1521, "CBB", "CBB", "XE");
+                    break;
+                } catch (ClassNotFoundException ex1) {
+                    System.err.println("Connexion CBB " + ex);
+                    break;
+                } catch (SQLException ex1) {
+                    System.err.println("Connexion CBB " + ex);
+                    break;
+                } catch (connexionException ex1) {
+                    System.err.println("Connexion CBB " + ex);
+                    break;
+                }             
+            } 
+            catch (connexionException ex) {
+                System.err.println("Connexion CB : "+ ex);
+                break;
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
