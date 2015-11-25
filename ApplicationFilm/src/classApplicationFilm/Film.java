@@ -5,8 +5,6 @@
  */
 package classApplicationFilm;
 
-import java.sql.Blob;
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 /**
@@ -43,7 +41,7 @@ public class Film {
     
     public void setDateSortie(String d)
     {
-        dateSortie = d;
+        dateSortie = d.substring(0, d.length()-11);
     }
     
     public String getDateSortie()

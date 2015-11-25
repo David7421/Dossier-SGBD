@@ -7,7 +7,6 @@ package GUIapplicationFilm;
 
 import classApplicationFilm.Film;
 import java.awt.CardLayout;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.DefaultListModel;
 import newBean.BeanBDAccess;
@@ -21,6 +20,7 @@ public class GUI extends javax.swing.JFrame {
     
     private BeanBDAccess connexionBD;
     private DefaultListModel listResult = new DefaultListModel();
+    private String curUser;
     
     /**
      * Creates new form GUI
@@ -55,6 +55,11 @@ public class GUI extends javax.swing.JFrame {
     {
         affichageFilm.setFilm(f);
     }
+    
+    public void setUser(String u)
+    {
+        curUser = u;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -65,6 +70,7 @@ public class GUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        connexionPanel1 = new GUIapplicationFilm.ConnexionPanel();
         accueil = new GUIapplicationFilm.accueilPanel();
         formulaireRecherche = new GUIapplicationFilm.formulaireRecherche();
         rechercheResult = new GUIapplicationFilm.rechercheResult();
@@ -72,6 +78,7 @@ public class GUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
+        getContentPane().add(connexionPanel1, "connexion");
         getContentPane().add(accueil, "accueil");
         getContentPane().add(formulaireRecherche, "formulaireRecherche");
         getContentPane().add(rechercheResult, "result");
@@ -128,6 +135,7 @@ public class GUI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private GUIapplicationFilm.accueilPanel accueil;
     private GUIapplicationFilm.affichageFilm affichageFilm;
+    private GUIapplicationFilm.ConnexionPanel connexionPanel1;
     private GUIapplicationFilm.formulaireRecherche formulaireRecherche;
     private GUIapplicationFilm.rechercheResult rechercheResult;
     // End of variables declaration//GEN-END:variables
