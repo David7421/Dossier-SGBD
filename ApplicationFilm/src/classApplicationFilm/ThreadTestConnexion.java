@@ -5,11 +5,35 @@
  */
 package classApplicationFilm;
 
+import GUIapplicationFilm.GUI;
+
 /**
  *
  * @author Jerome
  */
 public class ThreadTestConnexion extends Thread{
     
+    private GUI application;
+    
+    public ThreadTestConnexion(GUI a)
+    {
+        application = a;
+    }
+    
+    
+    @Override
+    public void run()
+    {
+        while(true)
+        {
+            try {
+                Thread.sleep(120000);//Toutes les 2 minutes
+            } catch (InterruptedException ex) {
+                System.err.println("Sleep interrompus");
+            }
+            
+            application.setConnexion();
+        }
+    }
     
 }

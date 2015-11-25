@@ -21,8 +21,7 @@ import newBean.connexionException;
  */
 public class GUI extends javax.swing.JFrame {
     
-    private BeanBDAccess connexionCB;
-    private BeanBDAccess connexionCBB;
+    private BeanBDAccess connexionDB;
     private DefaultListModel listResult = new DefaultListModel();
     private String curUser;
     
@@ -43,7 +42,7 @@ public class GUI extends javax.swing.JFrame {
     
     public BeanBDAccess getBeanbd()
     {
-        return connexionCB;
+        return connexionDB;
     }
     
     public void setFilm(Film f)
@@ -129,13 +128,22 @@ public class GUI extends javax.swing.JFrame {
     
     public synchronized void setConnexion()
     {
-        int nbrEssais = 0;
-        connexionCB = new BeanBDAccess();
         
+        try {
+            if(connexionDB.getConnexion()!= null && connexionDB.getConnexion().isValid(5))//si la connexione est ok
+                return;
+                
+        } catch (SQLException ex) {
+            System.err.println("Erreur test connexion " + ex);
+        }
+        
+        int nbrEssais = 0;
+        connexionDB = new BeanBDAccess();
+     
         while(nbrEssais < 3)
         {        
             try {
-                connexionCB.connexionOracle("localhost", 1521, "CB", "CB", "XE");
+                connexionDB.connexionOracle("localhost", 1521, "CB", "CB", "XE");
                 break; // la connexion s'est bien passée.
             } catch (ClassNotFoundException ex) {
                 System.err.println("Connexion CB " +ex);
@@ -149,7 +157,7 @@ public class GUI extends javax.swing.JFrame {
                     continue;
                 }
                 try {
-                    connexionCB.connexionOracle("localhost", 1521, "CBB", "CBB", "XE");
+                    connexionDB.connexionOracle("localhost", 1521, "CBB", "CBB", "XE");
                     break;
                 } catch (ClassNotFoundException ex1) {
                     System.err.println("Connexion CBB " + ex);
