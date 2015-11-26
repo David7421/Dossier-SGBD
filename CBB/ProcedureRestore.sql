@@ -17,7 +17,7 @@ BEGIN
 		EXCEPTION
 			WHEN dup_val_on_index THEN
 				LOGEVENT('RESTORE dupval', 'Le commentaire existe déjà => UPDATE');
-				UPDATE EVALUATION@CB.DBL SET COTE = eval.COTE, AVIS = eval.AVIS WHERE IDFILM = eval.IDFILM AND LOGIN = eval.LOGIN; 
+				UPDATE EVALUATION@CB.DBL SET COTE = eval.COTE, AVIS = eval.AVIS, TOKEN = eval.TOKEN WHERE IDFILM = eval.IDFILM AND LOGIN = eval.LOGIN; 
 			WHEN OTHERS THEN 
 				LOGEVENT('ERREUR RESTORE', 'Insert rate => ' || SQLCODE || ' : ' || SQLERRM); RAISE;
 		END;
