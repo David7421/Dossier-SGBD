@@ -26,7 +26,7 @@ public class GUI extends javax.swing.JFrame {
     private BeanBDAccess connexionDB;
     private DefaultListModel listResult = new DefaultListModel();
     private String curUser;
-    private String curBD = null;
+    private String curBD = null; //Nom de la base en cour (CB ou CBB)
     
     /**
      * Creates new form GUI
@@ -38,7 +38,7 @@ public class GUI extends javax.swing.JFrame {
         ThreadTestConnexion ttc = new ThreadTestConnexion(this);
         ttc.start();
     }
-    
+    //Methode permettant de changer le panel affiché
     public void changeLayout(String nomCard)
     {
         CardLayout card = (CardLayout) this.getContentPane().getLayout();
@@ -136,10 +136,12 @@ public class GUI extends javax.swing.JFrame {
         return listResult;
     }
     
+    
     public synchronized void setConnexion()
     {
         try {
-            if(curBD != null && curBD.equals("CB") && connexionDB.getConnexion().isValid(5))//si la connexione est ok
+            //Si on est connecté à CB et que CB réagit toujours on continue
+            if(curBD != null && curBD.equals("CB") && connexionDB.getConnexion().isValid(5))
             {
                 System.out.println("Connexion ok");
                 return;
@@ -151,11 +153,11 @@ public class GUI extends javax.swing.JFrame {
         
         int nbrEssais = 0;
         Connection oldConnection = null;
-        if(connexionDB != null)
-            oldConnection = connexionDB.getConnexion();//On prend l'ancienne connexion si on rebascule sur CB
+        if(connexionDB != null)//Si on était déjà connecté
+            oldConnection = connexionDB.getConnexion();//On prend l'ancienne connexion
         connexionDB = new BeanBDAccess();
      
-        while(nbrEssais < 3)
+        while(nbrEssais < 3)//3 tentatives de connexion
         {        
             try {
                 connexionDB.connexionOracle("localhost", 1521, "CB", "CB", "XE");
@@ -185,12 +187,15 @@ public class GUI extends javax.swing.JFrame {
             } 
             catch (SQLException ex) 
             {
+                //L'exception est transient (un nouvel essais de connexion pourrait aboutir dans qu'aucune modif ne soit apportée)
                 if(ex instanceof SQLTransientException && nbrEssais < 2)
                 {
                     nbrEssais++;
                     continue;
                 }
+                //CB est hors ligne on se rabat sur CBB
                 try {
+                    
                     connexionDB.connexionOracle("localhost", 1521, "CBB", "CBB", "XE");
                     curBD = "CBB";
                     System.out.println("On passe sur CBB");
