@@ -32,6 +32,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
         DefaultListModel lmReal = new DefaultListModel();
         listReal.setModel(lmReal);
         listActeur.setModel(lmActeur);
+        erreurLabel.setVisible(false);
     }
 
     /**
@@ -68,6 +69,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
         avantLabel = new javax.swing.JLabel();
         avantTextField = new javax.swing.JTextField();
         menuButton = new javax.swing.JButton();
+        erreurLabel = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(780, 500));
 
@@ -135,6 +137,9 @@ public class formulaireRecherche extends javax.swing.JPanel {
             }
         });
 
+        erreurLabel.setForeground(new java.awt.Color(255, 0, 0));
+        erreurLabel.setText("jLabel2");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -172,7 +177,8 @@ public class formulaireRecherche extends javax.swing.JPanel {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(RechercherButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(49, 49, 49)
-                                        .addComponent(menuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
+                                        .addComponent(menuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(erreurLabel))))))
                 .addContainerGap(31, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
@@ -238,7 +244,9 @@ public class formulaireRecherche extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(menuButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(RechercherButton, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(51, 51, 51))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(erreurLabel)
+                .addGap(26, 26, 26))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -247,6 +255,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
         CallableStatement cs = null;
         Connection conDB = container.getBeanbd().getConnexion();
         ResultSet rs = null;
+        erreurLabel.setVisible(false);
         
         if(!idTextField.getText().isEmpty())
         {
@@ -258,6 +267,8 @@ public class formulaireRecherche extends javax.swing.JPanel {
                 rs = (ResultSet)cs.getObject(1);
             } catch (SQLException ex) {
                 System.err.println("err " + ex);
+                erreurLabel.setVisible(true);
+                erreurLabel.setText("Erreur d'envois au serveur  : Réessayez plus tard");
             }
         }
         else
@@ -362,6 +373,8 @@ public class formulaireRecherche extends javax.swing.JPanel {
                 rs = (ResultSet)cs.getObject(1);
             } catch (SQLException ex) {
                 ex.printStackTrace();
+                erreurLabel.setVisible(true);
+                erreurLabel.setText("Erreur d'envois au serveur  : Réessayez plus tard");
             }
         }
         
@@ -381,7 +394,8 @@ public class formulaireRecherche extends javax.swing.JPanel {
                 listMod.addElement(f);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(formulaireRecherche.class.getName()).log(Level.SEVERE, null, ex);
+            erreurLabel.setVisible(true);
+            erreurLabel.setText("Erreur d'envois au serveur  : Réessayez plus tard");
         }
         
         container.changeLayout("result");
@@ -442,6 +456,7 @@ public class formulaireRecherche extends javax.swing.JPanel {
     private javax.swing.JTextField apresTextField;
     private javax.swing.JLabel avantLabel;
     private javax.swing.JTextField avantTextField;
+    private javax.swing.JLabel erreurLabel;
     private javax.swing.JLabel idLabel;
     private javax.swing.JTextField idTextField;
     private javax.swing.JLabel jLabel1;
