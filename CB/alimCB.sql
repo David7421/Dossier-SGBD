@@ -91,7 +91,7 @@ BEGIN
 		LOOP
 			k:= k+1;
 			BEGIN
-		        insert into film_copie values (s.id, k);
+		        insert into film_copie values (s.id, k, null);
 		    EXCEPTION
 		    	WHEN dup_val_on_index THEN LOGEVENT('Insertion film_copie', 'Doublon dans les copies');
 		    	WHEN OTHERS THEN LOGEVENT('insertion film_copie', 'TUPLE REJETE : ' ||SQLERRM);
