@@ -41,6 +41,7 @@
                               <Component id="noteDixLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Component id="erreurLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="avisLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
@@ -63,7 +64,9 @@
                   <Component id="noteTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="noteDixLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+              <Component id="avisLabel" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="149" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="erreurLabel" min="-2" max="-2" attributes="0"/>
@@ -130,6 +133,11 @@
           <Color blue="0" green="0" red="ff" type="rgb"/>
         </Property>
         <Property name="text" type="java.lang.String" value="jLabel1"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="avisLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Avis"/>
       </Properties>
     </Component>
   </SubComponents>

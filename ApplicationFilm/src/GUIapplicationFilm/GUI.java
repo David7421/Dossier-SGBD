@@ -9,8 +9,6 @@ import classApplicationFilm.Film;
 import java.awt.CardLayout;
 import java.sql.SQLException;
 import java.sql.SQLTransientException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
@@ -53,6 +51,11 @@ public class GUI extends javax.swing.JFrame {
     public void setUser(String u)
     {
         curUser = u;
+    }
+    
+    public String getUser()
+    {
+        return curUser;
     }
 
     /**
@@ -128,9 +131,8 @@ public class GUI extends javax.swing.JFrame {
     
     public synchronized void setConnexion()
     {
-        
         try {
-            if(connexionDB.getConnexion()!= null && connexionDB.getConnexion().isValid(5))//si la connexione est ok
+            if(connexionDB != null && connexionDB.getConnexion().isValid(5))//si la connexione est ok
                 return;
                 
         } catch (SQLException ex) {

@@ -448,7 +448,9 @@ public class affichageFilm extends javax.swing.JPanel {
     }//GEN-LAST:event_suivantButtonActionPerformed
 
     private void evaluerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evaluerButtonActionPerformed
-        noterDialog dial = new noterDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
+        GUI container = (GUI)SwingUtilities.getWindowAncestor(this);
+        Connection conDB = container.getBeanbd().getConnexion();
+        noterDialog dial = new noterDialog((Frame) SwingUtilities.getWindowAncestor(this), true, filmID, conDB, container.getUser());
         dial.setVisible(true);
     }//GEN-LAST:event_evaluerButtonActionPerformed
 

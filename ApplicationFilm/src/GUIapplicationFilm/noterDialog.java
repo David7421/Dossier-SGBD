@@ -5,19 +5,27 @@
  */
 package GUIapplicationFilm;
 
+import java.sql.Connection;
+
 /**
  *
  * @author John
  */
 public class noterDialog extends javax.swing.JDialog {
-
+    
+    private Connection conDB;
+    private String curUser;
+    private int curFilm;
     /**
      * Creates new form noterDialog
      */
-    public noterDialog(java.awt.Frame parent, boolean modal) {
+    public noterDialog(java.awt.Frame parent, boolean modal, int idFilm, Connection c, String cu) {
         super(parent, modal);
         initComponents();
         erreurLabel.setVisible(false);
+        conDB = c;
+        curFilm = idFilm;
+        curUser = cu;
     }
 
     /**
@@ -37,6 +45,7 @@ public class noterDialog extends javax.swing.JDialog {
         commenterJtaxtArea = new javax.swing.JTextArea();
         evaluerButton = new javax.swing.JButton();
         erreurLabel = new javax.swing.JLabel();
+        avisLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -63,6 +72,8 @@ public class noterDialog extends javax.swing.JDialog {
         erreurLabel.setForeground(new java.awt.Color(255, 0, 0));
         erreurLabel.setText("jLabel1");
 
+        avisLabel.setText("Avis");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -82,7 +93,8 @@ public class noterDialog extends javax.swing.JDialog {
                                 .addComponent(noteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(noteDixLabel))
-                            .addComponent(erreurLabel)))
+                            .addComponent(erreurLabel)
+                            .addComponent(avisLabel)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(187, 187, 187)
                         .addComponent(evaluerButton)))
@@ -98,7 +110,9 @@ public class noterDialog extends javax.swing.JDialog {
                     .addComponent(noteLabel)
                     .addComponent(noteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(noteDixLabel))
-                .addGap(18, 18, 18)
+                .addGap(3, 3, 3)
+                .addComponent(avisLabel)
+                .addGap(1, 1, 1)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(erreurLabel)
@@ -113,63 +127,33 @@ public class noterDialog extends javax.swing.JDialog {
     private void evaluerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evaluerButtonActionPerformed
         
         erreurLabel.setVisible(false);
-        float note;
-        try
+        
+        if(noteTextField.getText().isEmpty() && commenterJtaxtArea.getText().isEmpty())
         {
-            note = Float.parseFloat(noteTextField.getText());
-        }
-        catch(NumberFormatException ex)
-        {
-            erreurLabel.setText("La note doit être un nombre compris entre 0 et 10");
+            erreurLabel.setText("Vous devez renseigner au moins une note ou un avis");
             erreurLabel.setVisible(true);
         }
+        float note = -1;
+        if(!noteTextField.getText().isEmpty())
+        {
+            try
+            {
+                note = Float.parseFloat(noteTextField.getText());
+            }
+            catch(NumberFormatException ex)
+            {
+                erreurLabel.setText("La note doit être un nombre compris entre 0 et 10");
+                erreurLabel.setVisible(true);
+            }
+        }
         
+
         //TO DO procedure evaluation film
     }//GEN-LAST:event_evaluerButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(noterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(noterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(noterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(noterDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                noterDialog dialog = new noterDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel avisLabel;
     private javax.swing.JTextArea commenterJtaxtArea;
     private javax.swing.JLabel erreurLabel;
     private javax.swing.JButton evaluerButton;
