@@ -7,7 +7,7 @@ BEGIN
 	MERGE INTO EVALUATION e
     USING (SELECT film Nidfilm, login idlog, note eval, commentaire Navis FROM DUAL) ajout
     ON (e.IDFILM = ajout.Nidfilm AND e.LOGIN = ajout.idlog)
-    WHEN MATCHED THEN UPDATE SET e.COTE = ajout.eval, e.AVIS = ajout.Navis
+    WHEN MATCHED THEN UPDATE SET e.COTE = ajout.eval, e.AVIS = ajout.Navis, e.TOKEN = null
     WHEN NOT MATCHED THEN INSERT (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN)
     VALUES(ajout.Nidfilm, ajout.idlog, ajout.eval, ajout.Navis, sysdate, null);
 

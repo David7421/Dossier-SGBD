@@ -5,13 +5,17 @@
  */
 package GUIapplicationFilm;
 
-import classApplicationFilm.Film;
+import classApplicationFilm.*;
+import classApplicationFilm.ThreadTestConnexion;
 import java.awt.CardLayout;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTransientException;
 import javax.swing.DefaultListModel;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
+import oracle.jdbc.OracleTypes;
 
 /**
  *
@@ -22,6 +26,7 @@ public class GUI extends javax.swing.JFrame {
     private BeanBDAccess connexionDB;
     private DefaultListModel listResult = new DefaultListModel();
     private String curUser;
+    private String curBD = null;
     
     /**
      * Creates new form GUI
@@ -30,6 +35,8 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         rechercheResult.setListModel(listResult);
         setConnexion();
+        ThreadTestConnexion ttc = new ThreadTestConnexion(this);
+        ttc.start();
     }
     
     public void changeLayout(String nomCard)
@@ -132,20 +139,45 @@ public class GUI extends javax.swing.JFrame {
     public synchronized void setConnexion()
     {
         try {
-            if(connexionDB != null && connexionDB.getConnexion().isValid(5))//si la connexione est ok
+            if(curBD != null && curBD.equals("CB") && connexionDB.getConnexion().isValid(5))//si la connexione est ok
+            {
+                System.out.println("Connexion ok");
                 return;
+            }
                 
         } catch (SQLException ex) {
             System.err.println("Erreur test connexion " + ex);
         }
         
         int nbrEssais = 0;
+        Connection oldConnection = null;
+        if(connexionDB != null)
+            oldConnection = connexionDB.getConnexion();//On prend l'ancienne connexion si on rebascule sur CB
         connexionDB = new BeanBDAccess();
      
         while(nbrEssais < 3)
         {        
             try {
                 connexionDB.connexionOracle("localhost", 1521, "CB", "CB", "XE");
+                
+                if(curBD != null && curBD.equals("CBB"))//CB a repris après panne
+                {
+                    System.out.println("Reprise après panne");
+                    CallableStatement cs = null;
+                    try {
+                        cs =  oldConnection.prepareCall("{call RESTORE()}");//copie des infos de CB sur CBB
+                        cs.executeQuery();
+                        oldConnection.commit();
+                    } catch (SQLException ex) {
+                        try {
+                            oldConnection.rollback();
+                        } catch (SQLException ex1) {
+                            System.err.println("erreur : " + ex1);
+                        }
+                    }
+                }
+                curBD = "CB";
+                System.out.println("On se connecte sur CB");
                 break; // la connexion s'est bien passée.
             } catch (ClassNotFoundException ex) {
                 System.err.println("Connexion CB " +ex);
@@ -160,6 +192,8 @@ public class GUI extends javax.swing.JFrame {
                 }
                 try {
                     connexionDB.connexionOracle("localhost", 1521, "CBB", "CBB", "XE");
+                    curBD = "CBB";
+                    System.out.println("On passe sur CBB");
                     break;
                 } catch (ClassNotFoundException ex1) {
                     System.err.println("Connexion CBB " + ex);

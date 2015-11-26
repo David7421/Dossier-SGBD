@@ -22,3 +22,12 @@ INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN) VALUES ((SEL
 
 SELECT image, cote, avis FROM film INNER JOIN affiche ON affiche.id = film.affiche INNER JOIN evaluation ON film.id = evaluation.idfilm
 WHERE film.id = 635;
+
+--TEST DE DECONNEXION
+
+SELECT s.inst_id, s.sid, s.serial#, p.spid, s.username, s.program from gv$session s JOIN gv$process p 
+on p.addr = s.paddr AND p.inst_id = s.inst_id
+WHERE s.type != 'BACKGROUND';
+
+ALTER SYSTEM DISCONNECT SESSION '53,15' IMMEDIATE;
+ALTER USER CB ACCOUNT LOCK;
