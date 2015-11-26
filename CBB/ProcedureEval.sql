@@ -2,7 +2,7 @@ create or replace PROCEDURE EVALFILM(film IN NUMBER, login IN VARCHAR2, note IN 
 IS
 BEGIN
 
-	LOGEVENT('CB : EVALFILM', ' debut');
+	LOGEVENT('CBB : EVALFILM', ' debut');
 
 	MERGE INTO EVALUATION e
     USING (SELECT film Nidfilm, login idlog, note eval, commentaire Navis FROM DUAL) ajout
@@ -11,9 +11,9 @@ BEGIN
     WHEN NOT MATCHED THEN INSERT (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN)
     VALUES(ajout.Nidfilm, ajout.idlog, ajout.eval, ajout.Navis, sysdate, null);
 
-	LOGEVENT('CB : EVALFILM', ' FIN');
+	LOGEVENT('CBB : EVALFILM', ' FIN');
 
 EXCEPTION
-	WHEN OTHERS THEN LOGEVENT('CB : TRIGGER EVALFILM', 'Copie ratee => ' || SQLCODE || ' : ' || SQLERRM); RAISE;
+	WHEN OTHERS THEN LOGEVENT('CBB : TRIGGER EVALFILM', 'Copie ratee => ' || SQLCODE || ' : ' || SQLERRM); RAISE;
 
 END;

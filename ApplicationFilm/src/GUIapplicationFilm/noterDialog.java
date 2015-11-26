@@ -5,7 +5,13 @@
  */
 package GUIapplicationFilm;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import oracle.jdbc.OracleTypes;
 
 /**
  *
@@ -132,6 +138,7 @@ public class noterDialog extends javax.swing.JDialog {
         {
             erreurLabel.setText("Vous devez renseigner au moins une note ou un avis");
             erreurLabel.setVisible(true);
+            return;
         }
         float note = -1;
         if(!noteTextField.getText().isEmpty())
@@ -144,11 +151,43 @@ public class noterDialog extends javax.swing.JDialog {
             {
                 erreurLabel.setText("La note doit être un nombre compris entre 0 et 10");
                 erreurLabel.setVisible(true);
+                return;
             }
         }
         
+        CallableStatement cs = null;
 
-        //TO DO procedure evaluation film
+        try {
+            cs =  conDB.prepareCall("{call EVALFILM(?, ?, ?, ?)}");
+            cs.setInt(1, curFilm);
+            cs.setString(2, curUser);
+            
+            if(note != -1)
+                cs.setFloat(3, note);
+            else
+                cs.setNull(3, OracleTypes.NUMBER);
+            
+            if(!commenterJtaxtArea.getText().isEmpty())
+                cs.setString(4, commenterJtaxtArea.getText());
+            else
+                cs.setNull(4, OracleTypes.VARCHAR);
+            
+            cs.executeQuery();
+            conDB.commit();
+        } catch (SQLException ex) {
+            System.err.println("erreur : " + ex);
+            erreurLabel.setText("Echec d'envois : reessayez plus tard.");
+            erreurLabel.setVisible(true);
+            
+            try {
+                conDB.rollback();
+            } catch (SQLException ex1) {
+                System.err.println("erreur : " + ex1);
+            }
+            return;
+        }
+        
+        this.dispose();
     }//GEN-LAST:event_evaluerButtonActionPerformed
 
 
