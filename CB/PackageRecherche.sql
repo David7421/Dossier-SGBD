@@ -1,5 +1,3 @@
-
-
 -------------------
 -- SPECIFICATION --
 -------------------
@@ -18,6 +16,9 @@ IS
 	FUNCTION getAvisFilm(p_id IN number, p_page IN number) RETURN SYS_REFCURSOR;
 END;
 /
+
+
+
 
 
 ----------
@@ -126,6 +127,7 @@ IS
 		WHEN OTHERS THEN LOGEVENT('Package recherche function recherche', SQLERRM);
 	END;
 
+
 	FUNCTION getAfficheFilm(p_id IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
@@ -135,6 +137,7 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('Package recherche function getAfficheFilm', SQLERRM);
 	END;
+
 
 	--RETOURNE LA SOMME ET LA MOYENNE DES NOTES STOCKEES DANS LA TABLE EVALUATION POUR UN FILM DONNE
 	FUNCTION getNoteUtilisateurFilm(p_id IN number) RETURN SYS_REFCURSOR
@@ -146,6 +149,7 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('Package recherche function getNoteFilm', SQLERRM);
 	END;
+
 
 	--RETOURNE TOUS LES ACTEURS POUR UN FILM DONNE
 	FUNCTION getActeursFilm(p_id IN number) RETURN SYS_REFCURSOR
@@ -162,7 +166,6 @@ IS
 	END;
 
 
-
 	FUNCTION getRealisateursFilm(p_id IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
@@ -174,6 +177,7 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('Package recherche function getRealisateursFilm', SQLERRM);
 	END;
+
 
 	--RECUPERE LES AVIS 5 PAR 5 SELON LE NUMERO DE PAGE OU L'ON SE TROUVE
 	FUNCTION getAvisFilm(p_id IN number, p_page IN number) RETURN SYS_REFCURSOR
@@ -195,9 +199,3 @@ END;
 /
 
 EXIT;
-
--- SELECT film.id, film.titre, personne.nom FROM film 
--- INNER JOIN role ON film.id = role.film_associe
--- INNER JOIN personne_role ON role.film_associe = personne_role.role_film AND role.id = personne_role.role_id
--- INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
--- INNER JOIN personne ON personne_role.id_personne = personne.id OR personne.id = est_realisateur.id_personne;

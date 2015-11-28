@@ -4,9 +4,6 @@
 
 CREATE OR REPLACE PACKAGE PACKAGECB
 IS
-	PROCEDURE AJOUTER_EVALUATION (f IN EVALUATION.IDFILM%TYPE, l IN EVALUATION.LOGIN%TYPE, c IN EVALUATION.COTE%TYPE, a IN EVALUATION.AVIS%TYPE);
-	PROCEDURE MODIFIER_EVALUATION (f IN EVALUATION.IDFILM%TYPE, l IN EVALUATION.LOGIN%TYPE, c IN EVALUATION.COTE%TYPE, a IN EVALUATION.AVIS%TYPE);
-
 	FUNCTION VERIF_FILM_FIELDS(id IN NUMBER, titre IN VARCHAR2, titre_original IN VARCHAR2, date_sortie IN FILM.DATE_SORTIE%TYPE, status IN VARCHAR2, note_moyenne IN NUMBER, 
 		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN NUMBER, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
 		tagline IN VARCHAR2, overview IN VARCHAR2, nbr_copy IN NUMBER) RETURN film%ROWTYPE;
@@ -23,96 +20,13 @@ END;
 
 
 
+
 ----------
 -- BODY --
 ----------
 
 CREATE OR REPLACE PACKAGE BODY PACKAGECB
 IS
-
-	PROCEDURE AJOUTER_EVALUATION (f IN EVALUATION.IDFILM%TYPE, l IN EVALUATION.LOGIN%TYPE, c IN EVALUATION.COTE%TYPE, a IN EVALUATION.AVIS%TYPE)
-	AS
-
-		NotNullException			EXCEPTION;
-			PRAGMA EXCEPTION_INIT (NotNullException, -1400);
-		CheckException				EXCEPTION;
-			PRAGMA EXCEPTION_INIT (CheckException, -2290);
-		ForeignKeyException			EXCEPTION;
-			PRAGMA EXCEPTION_INIT (ForeignKeyException, -2291);
-		-- TimeOutException			EXCEPTION;
-		-- 	PRAGMA EXCEPTION_INIT (TimeOutException, -2291);
-
-	BEGIN
-
-		INSERT INTO EVALUATION (IDFILM, LOGIN, COTE, AVIS, DATEEVAL) VALUES (f, l, c, a, CURRENT_DATE);
-		COMMIT;
-
-	EXCEPTION
-
-		WHEN DUP_VAL_ON_INDEX THEN
-			MODIFIER_EVALUATION(f, l, c, a);
-			ROLLBACK;
-
-		WHEN NotNullException THEN
-			RAISE_APPLICATION_ERROR(-20001, 'Le film et le login ne peuvent pas ne pas être renseignés !');
-			ROLLBACK;
-
-		WHEN CheckException THEN
-			IF SQLERRM LIKE '%CK_COTEAVIS_NOTNULL%' THEN RAISE_APPLICATION_ERROR(-20002, 'La cote et l''avis ne peuvent pas être simultanément inconnus !'); END IF;
-			ROLLBACK;
-
-		WHEN ForeignKeyException THEN
-			CASE
-				WHEN SQLERRM LIKE '%REF_UTILISATEUR_LOGIN%' THEN RAISE_APPLICATION_ERROR (-20003, 'Le login de l''utilisateur (' || l || ') n''existe pas !');
-				-- FK sur IDFILM à rajouter en temps utile
-				ROLLBACK;
-			END CASE;
-
-		-- WHEN TimeOutException THEN
-			-- RAISE_APPLICATION_ERROR(-20005, 'Ajout momentanément impossible, veuillez réessayer d''ici quelques minutes.');
-			--	ROLLBACK;
-
-		WHEN OTHERS THEN ROLLBACK; RAISE;
-
-	END;
-
-
-
-
-
-	PROCEDURE MODIFIER_EVALUATION (f IN EVALUATION.IDFILM%TYPE, l IN EVALUATION.LOGIN%TYPE, c IN EVALUATION.COTE%TYPE, a IN EVALUATION.AVIS%TYPE)
-	AS
-
-		NotNullException			EXCEPTION;
-			PRAGMA EXCEPTION_INIT (NotNullException, -1400);
-		CheckException				EXCEPTION;
-			PRAGMA EXCEPTION_INIT (CheckException, -2290);
-		-- TimeOutException			EXCEPTION;
-		-- 	PRAGMA EXCEPTION_INIT (TimeOutException, -2291);
-
-	BEGIN
-
-		UPDATE EVALUATION SET COTE = c, AVIS = a, DATEEVAL = CURRENT_DATE, TOKEN = NULL WHERE IDFILM = f AND LOGIN = l;
-		COMMIT;
-
-	EXCEPTION
-
-		WHEN NotNullException THEN
-			RAISE_APPLICATION_ERROR(-20001, 'Le film et le login ne peuvent pas ne pas être renseignés !');
-			ROLLBACK;
-
-		WHEN CheckException THEN
-			IF SQLERRM LIKE '%CK_COTEAVIS_NOTNULL%' THEN RAISE_APPLICATION_ERROR(-20002, 'La cote et l''avis ne peuvent pas être simultanément inconnus !'); END IF;
-			ROLLBACK;
-
-		-- WHEN TimeOutException THEN
-			-- RAISE_APPLICATION_ERROR(-20005, 'Ajout momentanément impossible, veuillez réessayer d''ici quelques minutes.');
-			-- ROLLBACK;
-
-		WHEN OTHERS THEN ROLLBACK; RAISE;
-
-	END;
-
 
 	FUNCTION VERIF_FILM_FIELDS(id IN NUMBER, titre IN VARCHAR2, titre_original IN VARCHAR2, date_sortie IN FILM.DATE_SORTIE%TYPE, status IN VARCHAR2, note_moyenne IN NUMBER, 
 		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN NUMBER, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
@@ -134,7 +48,6 @@ IS
 		new_runtime NUMBER;
 		new_budget NUMBER;
 		new_revenus NUMBER;
-
 
 		returnValue film%ROWTYPE;
 
@@ -261,6 +174,7 @@ IS
 	END;
 
 
+
 	FUNCTION VERIF_GENRE_FIELDS(id IN NUMBER, nom IN VARCHAR2) RETURN genre%ROWTYPE
 	AS
 		returnValue genre%ROWTYPE;
@@ -279,6 +193,7 @@ IS
 
 		WHEN OTHERS THEN RAISE;
 	END;
+
 
 
 	FUNCTION VERIF_PRODUCTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2) RETURN producteur%ROWTYPE
@@ -307,6 +222,7 @@ IS
 	END;
 
 
+
 	FUNCTION VERIF_PAYS_FIELDS(id IN VARCHAR2, nom IN VARCHAR2) RETURN pays%ROWTYPE
 	AS
 		returnValue pays%ROWTYPE;
@@ -330,6 +246,7 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN RAISE;
 	END;
+
 
 
 
@@ -358,6 +275,7 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN RAISE;
 	END;
+
 
 
 	FUNCTION VERIF_PERSONNE_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN personne%ROWTYPE
@@ -395,6 +313,7 @@ IS
 	END;
 
 
+
 	FUNCTION VERIF_ROLE_FIELDS(id IN NUMBER, id_film IN FILM.ID%TYPE ,nom IN VARCHAR2) RETURN role%ROWTYPE
 	AS
 		tmp VARCHAR2(4000);
@@ -424,7 +343,6 @@ IS
 	EXCEPTION
 		WHEN OTHERS THEN RAISE;
 	END;
-
 
 END;
 /
