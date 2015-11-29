@@ -30,11 +30,10 @@ public class ThreadTestConnexion extends Thread{
                 //Thread.sleep(120000);//Toutes les 2 minutes
                 Thread.sleep(5000);
             } catch (InterruptedException ex) {
-                System.err.println("Sleep interrompus");
+                System.err.println("Sleep interrompu");
             }
             
             application.setConnexion();
         }
     }
-    
 }

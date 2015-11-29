@@ -146,6 +146,13 @@ public class noterDialog extends javax.swing.JDialog {
             try
             {
                 note = Float.parseFloat(noteTextField.getText());
+                
+                if(note < 0 || 10 < note)
+                {
+                    erreurLabel.setText("La note doit être un nombre compris entre 0 et 10");
+                    erreurLabel.setVisible(true);
+                    return;
+                }
             }
             catch(NumberFormatException ex)
             {
@@ -176,7 +183,7 @@ public class noterDialog extends javax.swing.JDialog {
             conDB.commit();
         } catch (SQLException ex) {
             System.err.println("erreur : " + ex);
-            erreurLabel.setText("Echec d'envois : reessayez plus tard.");
+            erreurLabel.setText("Echec d'envoi : reessayez plus tard.");
             erreurLabel.setVisible(true);
             
             try {

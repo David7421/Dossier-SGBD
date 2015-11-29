@@ -187,7 +187,7 @@ public class GUI extends javax.swing.JFrame {
             } 
             catch (SQLException ex) 
             {
-                //L'exception est transient (un nouvel essais de connexion pourrait aboutir dans qu'aucune modif ne soit apportée)
+                //L'exception est transiente (un nouvel essai de connexion pourrait aboutir sans qu'aucune modif ne soit apportée)
                 if(ex instanceof SQLTransientException && nbrEssais < 2)
                 {
                     nbrEssais++;
