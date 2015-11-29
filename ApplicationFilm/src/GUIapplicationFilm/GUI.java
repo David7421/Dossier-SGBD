@@ -35,8 +35,6 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         rechercheResult.setListModel(listResult);
         setConnexion();
-        ThreadTestConnexion ttc = new ThreadTestConnexion(this);
-        ttc.start();
     }
     //Methode permettant de changer le panel affiché
     public void changeLayout(String nomCard)
@@ -47,6 +45,7 @@ public class GUI extends javax.swing.JFrame {
     
     public BeanBDAccess getBeanbd()
     {
+        setConnexion();
         return connexionDB;
     }
     

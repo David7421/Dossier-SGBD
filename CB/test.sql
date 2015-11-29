@@ -29,5 +29,5 @@ SELECT s.inst_id, s.sid, s.serial#, p.spid, s.username, s.program from gv$sessio
 on p.addr = s.paddr AND p.inst_id = s.inst_id
 WHERE s.type != 'BACKGROUND';
 
-ALTER SYSTEM DISCONNECT SESSION '53,15' IMMEDIATE;
+ALTER SYSTEM DISCONNECT SESSION '137,31' IMMEDIATE;
 ALTER USER CB ACCOUNT LOCK;
