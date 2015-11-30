@@ -166,7 +166,7 @@ public class GUI extends javax.swing.JFrame {
                     System.out.println("Reprise après panne");
                     CallableStatement cs = null;
                     try {
-                        cs =  oldConnection.prepareCall("{call RESTORE()}");//copie des infos de CB sur CBB
+                        cs =  oldConnection.prepareCall("{call RESTORE()}");//copie des infos de CBB sur CB
                         cs.executeQuery();
                         oldConnection.commit();
                     } catch (SQLException ex) {
