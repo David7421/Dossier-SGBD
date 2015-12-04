@@ -10,7 +10,7 @@
     <!--Definition du type complexe film-->
     <xs:complexType name="filmType" xdb:SQLType="FILM_TYPE">
         <xs:sequence>
-            <xs:element name="id_film" type="idNumberType" minOccurs="1" xdb:SQLName="IDFILM" xdb:SQLType="NUMBER"/>
+            <xs:element name="id_film" type="xs:integer" minOccurs="1" xdb:SQLName="IDFILM" xdb:SQLType="NUMBER"/>
             <xs:element name="titre" type="titreType" minOccurs="1" xdb:SQLName="TITRE" xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="titre_original" 
@@ -20,7 +20,7 @@
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="date_sortie" 
-                        type="dateType" 
+                        type="xs:date" 
                         xdb:SQLName="DATE_SORTIE" 
                         xdb:SQLType="DATE"/>
             
@@ -30,17 +30,17 @@
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="note_moyenne" 
-                        type="noteMoyenneType"
+                        type="xs:decimal"
                         xdb:SQLName="STATUS" 
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="nbr_note" 
-                        type="nbrNoteType"
+                        type="xs:integer"
                         xdb:SQLName="NBR_NOTE" 
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="runtime" 
-                        type="runtimeType"
+                        type="xs:integer"
                         xdb:SQLName="RUNTIME" 
                         xdb:SQLType="NUMBER"/>
             
@@ -50,17 +50,17 @@
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="affiche" 
-                        type="afficheType"
+                        type="xs:hexBinary"
                         xdb:SQLName="AFFICHE" 
                         xdb:SQLType="BLOB"/>
             
             <xs:element name="budget" 
-                        type="budgetType"
+                        type="xs:integer"
                         xdb:SQLName="BUDGET" 
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="revenus" 
-                        type="revenusType"
+                        type="xs:integer"
                         xdb:SQLName="REVENUS" 
                         xdb:SQLType="NUMBER"/>
             
@@ -80,7 +80,7 @@
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="numCopie" 
-                        type="numCopieType"
+                        type="xs:integer"
                         xdb:SQLName="NUMCOPIE" 
                         xdb:SQLType="NUMBER"/>
             
@@ -98,12 +98,12 @@
     <xs:complexType name="genreType" xdb:SQLType="GENRE_TYPE">
         <xs:sequence>
             <xs:element name="id_genre" 
-                        type="id_genreType"
+                        type="xs:integer"
                         xdb:SQLName="ID_GENRE" 
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="nom" 
-                        type="nom_genreType"
+                        type="xs:string"
                         xdb:SQLName="NOM_GENRE" 
                         xdb:SQLType="VARCHAR2"/>
         </xs:sequence>
@@ -113,12 +113,12 @@
     <xs:complexType name="producteurType" xdb:SQLType="PRODCTEUR_TYPE">
         <xs:sequence>
             <xs:element name="id_producteur" 
-                        type="id_producteurType"
+                        type="xs:integer"
                         xdb:SQLName="ID_PRODUCTEUR" 
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="nom" 
-                        type="nom_producteurType"
+                        type="xs:string"
                         xdb:SQLName="NOM_PRODUCTEUR" 
                         xdb:SQLType="VARCHAR2"/>
         </xs:sequence>
@@ -128,12 +128,12 @@
     <xs:complexType name="langueType" xdb:SQLType="LANGUE_TYPE">
         <xs:sequence>
             <xs:element name="id_langue" 
-                        type="id_langueType"
+                        type="xs:string"
                         xdb:SQLName="ID_LANGUE" 
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="nom" 
-                        type="nom_langueType"
+                        type="xs:string"
                         xdb:SQLName="NOM_LANGUE" 
                         xdb:SQLType="VARCHAR2"/>
         </xs:sequence>
@@ -144,12 +144,12 @@
     <xs:complexType name="paysType" xdb:SQLType="PAYS_TYPE">
         <xs:sequence>
             <xs:element name="id_pays" 
-                        type="id_paysType"
+                        type="xs:string"
                         xdb:SQLName="ID_PAYS" 
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="nom" 
-                        type="nom_paysType"
+                        type="xs:string"
                         xdb:SQLName="NOM_PAYS" 
                         xdb:SQLType="VARCHAR2"/>
         </xs:sequence>
@@ -160,17 +160,17 @@
     <xs:complexType name="acteurType" xdb:SQLType="ACTEUR_TYPE">
         <xs:sequence>
             <xs:element name="id_acteur" 
-                        type="id_acteurType"
+                        type="xs:integer"
                         xdb:SQLName="ID_ACTEUR" 
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="nom" 
-                        type="nom_acteurType"
+                        type="xs:string"
                         xdb:SQLName="NOM_ACTEUR" 
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="lien_photo" 
-                        type="lien_photoType"
+                        type="xs:string"
                         xdb:SQLName="PHOTO" 
                         xdb:SQLType="VARCHAR2"/>
         </xs:sequence>
@@ -180,19 +180,85 @@
     <xs:complexType name="realisateurType" xdb:SQLType="REALISATEUR_TYPE">
         <xs:sequence>
             <xs:element name="id_realisateur" 
-                        type="id_realisateurType"
+                        type="xs:integer"
                         xdb:SQLName="ID_REALISATEUR" 
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="nom" 
-                        type="nom_realisateurType"
+                        type="xs:string"
                         xdb:SQLName="NOM_REALISATEUR" 
                         xdb:SQLType="VARCHAR2"/>
             
             <xs:element name="lien_photo" 
-                        type="lien_photoType"
+                        type="xs:string"
                         xdb:SQLName="PHOTO" 
                         xdb:SQLType="VARCHAR2"/>
         </xs:sequence>
     </xs:complexType>
+    
+    
+    
+    <!--Precision des types simples--> 
+    
+    <!--Longueur du titre de max 58 cractères-->
+    <xs:simpleType name="titreType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="58"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur du originale de max 59 cractères-->
+    <xs:simpleType name="titreOriginalType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="59"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Valeurs imposées pour le status-->
+    <xs:simpleType name="statusType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="POST PRODUCTION"/>
+            <xs:enumeration value="RUMORED"/>
+            <xs:enumeration value="RELEASED"/>
+            <xs:enumeration value="IN PRODUCTION"/>
+            <xs:enumeration value="PLANNED"/>
+            <xs:enumeration value="CANCELED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs certification-->
+    <xs:simpleType name="certificationType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs homepage-->
+    <xs:simpleType name="homepageType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="122"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs homepage-->
+    <xs:simpleType name="taglineType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="172"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs homepage-->
+    <xs:simpleType name="overviewType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="949"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
 </xs:schema>
