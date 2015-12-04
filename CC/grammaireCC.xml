@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<film>
+    <id_film></id_film>
+    <titre></titre>
+    <titre_original></titre_original>
+    <date_sortie></date_sortie>
+    <status></status>
+    <note_moyenne></note_moyenne>
+    <nbr_note></nbr_note>
+    <runtime></runtime>
+    <certification></certification>
+    <affiche></affiche>
+    <budget></budget>
+    <revenus></revenus>
+    <homepage></homepage>
+    <tagline></tagline>
+    <overview></overview>
+    <numCopie></numCopie>
+    
+    <genre>
+        <id_genre></id_genre>
+        <nom></nom>
+    </genre>
+    
+    <producteur>
+        <id_producteur></id_producteur>
+        <nom></nom>
+    </producteur>
+    
+    <langue>
+        <id_langue></id_langue>
+        <nom></nom>
+    </langue>
+    
+    <pays>
+        <id_pays></id_pays>
+        <nom></nom>
+    </pays>
+    
+    <acteur>
+        <id_acteur></id_acteur>
+        <nom></nom>
+        <lien_photo></lien_photo>
+    </acteur>
+    
+    <realisateur>
+        <id_realisateur></id_realisateur>
+        <nom></nom>
+        <lien_photo></lien_photo>
+    </realisateur>
+</film>
