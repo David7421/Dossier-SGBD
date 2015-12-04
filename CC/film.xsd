@@ -84,12 +84,12 @@
                         xdb:SQLName="NUMCOPIE" 
                         xdb:SQLType="NUMBER"/>
             
-            <xs:element name="genre" type="genreType"/>
-            <xs:element name="producteur" type="producteurType"/>
-            <xs:element name="langue" type="langueType"/>
-            <xs:element name="pays" type="paysType"/>
-            <xs:element name="acteur" type="acteurType"/>
-            <xs:element name="realisateur" type="realisateurType"/>
+            <xs:element name="genre" maxOccurs="unbounded" type="genreType"/>
+            <xs:element name="producteur" maxOccurs="unbounded" type="producteurType"/>
+            <xs:element name="langue" maxOccurs="unbounded" type="langueType"/>
+            <xs:element name="pays" maxOccurs="unbounded" type="paysType"/>
+            <xs:element name="acteur" maxOccurs="unbounded" type="acteurType"/>
+            <xs:element name="realisateur" maxOccurs="unbounded" type="realisateurType"/>
             
         </xs:sequence>
     </xs:complexType>
@@ -110,7 +110,7 @@
     </xs:complexType>
     
     <!--Type complexe producteur-->
-    <xs:complexType name="producteurType" xdb:SQLType="GENRE_TYPE">
+    <xs:complexType name="producteurType" xdb:SQLType="PRODCTEUR_TYPE">
         <xs:sequence>
             <xs:element name="id_producteur" 
                         type="id_producteurType"
@@ -118,11 +118,81 @@
                         xdb:SQLType="NUMBER"/>
             
             <xs:element name="nom" 
-                        type="nom_genreType"
-                        xdb:SQLName="NOM_GENRE" 
+                        type="nom_producteurType"
+                        xdb:SQLName="NOM_PRODUCTEUR" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--Type complexe langue-->
+    <xs:complexType name="langueType" xdb:SQLType="LANGUE_TYPE">
+        <xs:sequence>
+            <xs:element name="id_langue" 
+                        type="id_langueType"
+                        xdb:SQLName="ID_LANGUE" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="nom" 
+                        type="nom_langueType"
+                        xdb:SQLName="NOM_LANGUE" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <!--Type complexe pays-->
+    <xs:complexType name="paysType" xdb:SQLType="PAYS_TYPE">
+        <xs:sequence>
+            <xs:element name="id_pays" 
+                        type="id_paysType"
+                        xdb:SQLName="ID_PAYS" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="nom" 
+                        type="nom_paysType"
+                        xdb:SQLName="NOM_PAYS" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <!--Type complexe acteur-->
+    <xs:complexType name="acteurType" xdb:SQLType="ACTEUR_TYPE">
+        <xs:sequence>
+            <xs:element name="id_acteur" 
+                        type="id_acteurType"
+                        xdb:SQLName="ID_ACTEUR" 
                         xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="nom" 
+                        type="nom_acteurType"
+                        xdb:SQLName="NOM_ACTEUR" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="lien_photo" 
+                        type="lien_photoType"
+                        xdb:SQLName="PHOTO" 
+                        xdb:SQLType="VARCHAR2"/>
         </xs:sequence>
     </xs:complexType>
 
-
+    <!--Type complexe acteur-->
+    <xs:complexType name="realisateurType" xdb:SQLType="REALISATEUR_TYPE">
+        <xs:sequence>
+            <xs:element name="id_realisateur" 
+                        type="id_realisateurType"
+                        xdb:SQLName="ID_REALISATEUR" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="nom" 
+                        type="nom_realisateurType"
+                        xdb:SQLName="NOM_REALISATEUR" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="lien_photo" 
+                        type="lien_photoType"
+                        xdb:SQLName="PHOTO" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>
