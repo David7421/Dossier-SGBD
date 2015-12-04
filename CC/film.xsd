@@ -84,15 +84,55 @@
                         xdb:SQLName="NUMCOPIE" 
                         xdb:SQLType="NUMBER"/>
             
-            <xs:element name="genre" maxOccurs="unbounded" type="genreType"/>
-            <xs:element name="producteur" maxOccurs="unbounded" type="producteurType"/>
-            <xs:element name="langue" maxOccurs="unbounded" type="langueType"/>
-            <xs:element name="pays" maxOccurs="unbounded" type="paysType"/>
-            <xs:element name="acteur" maxOccurs="unbounded" type="acteurType"/>
-            <xs:element name="realisateur" maxOccurs="unbounded" type="realisateurType"/>
-            
+            <xs:element name="genres" type="listGenreType" xdb:SQLName="LIST_GENRE"/>
+            <xs:element name="producteurs" type="listProducteurType" xdb:SQLName="LIST_PRODUCTEURS"/>
+            <xs:element name="langues" type="listLangueType" xdb:SQLName="LIST_LANGUES"/>
+            <xs:element name="listPays" type="listPaysType" xdb:SQLName="LIST_PAYS"/>
+            <xs:element name="acteurs" type="listActeurType" xdb:SQLName="LIST_ACTEURS"/>
+            <xs:element name="realisateurs" type="listRealisateurType" xdb:SQLName="LIST_REALISATEURS"/>
+              
         </xs:sequence>
     </xs:complexType>
+    
+    <!--Types complexe encapsulant les listes-->
+    
+    <xs:complexType name="listGenreType" xdb:SQLType="GENRES_TYPE">
+        <xs:sequence>
+            <xs:element name="genre" maxOccurs="unbounded" type="genreType" xdb:SQLCollType="GENRES_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listProducteurType" xdb:SQLType="PRODCTEURS_TYPE">
+        <xs:sequence>
+            <xs:element name="producteur" maxOccurs="unbounded" type="producteurType" xdb:SQLCollType="PRODUCTEURS_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listLangueType" xdb:SQLType="LANGUES_TYPE">
+        <xs:sequence>
+            <xs:element name="langue" maxOccurs="unbounded" type="langueType" xdb:SQLCollType="LANGUES_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listPaysType" xdb:SQLType="L_PAYS_TYPE">
+        <xs:sequence>
+            <xs:element name="pays" maxOccurs="unbounded" type="paysType" xdb:SQLCollType="PAYS_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listActeurType" xdb:SQLType="ACTEURS_TYPE">
+        <xs:sequence>
+            <xs:element name="acteur" maxOccurs="unbounded" type="acteurType" xdb:SQLCollType="ACTEURS_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="listRealisateurType" xdb:SQLType="REALISATEURS_TYPE">
+        <xs:sequence>
+            <xs:element name="realisateur" maxOccurs="unbounded" type="realisateurType" xdb:SQLCollType="REALISATEUR_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
     
     <!--Type complexe genre-->
     <xs:complexType name="genreType" xdb:SQLType="GENRE_TYPE">
