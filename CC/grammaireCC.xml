@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 
 <film>
     <id_film></id_film>
@@ -53,6 +53,7 @@
             <id_acteur></id_acteur>
             <nom></nom>
             <lien_photo></lien_photo>
+            <nom_role></nom_role>
         </acteur>
     </acteurs>
     

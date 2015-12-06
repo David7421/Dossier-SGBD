@@ -1,6 +1,6 @@
 BEGIN
 
-	DBMS_XMLSCHEMA.DELETESCHEMA('http://cc/compagnies.xsd',3);
+	DBMS_XMLSCHEMA.DELETESCHEMA('http://cc/film.xsd',3);
 
 	DBMS_XMLSCHEMA.REGISTERSCHEMA(
 	  SCHEMAURL => 'http://cc/film.xsd',
