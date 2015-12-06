@@ -64,4 +64,11 @@
             <lien_photo></lien_photo>
         </realisateur>
     </realisateurs>
+    
+    <listAvis>
+        <avis>
+            <note></note>
+            <commentaire></commentaire>
+        </avis>
+    </listAvis>
 </film>

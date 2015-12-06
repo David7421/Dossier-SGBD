@@ -90,6 +90,7 @@
             <xs:element name="listPays" type="listPaysType" xdb:SQLName="LIST_PAYS"/>
             <xs:element name="acteurs" type="listActeurType" xdb:SQLName="LIST_ACTEURS"/>
             <xs:element name="realisateurs" type="listRealisateurType" xdb:SQLName="LIST_REALISATEURS"/>
+            <xs:element name="listAvis" type="listAvisType" xdb:SQLName="LIST_AVIS"/>
               
         </xs:sequence>
     </xs:complexType>
@@ -130,6 +131,12 @@
     <xs:complexType name="listRealisateurType" xdb:SQLType="REALISATEURS_TYPE">
         <xs:sequence>
             <xs:element name="realisateur" maxOccurs="unbounded" type="realisateurType" xdb:SQLName="REALISATEUR" xdb:SQLCollType="REALISATEUR_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listAvisType" xdb:SQLType="L_AVIS_TYPE">
+        <xs:sequence>
+            <xs:element name="avis" maxOccurs="unbounded" type="avisType" xdb:SQLName="AVIS" xdb:SQLCollType="AVIS_VRY"/>
         </xs:sequence>
     </xs:complexType>
     
@@ -241,7 +248,20 @@
         </xs:sequence>
     </xs:complexType>
     
-    
+    <!--Type complexe avis-->
+    <xs:complexType name="avisType" xdb:SQLType="AVIS_TYPE">
+        <xs:sequence>            
+            <xs:element name="note" 
+                        type="xs:integer"
+                        xdb:SQLName="NOTE" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="commentaire" 
+                        type="commentaireAvisType"
+                        xdb:SQLName="COMMENTAIRE" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
     
     <!--Precision des types simples--> 
     
@@ -383,6 +403,13 @@
     <xs:simpleType name="photoRealisateurType">
         <xs:restriction base="xs:string">
             <xs:maxLength value="32"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur photo realisateur-->
+    <xs:simpleType name="commentaireAvisType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1000"/>
         </xs:restriction>
     </xs:simpleType>
     
