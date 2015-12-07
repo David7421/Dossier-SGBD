@@ -18,7 +18,6 @@
     <overview></overview>
     <numCopie></numCopie>
     
-    
     <genres>
         <genre>
             <id_genre></id_genre>
@@ -39,7 +38,6 @@
             <nom></nom>
         </langue>
     </langues>
-    
     
     <listPays>
         <pays>
