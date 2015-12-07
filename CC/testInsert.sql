@@ -3,7 +3,7 @@ INSERT INTO filmSchema VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="
     <id_film>4848</id_film>
     <titre>incption</titre>
     <titre_original>inception</titre_original>
-    <date_sortie>23/10/12</date_sortie>
+    <date_sortie>2012/10/12</date_sortie>
     <status>RELEASED</status>
     <note_moyenne>5</note_moyenne>
     <nbr_note>250</nbr_note>
