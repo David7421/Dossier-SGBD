@@ -1,7 +1,7 @@
 SELECT XMLElement(	"film", 
 					XMLForest(	film.id AS "id_film", 
 								film.titre AS "titre", 
-								film.titre_original AS "titre_originale",
+								film.titre_original AS "titre_original",
 								TO_CHAR(film.date_sortie, 'YYYY/MM/DD') AS "date_sortie",
 								film.statut AS "status",
 								film.note_moyenne AS "note_moyenne",
@@ -51,11 +51,28 @@ SELECT XMLElement(	"film",
 								),
 
 					XMLElement	("acteurs", (SELECT XMLAgg( XMLElement("acteur",
-																		XMLForest(personne.id AS "id_pays", pays.nom AS "nom")))
+																	XMLForest(personne.id AS "id_acteur", personne.nom AS "nom", personne.photo AS "lien_photo", role.nom AS "nom_role")))
 										FROM film
 										INNER JOIN personne_role ON film.id = personne_role.role_film
 										INNER JOIN personne ON personne_role.id_personne = personne.id
 										INNER JOIN role ON role.id = personne_role.role_id AND role.film_associe = personne_role.role_film
+										WHERE film.id = 272947
+									)
+								),
+
+					XMLElement	("realisateurs", (SELECT XMLAgg( XMLElement("realisateur",
+																	XMLForest(personne.id AS "id_realisateur", personne.nom AS "nom", personne.photo AS "lien_photo")))
+										FROM film
+										INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
+										INNER JOIN personne ON est_realisateur.id_personne = personne.id
+										WHERE film.id = 272947
+									)
+								),
+
+					XMLElement	("listAvis", (SELECT XMLAgg( XMLElement("avis",
+																	XMLForest(evaluation.cote AS "note", evaluation.avis AS "commentaire")))
+										FROM film
+										INNER JOIN evaluation ON film.id = evaluation.idfilm
 										WHERE film.id = 272947
 									)
 								)
