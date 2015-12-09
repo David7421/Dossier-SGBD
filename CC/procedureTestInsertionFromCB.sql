@@ -1,3 +1,5 @@
+CREATE OR REPLACE PROCEDURE()
+
 SELECT XMLElement(	"film", 
 					XMLForest(	film.id AS "id_film", 
 								film.titre AS "titre", 
@@ -13,8 +15,8 @@ SELECT XMLElement(	"film",
 								film.revenu AS "revenus",
 								film.homepage AS "homepage",
 								film.tagline AS "tagline",
-								film.overview AS "overview"),
-					--XMLForest(numCopy)
+								film.overview AS "overview",
+								1 AS "numCopie"),
 					XMLElement	("genres", (SELECT XMLAgg( XMLElement(	"genre",
 																		XMLForest(genre.id AS "id_genre", genre.nom AS "nom")))
 										FROM film
