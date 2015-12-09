@@ -5,7 +5,7 @@ DECLARE
   checkException exception;
   pragma exception_init(checkException, -2291);
 BEGIN
-	IF :NEW.TOKEN IS NULL THEN
+	IF :NEW.TOKEN IS NULL THEN --TOKEN null == la copie du film n'a pas encore été copiée sur CBB
 		:NEW.TOKEN := 'OK';
 		LOGEVENT('CB : TRIGGER COPIEFILM', 'Debut de copie');
 

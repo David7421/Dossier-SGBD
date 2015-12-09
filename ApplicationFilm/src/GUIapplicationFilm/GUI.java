@@ -6,7 +6,6 @@
 package GUIapplicationFilm;
 
 import classApplicationFilm.*;
-import classApplicationFilm.ThreadTestConnexion;
 import java.awt.CardLayout;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -15,7 +14,6 @@ import java.sql.SQLTransientException;
 import javax.swing.DefaultListModel;
 import newBean.BeanBDAccess;
 import newBean.connexionException;
-import oracle.jdbc.OracleTypes;
 
 /**
  *
