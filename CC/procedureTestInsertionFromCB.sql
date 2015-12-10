@@ -93,8 +93,7 @@ BEGIN
 	WHERE id = v_film_id;
 
 
-	INSERT INTO FILMSCHEMA@CC.DBL 
-	VALUES(XMLTYPE(documentXML));
+	RECEPTION_FILM@cc.dbl(documentXML);
 
 
 EXCEPTION
