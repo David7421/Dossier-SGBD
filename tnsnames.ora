@@ -15,3 +15,12 @@ CBB =
       (SERVICE_NAME = XE)
     )
   )
+
+CC =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = Utilisateur-PC)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = XE)
+    )
+  )

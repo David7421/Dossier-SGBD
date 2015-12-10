@@ -79,11 +79,6 @@
                         xdb:SQLName="OVERVIEW" 
                         xdb:SQLType="VARCHAR2"/>
             
-            <xs:element name="numCopie" 
-                        type="xs:integer"
-                        xdb:SQLName="NUMCOPIE" 
-                        xdb:SQLType="NUMBER"/>
-            
             <xs:element name="genres" type="listGenreType" xdb:SQLName="LIST_GENRE"/>
             <xs:element name="producteurs" type="listProducteurType" xdb:SQLName="LIST_PRODUCTEURS"/>
             <xs:element name="langues" type="listLangueType" xdb:SQLName="LIST_LANGUES"/>

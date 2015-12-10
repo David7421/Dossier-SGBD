@@ -16,7 +16,6 @@
     <homepage></homepage>
     <tagline></tagline>
     <overview></overview>
-    <numCopie></numCopie>
     
     <genres>
         <genre>
@@ -70,3 +69,25 @@
         </avis>
     </listAvis>
 </film>
+
+
+
+
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<copie>
+    <idFilm></idFilm>
+    <numCopy></numCopy>
+</copie>
+
+
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<programmation>
+    <idFilm></idFilm>
+    <date></date>
+</programmation>
+
+
+
+

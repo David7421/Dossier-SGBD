@@ -15,8 +15,6 @@ INSERT INTO filmSchema VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="
     <homepage>http://me.be</homepage>
     <tagline>un bon film</tagline>
     <overview>un bon film qui parle de reve</overview>
-    <numCopie></numCopie>
-    
     
     <genres>
         <genre>
