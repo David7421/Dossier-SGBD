@@ -28,13 +28,20 @@ IS
 		nbrCopieDispo NUMBER;
 		nbrCopieTransfert NUMBER;
 		documentXML XMLTYPE;
+
+
+		TYPE tabCopy IS TABLE OF NUMBER INDEX BY BINARY_INTEGER;
+		copy tabCopy;
+
+		parc NUMBER;
+
 	BEGIN
 		
 		SELECT COUNT(*) INTO nbrCopieDispo FROM FILM_COPIE WHERE FILM_ID = v_film_id;
 
-		nbrCopieTransfert := FLOOR(dbms_random.normal * 2 + 5); --TO DO remplacer par continue
+		nbrCopieTransfert := FLOOR(dbms_random.normal * 1 + (nbrCopieDispo/2));
 
-
+		--Generation des infos du film en XML
 		SELECT XMLElement(	"film", 
 							XMLForest(	film.id AS "id_film", 
 										film.titre AS "titre", 
@@ -120,6 +127,18 @@ IS
 		INSERT INTO TMPXML
 		VALUES(documentXML);
 
+		--generation des copies de film à envoyer sur CC
+
+		LOGEVENT('ALIMCC', 'AJOUT DE ' || nbrCopieTransfert ||' COPIES DU FILM ' || v_film_id);
+
+		SELECT NUM_COPIE BULK COLLECT INTO copy
+		FROM (SELECT FILM_ID, ROWNUM FROM FILM_COPIE WHERE FILM_ID = v_film_id)
+		WHERE ROWNUM < nbrCopieTransfert;
+
+		FOR parc IN copy.FIRST..copy.LAST LOOP
+
+		END LOOP;
+		
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('procedure alimCC', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 	END;
