@@ -101,6 +101,9 @@ BEGIN
 		END LOOP;
 
 		IF flag THEN
+			--Envois d'un certains nombre de copies à CC
+			ALIMCC.MOVIE_COPY_GENERATOR(s.id);
+
 			COMMIT;
 			CONTINUE;
 		END IF;
@@ -334,7 +337,14 @@ BEGIN
 		    j := j+1;
 		end loop;
 		i := i+1;
+
+		ALIMCC.MOVIE_COPY_GENERATOR(s.id);
+
 		COMMIT;
+
+		--Signal à CC de lire ce qu'il y a dans les tables temporaires des films à envoyer
+		RECEPTION_FILM@CC.DBL;
+
 	END LOOP;
 EXCEPTION
 	WHEN OTHERS THEN ROLLBACK; RAISE;
