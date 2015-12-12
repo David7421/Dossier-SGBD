@@ -124,7 +124,7 @@ IS
 		FROM film
 		WHERE id = v_film_id;
 
-		INSERT INTO TMPXML
+		INSERT INTO tmpXMLMovie
 		VALUES(documentXML);
 
 		--generation des copies de film à envoyer sur CC
@@ -132,13 +132,19 @@ IS
 		LOGEVENT('ALIMCC', 'AJOUT DE ' || nbrCopieTransfert ||' COPIES DU FILM ' || v_film_id);
 
 		SELECT NUM_COPIE BULK COLLECT INTO copy
-		FROM (SELECT FILM_ID, ROWNUM FROM FILM_COPIE WHERE FILM_ID = v_film_id)
+		FROM (SELECT NUM_COPIE, ROWNUM FROM FILM_COPIE WHERE FILM_ID = v_film_id)
 		WHERE ROWNUM < nbrCopieTransfert;
 
 		FOR parc IN copy.FIRST..copy.LAST LOOP
+	
+			documentXML := XMLElement("copie", XMLForest(	v_film_id AS "idFilm", 
+															copy(parc) AS "numCopy"));
+			
+			INSERT INTO tmpXMLCopy VALUES(documentXML);
+			DELETE FROM FILM_COPIE WHERE FILM_ID = v_film_id AND NUM_COPIE = copy(parc);
 
 		END LOOP;
-		
+
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('procedure alimCC', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 	END;
