@@ -35,6 +35,9 @@ XMLTYPE STORE AS OBJECT RELATIONAL
 XMLSCHEMA "http://cc/programmation.xsd"
 ELEMENT "programmation";
 
+CREATE TABLE tmpXMLCopy (xml_col XMLType)
+XMLTYPE xml_col STORE AS BINARY XML;
+
 ALTER TABLE filmSchema
 ADD CONSTRAINT pk_filmschema PRIMARY KEY (XMLDATA."IDFILM");
 

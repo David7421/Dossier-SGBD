@@ -1,31 +1,32 @@
-CREATE OR REPLACE PROCEDURE RECEPTION_FILM
+create or replace PROCEDURE RECEPTION_FILM
 AS
-	elemXML XMLTYPE;
 BEGIN
-	
-	FOR elemXML IN (SELECT * FROM tmpXMLMovie@CB.DBL) LOOP
-		BEGIN
-			INSERT INTO FILMSCHEMA VALUES(elemXML);
-		EXCEPTION
-			WHEN OTHERS THEN RAISE;
-		END;
-	END LOOP;
 
-	FOR elemXML IN (SELECT * FROM tmpXMLCopy@CB.DBL) LOOP
-		BEGIN
-			INSERT INTO FILMSCHEMA VALUES(elemXML);
-		EXCEPTION
-			WHEN dup_val_on_index THEN LOGEVENT('reception film', 'Doublon decopie');
-			WHEN OTHERS THEN RAISE;
-		END;
-	END LOOP;
+	--On va d'abord renvoyer les copies qui ne sont plus utilisées.
+
+	INSERT INTO tmpXMLCopy SELECT * FROM copieFilm;
+
+	INSERT INTO FILMSCHEMA SELECT * FROM tmpXMLMovie@CB.DBL
+  	WHERE EXTRACTVALUE(XML_COL , 'film/if_film') NOT IN (select extractvalue(object_value, 'film/id_film') FROM FILMSCHEMA);
+
+	INSERT INTO COPIEFILM SELECT * FROM tmpXMLCopy@CB.DBL;
 
 	DELETE FROM tmpXMLMovie@CB.DBL;
 	DELETE FROM tmpXMLCopy@CB.DBL;
 
 	COMMIT;
 
+	RETOUR_COPIE@CB.DBL;
+	
+
 EXCEPTION
-	WHEN OTHERS THEN LOGEVENT('procedure alimCC', 'ERREUR : ' ||SQLERRM); ROLLBACK;
+	WHEN OTHERS THEN LOGEVENT('procedure reception', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 END;
+
+
+ --MERGE INTO FILMSCHEMA
+	--USING (SELECT * FROM tmpXMLMovie@CB.DBL) cbf
+	--ON (FILMSCHEMA.EXTRACT(OBJECT_VALUE,'film/id_film/text()') = cbf.EXTRACT(OBJECT_VALUE,'film/id_film/text()'))
+	--WHEN MATCHED THEN update SET object_value = updatexml(object_value, 'film/listAvis', cbf.EXTRACT(OBJECT_VALUE,'film/listAvis'))
+  --WHEN NOT MATCHED THEN INSERT VALUES cbf;
 

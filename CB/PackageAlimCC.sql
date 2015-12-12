@@ -7,7 +7,6 @@ IS
 	--Procedure qui permet de générer le XML pour les films et copies de film
 	PROCEDURE MOVIE_COPY_GENERATOR(v_film_id IN NUMBER);
 	PROCEDURE JOB;
-
 END;
 /
 
@@ -38,7 +37,11 @@ IS
 		
 		SELECT COUNT(*) INTO nbrCopieDispo FROM FILM_COPIE WHERE FILM_ID = v_film_id;
 
-		nbrCopieTransfert := FLOOR(dbms_random.normal * 1 + (nbrCopieDispo/2));
+		IF nbrCopieDispo > 1 THEN
+			nbrCopieDispo := nbrCopieDispo/2;
+		END IF;
+
+		nbrCopieTransfert := FLOOR(dbms_random.normal * 1 + nbrCopieDispo);
 
 		--Generation des infos du film en XML
 		SELECT XMLElement(	"film", 
@@ -128,23 +131,27 @@ IS
 
 		--generation des copies de film à envoyer sur CC
 
-		LOGEVENT('ALIMCC', 'AJOUT DE ' || nbrCopieTransfert ||' COPIES DU FILM ' || v_film_id);
+		IF nbrCopieTransfert > 0 THEN
 
-		SELECT NUM_COPIE BULK COLLECT INTO copy
-		FROM (SELECT NUM_COPIE, ROWNUM FROM FILM_COPIE WHERE FILM_ID = v_film_id)
-		WHERE ROWNUM < nbrCopieTransfert;
+			LOGEVENT('ALIMCC', 'AJOUT DE ' || nbrCopieTransfert ||' COPIES DU FILM ' || v_film_id);
 
-		FOR parc IN copy.FIRST..copy.LAST LOOP
-		
-			SELECT XMLElement("copie", XMLForest(	v_film_id AS "idFilm", 
-													copy(parc) AS "numCopy"))
-			INTO documentXML
-			FROM DUAL;
+			SELECT NUM_COPIE BULK COLLECT INTO copy
+			FROM (SELECT NUM_COPIE, ROWNUM FROM FILM_COPIE WHERE FILM_ID = v_film_id)
+			WHERE ROWNUM <= nbrCopieTransfert;
 
-			INSERT INTO tmpXMLCopy VALUES(documentXML);
-			DELETE FROM FILM_COPIE WHERE FILM_ID = v_film_id AND NUM_COPIE = copy(parc);
+			FOR parc IN copy.FIRST..copy.LAST LOOP
+			
+				SELECT XMLElement("copie", XMLForest(	v_film_id AS "idFilm", 
+														copy(parc) AS "numCopy"))
+				INTO documentXML
+				FROM DUAL;
 
-		END LOOP;
+				INSERT INTO tmpXMLCopy VALUES(documentXML);
+				DELETE FROM FILM_COPIE WHERE FILM_ID = v_film_id AND NUM_COPIE = copy(parc);
+
+			END LOOP;
+
+		END IF;
 
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('procedure alimCC', 'ERREUR : ' ||SQLERRM); ROLLBACK;
@@ -157,7 +164,7 @@ IS
 		f FILM%ROWTYPE;
 	BEGIN
 		
-		FOR s IN (SELECT * FROM FILM) LOOP
+		FOR f IN (SELECT * FROM FILM) LOOP
 
 			ALIMCC.MOVIE_COPY_GENERATOR(f.id);
 
