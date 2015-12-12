@@ -6,8 +6,7 @@ CREATE OR REPLACE PACKAGE ALIMCC
 IS
 	--Procedure qui permet de générer le XML pour les films et copies de film
 	PROCEDURE MOVIE_COPY_GENERATOR(v_film_id IN NUMBER);
-
-	--RECEPTION_FILM@CC.DBL;
+	PROCEDURE JOB;
 
 END;
 /
@@ -136,10 +135,12 @@ IS
 		WHERE ROWNUM < nbrCopieTransfert;
 
 		FOR parc IN copy.FIRST..copy.LAST LOOP
-	
-			documentXML := XMLElement("copie", XMLForest(	v_film_id AS "idFilm", 
-															copy(parc) AS "numCopy"));
-			
+		
+			SELECT XMLElement("copie", XMLForest(	v_film_id AS "idFilm", 
+													copy(parc) AS "numCopy"))
+			INTO documentXML
+			FROM DUAL;
+
 			INSERT INTO tmpXMLCopy VALUES(documentXML);
 			DELETE FROM FILM_COPIE WHERE FILM_ID = v_film_id AND NUM_COPIE = copy(parc);
 
@@ -147,6 +148,27 @@ IS
 
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('procedure alimCC', 'ERREUR : ' ||SQLERRM); ROLLBACK;
+	END;
+
+
+
+	PROCEDURE JOB
+	AS
+		f FILM%ROWTYPE;
+	BEGIN
+		
+		FOR s IN (SELECT * FROM FILM) LOOP
+
+			ALIMCC.MOVIE_COPY_GENERATOR(f.id);
+
+		END LOOP;
+
+		COMMIT;
+
+		RECEPTION_FILM@CC.DBL;
+
+	EXCEPTION
+		WHEN OTHERS THEN LOGEVENT('procedure alimCC JOB', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 	END;
 
 END;
