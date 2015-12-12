@@ -341,11 +341,11 @@ BEGIN
 		ALIMCC.MOVIE_COPY_GENERATOR(s.id);
 
 		COMMIT;
-
-		--Signal à CC de lire ce qu'il y a dans les tables temporaires des films à envoyer
-		RECEPTION_FILM@CC.DBL;
-
 	END LOOP;
+
+	--Signal à CC de lire ce qu'il y a dans les tables temporaires des films à envoyer
+	RECEPTION_FILM@CC.DBL;
+
 EXCEPTION
 	WHEN OTHERS THEN ROLLBACK; RAISE;
 END;

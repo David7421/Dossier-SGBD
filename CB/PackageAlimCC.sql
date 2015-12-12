@@ -47,7 +47,7 @@ IS
 										film.titre_original AS "titre_original",
 										TO_CHAR(film.date_sortie, 'YYYY/MM/DD') AS "date_sortie",
 										film.statut AS "status",
-										film.note_moyenne AS "note_moyenne",
+										to_char(film.note_moyenne,'000.000') AS "note_moyenne",
 										film.nombre_note AS "nbr_note",
 										film.runtime AS "runtime",
 										film.certification AS "certification",
