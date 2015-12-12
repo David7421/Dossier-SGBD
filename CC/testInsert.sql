@@ -70,3 +70,5 @@ INSERT INTO filmSchema VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="
     </listAvis>
 </film>'
 ));
+
+select EXTRACT(OBJECT_VALUE,'film/id_film') FROM FILMSCHEMA;

@@ -1,2 +1,0 @@
-CREATE TABLE tmpXML (xml_col XMLType)
-  XMLTYPE xml_col STORE AS BINARY XML;
