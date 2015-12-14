@@ -88,6 +88,31 @@
     <date></date>
 </programmation>
 
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<programmations>
+    <progra>
+        <idFil></idFilm>
+        <salle></salle>
+        <heureDebut></heureDebut>
+    </progra>
 
+    <progra>
+        <idFil></idFilm>
+        <salle></salle>
+        <heureDebut></heureDebut>
+    </progra>
+
+    <progra>
+        <idFil></idFilm>
+        <salle></salle>
+        <heureDebut></heureDebut>
+    </progra>
+
+    <progra>
+        <idFil></idFilm>
+        <salle></salle>
+        <heureDebut></heureDebut>
+    </progra>
+</programmations>
 
 
