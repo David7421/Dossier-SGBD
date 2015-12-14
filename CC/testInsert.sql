@@ -87,7 +87,7 @@ INSERT INTO COPIEFILM VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="U
 INSERT INTO PROGRAMMATION VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="UTF-8"?>
 <programmation>
     <idFilm>267011</idFilm>
-    <numCopy>1</numCopy>
+    <numCopy>3</numCopy>
     <debut>14/12/15 18:00:00,000000000</debut>
     <fin>14/12/15 18:00:00,000000000</fin>
 </programmation>'

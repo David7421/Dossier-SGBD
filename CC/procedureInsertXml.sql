@@ -34,6 +34,14 @@ EXCEPTION
 END;
 
 /*
+SELECT extractvalue(c.object_value, 'copie/idFilm'), extractvalue(object_value, 'copie/numCopy') from COPIEFILM c
+WHERE extractvalue(c.object_value, 'copie/idFilm') =
+          (SELECT extractvalue(p.object_value, 'programmation/idFilm')
+          FROM PROGRAMMATION p
+          WHERE current_timestamp < to_timestamp_tz(extractvalue(object_value, 'programmation/debut')));*/
+
+
+/*
 select
     extractvalue(object_value, '/schedule/copy_id') "copy_id"
 from
