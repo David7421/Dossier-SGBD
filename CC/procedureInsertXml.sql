@@ -8,12 +8,7 @@ BEGIN
 
 	--On remplit la table des copies à retourner avec les copies qui ne sont plus programmées
 	INSERT INTO tmpXMLCopy SELECT * FROM copieFilm;
-	--WHERE EXTRACTVALUE(object_value , 'copie/idFilm') NOT IN (	SELECT EXTRACTVALUE(object_value , 'programmation/idFilm')
-																--FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate)
 
-	--AND EXTRACTVALUE(object_value , 'copie/numCopy') NOT IN (
-																--SELECT EXTRACTVALUE(object_value , 'programmation/numCopy')
-																--FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate);
 
 	--On supprime les copies retournées de CC
 	DELETE FROM COPIEFILM 
@@ -38,10 +33,24 @@ EXCEPTION
 	WHEN OTHERS THEN LOGEVENT('procedure reception', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 END;
 
-
- --MERGE INTO FILMSCHEMA
-	--USING (SELECT * FROM tmpXMLMovie@CB.DBL) cbf
-	--ON (FILMSCHEMA.EXTRACT(OBJECT_VALUE,'film/id_film/text()') = cbf.EXTRACT(OBJECT_VALUE,'film/id_film/text()'))
-	--WHEN MATCHED THEN update SET object_value = updatexml(object_value, 'film/listAvis', cbf.EXTRACT(OBJECT_VALUE,'film/listAvis'))
-  --WHEN NOT MATCHED THEN INSERT VALUES cbf;
-
+/*
+select
+    extractvalue(object_value, '/schedule/copy_id') "copy_id"
+from
+    schedules s
+where not exists(
+    select * from
+        schedules s2,
+        xmltable('/schedule/time_schedule/schedule_start' passing s.object_value) t
+    where
+        to_timestamp_tz(extractvalue(t.column_value, 'schedule_start'), 'YYYY-MM-DD"T"HH24:MI:SS.FFTZH:TZM') + (
+            select
+                numtodsinterval(extractvalue(m.object_value, '/movie/runtime'), 'minute')
+            from movies m
+            where
+                extractvalue(m.object_value, '/movie/id') = extractvalue(s.object_value, '/schedule/movie_id')
+        ) + numtodsinterval(30, 'minute') > current_timestamp
+        and extractvalue(s.object_value,'/schedule/movie_id') = extractvalue(s2.object_value,'/schedule/movie_id')
+        and extractvalue(s.object_value,'/schedule/copy_id') = extractvalue(s2.object_value,'/schedule/copy_id')
+)
+;*/
