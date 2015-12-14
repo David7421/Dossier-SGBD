@@ -7,7 +7,13 @@ BEGIN
 	LOGEVENT('RECEPTION_FILM', 'debut de la reception');
 
 	--On remplit la table des copies à retourner avec les copies qui ne sont plus programmées
-	INSERT INTO tmpXMLCopy SELECT * FROM copieFilm;
+	INSERT INTO tmpXMLCopy SELECT * from COPIEFILM c
+			WHERE NOT EXISTS
+          						(	SELECT *
+          							FROM PROGRAMMATION p
+          							WHERE extractvalue(c.object_value, 'copie/idFilm') = extractvalue(p.object_value, 'programmation/idFilm')
+                        AND extractvalue(c.object_value, 'copie/numCopy') = extractvalue(p.object_value, 'programmation/numCopy')
+          							AND current_timestamp < to_timestamp_tz(extractvalue(p.object_value, 'programmation/debut')));
 
 
 	--On supprime les copies retournées de CC
@@ -26,17 +32,15 @@ BEGIN
 
 	COMMIT;
 
-	--RETOUR_COPIE@CB.DBL;
+	BEGIN
+		RETOUR_COPIE@CB.DBL;
+	EXCEPTION
+		WHEN OTHERS THEN LOGEVENT('RECEPTION_FILM', 'CB HS renvois sur CBB'); RETOUR_COPIE@CBB.DBL;
+	END;
 
 	LOGEVENT('RECEPTION_FILM', 'Fin de la reception');
 EXCEPTION
 	WHEN OTHERS THEN LOGEVENT('procedure reception', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 END;
 
-/*
-SELECT extractvalue(object_value, 'copie/idFilm'), extractvalue(object_value, 'copie/numCopy') from COPIEFILM
-WHERE extractvalue(object_value, 'copie/idFilm')=
-          (SELECT extractvalue(object_value, 'programmation/idFilm')
-          FROM PROGRAMMATION 
-          WHERE current_timestamp < to_timestamp_tz(extractvalue(object_value, 'programmation/debut')));*/
 
