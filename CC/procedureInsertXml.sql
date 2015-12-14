@@ -34,31 +34,9 @@ EXCEPTION
 END;
 
 /*
-SELECT extractvalue(c.object_value, 'copie/idFilm'), extractvalue(object_value, 'copie/numCopy') from COPIEFILM c
-WHERE extractvalue(c.object_value, 'copie/idFilm') =
-          (SELECT extractvalue(p.object_value, 'programmation/idFilm')
-          FROM PROGRAMMATION p
+SELECT extractvalue(object_value, 'copie/idFilm'), extractvalue(object_value, 'copie/numCopy') from COPIEFILM
+WHERE extractvalue(object_value, 'copie/idFilm')=
+          (SELECT extractvalue(object_value, 'programmation/idFilm')
+          FROM PROGRAMMATION 
           WHERE current_timestamp < to_timestamp_tz(extractvalue(object_value, 'programmation/debut')));*/
 
-
-/*
-select
-    extractvalue(object_value, '/schedule/copy_id') "copy_id"
-from
-    schedules s
-where not exists(
-    select * from
-        schedules s2,
-        xmltable('/schedule/time_schedule/schedule_start' passing s.object_value) t
-    where
-        to_timestamp_tz(extractvalue(t.column_value, 'schedule_start'), 'YYYY-MM-DD"T"HH24:MI:SS.FFTZH:TZM') + (
-            select
-                numtodsinterval(extractvalue(m.object_value, '/movie/runtime'), 'minute')
-            from movies m
-            where
-                extractvalue(m.object_value, '/movie/id') = extractvalue(s.object_value, '/schedule/movie_id')
-        ) + numtodsinterval(30, 'minute') > current_timestamp
-        and extractvalue(s.object_value,'/schedule/movie_id') = extractvalue(s2.object_value,'/schedule/movie_id')
-        and extractvalue(s.object_value,'/schedule/copy_id') = extractvalue(s2.object_value,'/schedule/copy_id')
-)
-;*/
