@@ -74,12 +74,21 @@ INSERT INTO filmSchema VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="
 select EXTRACT(OBJECT_VALUE,'film/id_film') FROM FILMSCHEMA;
 
 
+INSERT INTO COPIEFILM VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="UTF-8"?>
+<copie>
+    <idFilm>4848</idFilm>
+    <numCopy>1</numCopy>
+</copie>'
+));
 
-INSERT INTO filmSchema VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="UTF-8"?>
-<film>
-    <id_film>4848</id_film>
-    <titre>incption</titre>
-    <titre_original>inception</titre_original>
-    <date_sortie>2012/10/12</date_sortie>
-</film>'
+
+
+
+INSERT INTO PROGRAMMATION VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="UTF-8"?>
+<programmation>
+    <idFilm>292211</idFilm>
+    <numCopy>1</numCopy>
+    <debut>2015-12-24</debut>
+    <fin>2015-12-24</fin>
+</programmation>'
 ));

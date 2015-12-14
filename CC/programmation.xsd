@@ -12,8 +12,8 @@
         <xs:sequence>
             <xs:element name="idFilm" type="xs:integer" minOccurs="1" xdb:SQLName="IDFILM" xdb:SQLType="NUMBER"/>
             <xs:element name="numCopy" type="xs:integer" minOccurs="1" xdb:SQLName="IDCOPIE" xdb:SQLType="NUMBER"/>
-            <xs:element name="debut" type="xs:dateTime" minOccurs="1" xdb:SQLName="DEBUT" xdb:SQLType="TIMESTAMP"/>
-            <xs:element name="fin" type="xs:dateTime" minOccurs="1" xdb:SQLName="FIN" xdb:SQLType="TIMESTAMP"/>
+            <xs:element name="debut" type="xs:date" minOccurs="1" xdb:SQLName="DEBUT" xdb:SQLType="DATE"/>
+            <xs:element name="fin" type="xs:date" minOccurs="1" xdb:SQLName="FIN" xdb:SQLType="DATE"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

@@ -6,7 +6,14 @@ BEGIN
 
 	LOGEVENT('RECEPTION_FILM', 'debut de la reception');
 
-	INSERT INTO tmpXMLCopy SELECT * FROM copieFilm;
+	--On remplis la table des copies à retourner avec les copies qui ne sont plus programmées
+	INSERT INTO tmpXMLCopy SELECT * FROM copieFilm
+	WHERE EXTRACTVALUE(object_value , 'copie/idFilm') NOT IN (	SELECT EXTRACTVALUE(object_value , 'programmation/idFilm')
+																FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate)
+
+	AND EXTRACTVALUE(object_value , 'copie/numCopy') NOT IN (
+																SELECT EXTRACTVALUE(object_value , 'programmation/numCopy')
+																FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate);
 
 	--On supprime les copies retournée de CC
 	DELETE FROM COPIEFILM 
