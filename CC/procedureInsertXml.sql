@@ -6,21 +6,21 @@ BEGIN
 
 	LOGEVENT('RECEPTION_FILM', 'debut de la reception');
 
-	--On remplis la table des copies à retourner avec les copies qui ne sont plus programmées
-	INSERT INTO tmpXMLCopy SELECT * FROM copieFilm
-	WHERE EXTRACTVALUE(object_value , 'copie/idFilm') NOT IN (	SELECT EXTRACTVALUE(object_value , 'programmation/idFilm')
-																FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate)
+	--On remplit la table des copies à retourner avec les copies qui ne sont plus programmées
+	INSERT INTO tmpXMLCopy SELECT * FROM copieFilm;
+	--WHERE EXTRACTVALUE(object_value , 'copie/idFilm') NOT IN (	SELECT EXTRACTVALUE(object_value , 'programmation/idFilm')
+																--FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate)
 
-	AND EXTRACTVALUE(object_value , 'copie/numCopy') NOT IN (
-																SELECT EXTRACTVALUE(object_value , 'programmation/numCopy')
-																FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate);
+	--AND EXTRACTVALUE(object_value , 'copie/numCopy') NOT IN (
+																--SELECT EXTRACTVALUE(object_value , 'programmation/numCopy')
+																--FROM programmation WHERE EXTRACTVALUE(object_value , 'programmation/fin') > sysdate);
 
-	--On supprime les copies retournée de CC
+	--On supprime les copies retournées de CC
 	DELETE FROM COPIEFILM 
 	WHERE EXTRACTVALUE(object_value , 'copie/idFilm') IN (SELECT EXTRACTVALUE(XML_COL , 'copie/idFilm') FROM tmpXMLCopy)
 	AND EXTRACTVALUE(object_value , 'copie/numCopy') IN (SELECT EXTRACTVALUE(XML_COL , 'copie/numCopy') FROM tmpXMLCopy);
 
-	--Insertion des copies mis en attente sur CB
+	--Insertion des copies mises en attente sur CB
 	INSERT INTO FILMSCHEMA SELECT * FROM tmpXMLMovie@CB.DBL
   	WHERE EXTRACTVALUE(XML_COL , 'film/id_film') NOT IN (select extractvalue(object_value, 'film/id_film') FROM FILMSCHEMA);
 
@@ -31,7 +31,7 @@ BEGIN
 
 	COMMIT;
 
-	RETOUR_COPIE@CB.DBL;
+	--RETOUR_COPIE@CB.DBL;
 
 	LOGEVENT('RECEPTION_FILM', 'Fin de la reception');
 EXCEPTION
