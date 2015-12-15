@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+            xmlns:xdb="http://xmlns.oracle.com/xdb"
+            xdb:storeVarrayAsTable="true"
+            version="1.0">
+
+    <xs:element name="film" type="filmType" xdb:defaultTable="FILM_TABLE"/>
+    
+    <!--Definition du type complexe film-->
+    <xs:complexType name="filmType" xdb:SQLType="FILM_TYPE">
+        <xs:sequence>
+            <xs:element name="id_film" type="xs:integer" minOccurs="1" xdb:SQLName="IDFILM" xdb:SQLType="NUMBER"/>
+            <xs:element name="titre" type="titreType" minOccurs="1" xdb:SQLName="TITRE" xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="titre_original" 
+                        type="titreOriginalType" 
+                        minOccurs="1" 
+                        xdb:SQLName="TITRE_ORIGINAL" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="date_sortie" 
+                        type="xs:date" 
+                        xdb:SQLName="DATE_SORTIE" 
+                        xdb:SQLType="DATE"/>
+            
+            <xs:element name="status" 
+                        type="statusType" 
+                        xdb:SQLName="STATUS" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="note_moyenne" 
+                        type="xs:decimal"
+                        xdb:SQLName="STATUS" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="nbr_note" 
+                        type="xs:integer"
+                        xdb:SQLName="NBR_NOTE" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="runtime" 
+                        type="xs:integer"
+                        xdb:SQLName="RUNTIME" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="certification" 
+                        type="certificationType"
+                        xdb:SQLName="CERTIFICATION" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="affiche" 
+                        type="xs:hexBinary"
+                        xdb:SQLName="AFFICHE" 
+                        xdb:SQLType="BLOB"/>
+            
+            <xs:element name="budget" 
+                        type="xs:integer"
+                        xdb:SQLName="BUDGET" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="revenus" 
+                        type="xs:integer"
+                        xdb:SQLName="REVENUS" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="homepage" 
+                        type="homepageType"
+                        xdb:SQLName="HOMEPAGE" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="tagline" 
+                        type="taglineType"
+                        xdb:SQLName="TAGLINE" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="overview" 
+                        type="overviewType"
+                        xdb:SQLName="OVERVIEW" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="genres" type="listGenreType" xdb:SQLName="LIST_GENRE"/>
+            <xs:element name="producteurs" type="listProducteurType" xdb:SQLName="LIST_PRODUCTEURS"/>
+            <xs:element name="langues" type="listLangueType" xdb:SQLName="LIST_LANGUES"/>
+            <xs:element name="listPays" type="listPaysType" xdb:SQLName="LIST_PAYS"/>
+            <xs:element name="acteurs" type="listActeurType" xdb:SQLName="LIST_ACTEURS"/>
+            <xs:element name="realisateurs" type="listRealisateurType" xdb:SQLName="LIST_REALISATEURS"/>
+            <xs:element name="listAvis" type="listAvisType" xdb:SQLName="LIST_AVIS"/>
+              
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--Types complexe encapsulant les listes-->
+    
+    <xs:complexType name="listGenreType" xdb:SQLType="GENRES_TYPE">
+        <xs:sequence>
+            <xs:element name="genre" maxOccurs="unbounded" type="genreType" xdb:SQLName="GENRE" xdb:SQLCollType="GENRES_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listProducteurType" xdb:SQLType="PRODCTEURS_TYPE">
+        <xs:sequence>
+            <xs:element name="producteur" maxOccurs="unbounded" type="producteurType" xdb:SQLName="PRODUCTEUR" xdb:SQLCollType="PRODUCTEURS_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listLangueType" xdb:SQLType="LANGUES_TYPE">
+        <xs:sequence>
+            <xs:element name="langue" maxOccurs="unbounded" type="langueType" xdb:SQLName="LANGUE" xdb:SQLCollType="LANGUES_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listPaysType" xdb:SQLType="L_PAYS_TYPE">
+        <xs:sequence>
+            <xs:element name="pays" maxOccurs="unbounded" type="paysType" xdb:SQLName="PAYS" xdb:SQLCollType="PAYS_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listActeurType" xdb:SQLType="ACTEURS_TYPE">
+        <xs:sequence>
+            <xs:element name="acteur" maxOccurs="unbounded" type="acteurType" xdb:SQLName="ACTEUR" xdb:SQLCollType="ACTEURS_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="listRealisateurType" xdb:SQLType="REALISATEURS_TYPE">
+        <xs:sequence>
+            <xs:element name="realisateur" maxOccurs="unbounded" type="realisateurType" xdb:SQLName="REALISATEUR" xdb:SQLCollType="REALISATEUR_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="listAvisType" xdb:SQLType="L_AVIS_TYPE">
+        <xs:sequence>
+            <xs:element name="avis" maxOccurs="unbounded" type="avisType" xdb:SQLName="AVIS" xdb:SQLCollType="AVIS_VRY"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <!--Type complexe genre-->
+    <xs:complexType name="genreType" xdb:SQLType="GENRE_TYPE">
+        <xs:sequence>
+            <xs:element name="id_genre" 
+                        type="xs:integer"
+                        xdb:SQLName="ID_GENRE" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="nom" 
+                        type="nomGenreType"
+                        xdb:SQLName="NOM_GENRE" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--Type complexe producteur-->
+    <xs:complexType name="producteurType" xdb:SQLType="PRODCTEUR_TYPE">
+        <xs:sequence>
+            <xs:element name="id_producteur" 
+                        type="xs:integer"
+                        xdb:SQLName="ID_PRODUCTEUR" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="nom" 
+                        type="nomProducteurType"
+                        xdb:SQLName="NOM_PRODUCTEUR" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--Type complexe langue-->
+    <xs:complexType name="langueType" xdb:SQLType="LANGUE_TYPE">
+        <xs:sequence>
+            <xs:element name="id_langue" 
+                        type="idLangueType"
+                        xdb:SQLName="ID_LANGUE" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="nom" 
+                        type="nomLangueType"
+                        xdb:SQLName="NOM_LANGUE" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <!--Type complexe pays-->
+    <xs:complexType name="paysType" xdb:SQLType="PAYS_TYPE">
+        <xs:sequence>
+            <xs:element name="id_pays" 
+                        type="idPaysType"
+                        xdb:SQLName="ID_PAYS" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="nom" 
+                        type="nomPaysType"
+                        xdb:SQLName="NOM_PAYS" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <!--Type complexe acteur-->
+    <xs:complexType name="acteurType" xdb:SQLType="ACTEUR_TYPE">
+        <xs:sequence>
+            <xs:element name="id_acteur" 
+                        type="xs:integer"
+                        xdb:SQLName="ID_ACTEUR" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="nom" 
+                        type="nomActeurType"
+                        xdb:SQLName="NOM_ACTEUR" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="lien_photo" 
+                        type="photoActeurType"
+                        xdb:SQLName="PHOTO" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="nom_role" 
+                        type="nomRoleActeurType"
+                        xdb:SQLName="ROLE" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!--Type complexe acteur-->
+    <xs:complexType name="realisateurType" xdb:SQLType="REALISATEUR_TYPE">
+        <xs:sequence>
+            <xs:element name="id_realisateur" 
+                        type="xs:integer"
+                        xdb:SQLName="ID_REALISATEUR" 
+                        xdb:SQLType="NUMBER"/>
+            
+            <xs:element name="nom" 
+                        type="nomRealisateurType"
+                        xdb:SQLName="NOM_REALISATEUR" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="lien_photo" 
+                        type="photoRealisateurType"
+                        xdb:SQLName="PHOTO" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--Type complexe avis-->
+    <xs:complexType name="avisType" xdb:SQLType="AVIS_TYPE">
+        <xs:sequence>            
+            <xs:element name="note" 
+                        type="xs:integer"
+                        xdb:SQLName="NOTE" 
+                        xdb:SQLType="VARCHAR2"/>
+            
+            <xs:element name="commentaire" 
+                        type="commentaireAvisType"
+                        xdb:SQLName="COMMENTAIRE" 
+                        xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <!--Precision des types simples--> 
+    
+    <!--Longueur du titre de max 58 cractères-->
+    <xs:simpleType name="titreType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="58"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur du originale de max 59 cractères-->
+    <xs:simpleType name="titreOriginalType">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1"/>
+            <xs:maxLength value="59"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Valeurs imposées pour le status-->
+    <xs:simpleType name="statusType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="POST PRODUCTION"/>
+            <xs:enumeration value="RUMORED"/>
+            <xs:enumeration value="RELEASED"/>
+            <xs:enumeration value="IN PRODUCTION"/>
+            <xs:enumeration value="PLANNED"/>
+            <xs:enumeration value="CANCELED"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs certification-->
+    <xs:simpleType name="certificationType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="5"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs homepage-->
+    <xs:simpleType name="homepageType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="122"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs tagline-->
+    <xs:simpleType name="taglineType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="172"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--Longueur champs overview-->
+    <xs:simpleType name="overviewType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="949"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur champs noom de genre-->
+    <xs:simpleType name="nomGenreType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="16"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur champs nom de producteur-->
+    <xs:simpleType name="nomProducteurType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="45"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur id pays-->
+    <xs:simpleType name="idPaysType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur nom pays-->
+    <xs:simpleType name="nomPaysType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="31"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur id langue-->
+    <xs:simpleType name="idLangueType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur nom langue-->
+    <xs:simpleType name="nomLangueType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="15"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur nom acteur-->
+    <xs:simpleType name="nomActeurType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="23"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur photo acteur-->
+    <xs:simpleType name="photoActeurType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="32"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!--Longueur nom role acteur-->
+    <xs:simpleType name="nomRoleActeurType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="39"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    
+    <!--Longueur nom realisateur-->
+    <xs:simpleType name="nomRealisateurType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="23"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur photo realisateur-->
+    <xs:simpleType name="photoRealisateurType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="32"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!--Longueur photo realisateur-->
+    <xs:simpleType name="commentaireAvisType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="1000"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+</xs:schema>
