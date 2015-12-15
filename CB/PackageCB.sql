@@ -347,4 +347,4 @@ IS
 END;
 /
 
-EXIT;
+COMMIT;

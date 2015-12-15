@@ -1,4 +1,3 @@
-DROP TABLE movies_ext;
 
 create table movies_ext (
   id integer,
@@ -60,5 +59,5 @@ organization external (
 )
 reject limit unlimited;
 
-EXIT;
+COMMIT;
 
