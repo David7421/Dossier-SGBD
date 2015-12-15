@@ -1,6 +1,5 @@
 -- FINK Jérôme et SEEL Océane 
--- CreaCBLight
-
+-- CreaCB
 CREATE SEQUENCE IDAFFICHE;
 
 -- Les truncates des valeurs trop longues seront traitées dans des procédures d'ajout.

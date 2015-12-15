@@ -198,4 +198,4 @@ IS
 END;
 /
 
-EXIT;
+COMMIT;

@@ -1,0 +1,4 @@
+@CC/procedureInsertXml.sql
+
+EXIT;
+

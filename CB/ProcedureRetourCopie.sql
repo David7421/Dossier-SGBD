@@ -15,3 +15,6 @@ create or replace PROCEDURE RETOUR_COPIE
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('procedure reception', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 	END;
+	/
+
+COMMIT;

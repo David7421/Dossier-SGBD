@@ -35,4 +35,5 @@ EXCEPTION
 		END IF;
 END;
 /
-EXIT;
+
+COMMIT;

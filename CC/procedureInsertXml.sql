@@ -42,5 +42,8 @@ BEGIN
 EXCEPTION
 	WHEN OTHERS THEN LOGEVENT('procedure reception', 'ERREUR : ' ||SQLERRM); ROLLBACK;
 END;
+/
+
+COMMIT;
 
 

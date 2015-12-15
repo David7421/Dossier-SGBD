@@ -1,9 +1,5 @@
 BEGIN
 
-	DBMS_XMLSCHEMA.DELETESCHEMA('http://cc/film.xsd',3);
-	DBMS_XMLSCHEMA.DELETESCHEMA('http://cc/copie.xsd',3);
-	DBMS_XMLSCHEMA.DELETESCHEMA('http://cc/programmation.xsd',3);
-
 	DBMS_XMLSCHEMA.REGISTERSCHEMA(
 	  SCHEMAURL => 'http://cc/film.xsd',
 	  SCHEMADOC => BFILENAME('MOVIEDIRECTORY', 'film.xsd'),
@@ -22,3 +18,6 @@ BEGIN
 	  LOCAL => TRUE, GENTYPES => TRUE, GENTABLES => FALSE,
 	  CSID => NLS_CHARSET_ID('AL32UTF8'));
 END;
+/
+
+COMMIT;

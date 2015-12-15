@@ -15,3 +15,5 @@ EXCEPTION
 
 END;
 /
+
+COMMIT;

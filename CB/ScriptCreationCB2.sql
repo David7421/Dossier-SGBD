@@ -1,8 +1,8 @@
 @CB/TriggerCopieCotesAvis.sql
 @CB/TriggersCopieFilm.sql
 @CB/ProcedureBackup.sql
-@CB/CreaJobBackup.sql
 @CB/ProcedureEvalFilm.sql
-
-EXIT;
+@CB/PackageRecherche.sql
+@CB/CreaXMLCommunicationTable.sql
+@CB/CreaJobBackup.sql
 

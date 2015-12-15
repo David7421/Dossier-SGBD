@@ -175,7 +175,7 @@ IS
 	END;
 
 END;
+/
 
-
-EXIT;
+COMMIT;
 
