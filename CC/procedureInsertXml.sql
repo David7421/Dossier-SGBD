@@ -12,7 +12,7 @@ BEGIN
           						(	SELECT *
           							FROM PROGRAMMATION p
           							WHERE extractvalue(c.object_value, 'copie/idFilm') = extractvalue(p.object_value, 'programmation/idFilm')
-                        AND extractvalue(c.object_value, 'copie/numCopy') = extractvalue(p.object_value, 'programmation/numCopy')
+                        			AND extractvalue(c.object_value, 'copie/numCopy') = extractvalue(p.object_value, 'programmation/numCopy')
           							AND current_timestamp < to_timestamp_tz(extractvalue(p.object_value, 'programmation/debut')));
 
 
@@ -35,7 +35,7 @@ BEGIN
 	BEGIN
 		RETOUR_COPIE@CB.DBL;
 	EXCEPTION
-		WHEN OTHERS THEN LOGEVENT('RECEPTION_FILM', 'CB HS renvois sur CBB'); RETOUR_COPIE@CBB.DBL;
+		WHEN OTHERS THEN LOGEVENT('RECEPTION_FILM', 'CB HS renvoi sur CBB'); RETOUR_COPIE@CBB.DBL;
 	END;
 
 	LOGEVENT('RECEPTION_FILM', 'Fin de la reception');

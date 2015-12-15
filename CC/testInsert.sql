@@ -71,7 +71,9 @@ INSERT INTO filmSchema VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="
 </film>'
 ));
 
-select EXTRACT(OBJECT_VALUE,'film/id_film') FROM FILMSCHEMA;
+select EXTRACTVALUE(OBJECT_VALUE,'copie/idFilm'), EXTRACTVALUE(OBJECT_VALUE,'copie/numCopy')  FROM COPIEFILM;
+
+select EXTRACTVALUE(OBJECT_VALUE,'programmation/idFilm'), EXTRACTVALUE(OBJECT_VALUE,'programmation/numCopy')  FROM PROGRAMMATION;
 
 
 INSERT INTO COPIEFILM VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encoding="UTF-8"?>
@@ -92,3 +94,20 @@ INSERT INTO PROGRAMMATION VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encodin
     <fin>25/12/15 18:00:00,000000000</fin>
 </programmation>'
 ));
+
+
+
+SELECT s.inst_id,
+s.sid,
+s.serial#,
+p.spid,
+s.username,
+s.program
+FROM gv$session s
+JOIN gv$process p ON p.addr = s.paddr AND p.inst_id = s.inst_id
+WHERE s.type != 'BACKGROUND ';
+
+ALTER SYSTEM DISCONNECT SESSION '65,253' IMMEDIATE;
+
+ALTER USER cb LOCK ACCOUNT;
+
