@@ -91,27 +91,27 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <programmations>
     <progra>
-        <idFil></idFilm>
-        <salle></salle>
-        <heureDebut></heureDebut>
+        <idFilm>1</idFilm>
+        <salle>test</salle>
+        <heureDebut>test</heureDebut>
     </progra>
 
     <progra>
-        <idFil></idFilm>
-        <salle></salle>
-        <heureDebut></heureDebut>
+        <idFilm>2</idFilm>
+        <salle>ffdds</salle>
+        <heureDebut>fdfsd</heureDebut>
     </progra>
 
     <progra>
-        <idFil></idFilm>
-        <salle></salle>
-        <heureDebut></heureDebut>
+        <idFilm>3</idFilm>
+        <salle>fsdsdf</salle>
+        <heureDebut>fsddsf</heureDebut>
     </progra>
 
     <progra>
-        <idFil></idFilm>
-        <salle></salle>
-        <heureDebut></heureDebut>
+        <idFilm>4</idFilm>
+        <salle>fdssdf</salle>
+        <heureDebut>fsdf</heureDebut>
     </progra>
 </programmations>
 
