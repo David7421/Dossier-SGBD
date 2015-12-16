@@ -1,3 +1,4 @@
+--Paramètre : nombre de films à ajouter
 CREATE OR REPLACE PROCEDURE alimCB(nombreAjout IN NUMBER)
 AS
 	
@@ -33,10 +34,11 @@ AS
   	flag boolean;
   	lastNbrCopy number;
 BEGIN
+	--Curseur implicite sur les films de la tables externe
 	FOR s IN (select * from movies_ext order by dbms_random.value)
 	LOOP
 		EXIT WHEN i >= nombreAjout;
-
+		--Génération du nombre de copie
 		nbrCopie := FLOOR(dbms_random.normal * 2 + 5);
 		movieExist := 0;
 		lastNbrCopy := 0;
