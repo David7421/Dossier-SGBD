@@ -17,7 +17,7 @@ import oracle.jdbc.OracleTypes;
  *
  * @author John
  */
-public class noterDialog extends javax.swing.JDialog {
+public class NoterDialog extends javax.swing.JDialog {
     
     private Connection conDB;
     private String curUser;
@@ -25,7 +25,7 @@ public class noterDialog extends javax.swing.JDialog {
     /**
      * Creates new form noterDialog
      */
-    public noterDialog(java.awt.Frame parent, boolean modal, int idFilm, Connection c, String cu) {
+    public NoterDialog(java.awt.Frame parent, boolean modal, int idFilm, Connection c, String cu) {
         super(parent, modal);
         initComponents();
         erreurLabel.setVisible(false);

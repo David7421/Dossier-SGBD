@@ -12,12 +12,12 @@ import javax.swing.SwingUtilities;
  *
  * @author John
  */
-public class accueilPanel extends javax.swing.JPanel {
+public class AccueilPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form testPanel
      */
-    public accueilPanel() {
+    public AccueilPanel() {
         initComponents();
     }
 
