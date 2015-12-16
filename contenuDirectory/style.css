@@ -1,0 +1,24 @@
+body{
+	text-align: center;
+}
+
+programmations {
+    display: table;
+    border: thin solid black;
+    padding-left: auto;
+    padding-right: auto;
+    text-align: center;
+    width: 20em;
+
+}
+
+progra {
+    display: table;
+    border: thin solid black;
+    border-spacing: 2px;
+    width: 100%;
+}
+
+idFilm, numCopy, numSalle, heureDebut, feedback{
+    display: block;
+}

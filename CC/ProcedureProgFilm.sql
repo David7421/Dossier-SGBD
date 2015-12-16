@@ -13,7 +13,7 @@ AS
 
   	resultTest varchar2(2);
 
-  	nomFichierFeedback varchar2(50) := 'programmations/feedback.xml';
+  	nomFichierFeedback varchar2(50) := 'feedback.xml';
   	xmlFeedBack xmltype := xmltype('<programmations></programmations>');
 
 BEGIN
@@ -128,7 +128,7 @@ BEGIN
 
 
 	--Ecriture dans le fichier feedback
-	DBMS_XSLPROCESSOR.CLOB2FILE(xmlFeedBack.getClobVal(), 'MOVIEDIRECTORY', nomFichierFeedback, nls_charset_id('AL32UTF8'));
+	DBMS_XSLPROCESSOR.CLOB2FILE(xmlFeedBack.getClobVal(), 'MOVIEDIRECTORY/programmations', nomFichierFeedback, nls_charset_id('AL32UTF8'));
 
 
 EXCEPTION
