@@ -4,8 +4,11 @@
 
 CREATE OR REPLACE PACKAGE ALIMCC
 IS
-	--Procedure qui permet de générer le XML pour les films et copies de film
+	--Procedure qui permet de générer le XML pour les films et copies de film.
+	--Paramètre : id du film à envoyer.
 	PROCEDURE MOVIE_COPY_GENERATOR(v_film_id IN NUMBER);
+
+	--Procedure parcourant tous les films contenus dans CB pour envoyer des copies à CC
 	PROCEDURE JOB;
 END;
 /
@@ -20,7 +23,7 @@ END;
 
 CREATE OR REPLACE PACKAGE BODY ALIMCC
 IS
-
+	--Paramètre : Id du film à envoyer
 	PROCEDURE MOVIE_COPY_GENERATOR(v_film_id IN NUMBER)
 	AS
 		nbrCopieDispo NUMBER;
@@ -34,10 +37,12 @@ IS
 		parc NUMBER;
 
 	BEGIN
-		
+		--Génération du nombre de copie à envoyer sur base du nombre de copies présentes sur CB
 		SELECT COUNT(*) INTO nbrCopieDispo FROM FILM_COPIE WHERE FILM_ID = v_film_id;
 
 		nbrCopieTransfert := FLOOR(dbms_random.value(0, nbrCopieDispo/2));
+
+
 		IF nbrCopieTransfert > 0 THEN
 			--Generation des infos du film en XML
 			SELECT XMLElement(	"film", 
@@ -122,13 +127,11 @@ IS
 			FROM film
 			WHERE id = v_film_id;
 
+			--Insertion du XML généré dans la table de communication avec CC
 			INSERT INTO tmpXMLMovie
 			VALUES(documentXML);
 
 			--generation des copies de film à envoyer sur CC
-
-		
-
 			LOGEVENT('ALIMCC', 'AJOUT DE ' || nbrCopieTransfert ||' COPIES DU FILM ' || v_film_id);
 
 			SELECT NUM_COPIE BULK COLLECT INTO copy
@@ -142,8 +145,8 @@ IS
 				INTO documentXML
 				FROM DUAL;
 
-				INSERT INTO tmpXMLCopy VALUES(documentXML);
-				DELETE FROM FILM_COPIE WHERE FILM_ID = v_film_id AND NUM_COPIE = copy(parc);
+				INSERT INTO tmpXMLCopy VALUES(documentXML); --Insertion de la copie sélectionnée dans la table de communicaiton avec CC
+				DELETE FROM FILM_COPIE WHERE FILM_ID = v_film_id AND NUM_COPIE = copy(parc);--Suppression sur CB de la copie envoyée
 
 			END LOOP;
 
@@ -159,7 +162,7 @@ IS
 	AS
 		f FILM%ROWTYPE;
 	BEGIN
-		
+		--Boucle sur tous les films présents dans CB
 		FOR f IN (SELECT * FROM FILM) LOOP
 
 			ALIMCC.MOVIE_COPY_GENERATOR(f.id);
@@ -168,7 +171,7 @@ IS
 
 		COMMIT;
 
-		RECEPTION_FILM@CC.DBL;
+		RECEPTION_FILM@CC.DBL; --Demande à CC de lire la table remplie lors de MOVIE_COPY_GENERATOR
 
 	EXCEPTION
 		WHEN OTHERS THEN LOGEVENT('procedure alimCC JOB', 'ERREUR : ' ||SQLERRM); ROLLBACK;

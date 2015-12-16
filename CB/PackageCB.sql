@@ -27,7 +27,15 @@ END;
 
 CREATE OR REPLACE PACKAGE BODY PACKAGECB
 IS
+	/*
+		Paramètres :
+		IN : id du film, titre, titre originale, date de sortie, status, note moyenne IMDB, nombres de notes, runtime, certifications, URL poster, budget, revenus,
+			 homepage, tagline, overview, nombre de copies.
+		OUT: tuple de la table film.
 
+		PROCESS : La fonction va nettoyer les champs pour qu'ils soient à la bonne taille pour la table film et pour supprimer les ioncohérences.
+		Une valeur est incohérente si elle dépasse le quantile 10000 (voir creaRapport.sql)
+	*/
 	FUNCTION VERIF_FILM_FIELDS(id IN NUMBER, titre IN VARCHAR2, titre_original IN VARCHAR2, date_sortie IN FILM.DATE_SORTIE%TYPE, status IN VARCHAR2, note_moyenne IN NUMBER, 
 		nbr_note IN NUMBER, runtime IN NUMBER, certification IN VARCHAR2, lien_poster IN NUMBER, budget IN NUMBER, revenus IN NUMBER, homepage IN VARCHAR2, 
 		tagline IN VARCHAR2, overview IN VARCHAR2, nbr_copy IN NUMBER) RETURN film%ROWTYPE
@@ -52,7 +60,6 @@ IS
 		returnValue film%ROWTYPE;
 
 	BEGIN
-
 		new_titre := titre;
 		IF LENGTH(titre) > 112 THEN
 			RAISE_APPLICATION_ERROR(-20011, 'Champ titre trop long');
@@ -174,7 +181,13 @@ IS
 	END;
 
 
+	/*
+		Paramètres
+		IN : id genre et nom du genre
+		OUT : tuple de la table genre
 
+		PROCESS: modifie les valeurs entrées pour qu'elles puissent être contenues dans la table genre (troncage des chaines trop longues)
+	*/
 	FUNCTION VERIF_GENRE_FIELDS(id IN NUMBER, nom IN VARCHAR2) RETURN genre%ROWTYPE
 	AS
 		returnValue genre%ROWTYPE;
@@ -195,7 +208,13 @@ IS
 	END;
 
 
+	/*
+		Paramètres
+		IN : id producteur et nom du producteur
+		OUT : tuple de la table producteur
 
+		PROCESS: modifie les valeurs entrées pour qu'elles puissent être contenues dans la table producteur (troncage des chaines trop longues)
+	*/
 	FUNCTION VERIF_PRODUCTEUR_FIELDS(id IN NUMBER, nom IN VARCHAR2) RETURN producteur%ROWTYPE
 	AS
 		returnValue producteur%ROWTYPE;
@@ -222,7 +241,13 @@ IS
 	END;
 
 
+	/*
+		Paramètres
+		IN : id pays et nom du pays
+		OUT : tuple de la table pays
 
+		PROCESS: modifie les valeurs entrées pour qu'elles puissent être contenues dans la table pays (troncage des chaines trop longues)
+	*/
 	FUNCTION VERIF_PAYS_FIELDS(id IN VARCHAR2, nom IN VARCHAR2) RETURN pays%ROWTYPE
 	AS
 		returnValue pays%ROWTYPE;
@@ -249,7 +274,13 @@ IS
 
 
 
+	/*
+		Paramètres
+		IN : id langue et nom du langue
+		OUT : tuple de la table langue
 
+		PROCESS: modifie les valeurs entrées pour qu'elles puissent être contenues dans la table langue (troncage des chaines trop longues)
+	*/
 	FUNCTION VERIF_LANGUE_FIELDS(id IN VARCHAR2, nom IN VARCHAR2) RETURN langue%ROWTYPE
 	AS
 		tmp VARCHAR2(4000);
@@ -277,7 +308,13 @@ IS
 	END;
 
 
+	/*
+		Paramètres
+		IN : id personne et nom de la personne et url de la photo de la personne
+		OUT : tuple de la table personne
 
+		PROCESS: modifie les valeurs entrées pour qu'elles puissent être contenues dans la table personne (troncage des chaines trop longues)
+	*/
 	FUNCTION VERIF_PERSONNE_FIELDS(id IN NUMBER, nom IN VARCHAR2, image IN VARCHAR2) RETURN personne%ROWTYPE
 	AS
 		tmp VARCHAR2(4000);
@@ -285,7 +322,7 @@ IS
 		new_image VARCHAR2(4000);
 		returnValue personne%ROWTYPE;
 	BEGIN
-
+		--Si l'URL de l'image est trop longue on met a NULL. Une URL tronquée est invalide donc inutile de la garder
 		new_image := image;
 		IF LENGTH(image) > 32 THEN
 			LOGEVENT('VERIF_REALISATEUR_FIELDS', 'Lien trop grand : NULL');
@@ -313,7 +350,13 @@ IS
 	END;
 
 
+	/*
+		Paramètres
+		IN : id personne et nom de la personne et url de la photo de la personne
+		OUT : tuple de la table personne
 
+		PROCESS: modifie les valeurs entrées pour qu'elles puissent être contenues dans la table personne (troncage des chaines trop longues)
+	*/
 	FUNCTION VERIF_ROLE_FIELDS(id IN NUMBER, id_film IN FILM.ID%TYPE ,nom IN VARCHAR2) RETURN role%ROWTYPE
 	AS
 		tmp VARCHAR2(4000);

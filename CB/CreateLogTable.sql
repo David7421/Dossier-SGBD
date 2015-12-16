@@ -1,6 +1,7 @@
 
 ALTER SESSION SET PLSCOPE_SETTINGS = "IDENTIFIERS:NONE";
 
+--Sequence pour l'ID de la table log
 CREATE SEQUENCE SEQ_LOG;
 
 CREATE TABLE LOG_TABLE
@@ -13,6 +14,7 @@ CREATE TABLE LOG_TABLE
 
 COMMIT;
 
+--Procedure de log. 2 paramètres : nom de la procedure, finction, package ou elle est appelée et le message à loguer
 CREATE OR REPLACE PROCEDURE LogEvent(Emplacement IN LOG_TABLE.LOCALISATION%TYPE, Message IN LOG_TABLE.DESCRIPTION%TYPE)
 AS
 	PRAGMA AUTONOMOUS_TRANSACTION;
@@ -30,6 +32,8 @@ EXCEPTION
 END;
 /
 
+
+--Trigger de mise à jour de la séquence pour l'ID
 CREATE OR REPLACE TRIGGER logID
 BEFORE INSERT ON LOG_TABLE
 FOR EACH ROW

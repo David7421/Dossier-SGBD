@@ -27,7 +27,12 @@ END;
 
 CREATE OR REPLACE PACKAGE BODY PACKAGERECHERCHE
 IS
-
+	
+	/*
+		paramètres :
+		IN : ID du film recherché
+		OUT : Curseur contenant le film trouvé
+	*/
 	FUNCTION recherche_id(p_id IN NUMBER) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
@@ -38,6 +43,15 @@ IS
 		WHEN OTHERS THEN LOGEVENT('Package recherche function recherche_id', SQLERRM);
 	END;
 
+
+	/*
+		paramètres :
+		IN : titre, liste d'acteur, liste realisateur, date de sortie recherche, data de sortie max, date de sortie min
+		OUT : Curseur contenant les films trouvés
+
+		PROCESS : Construction d'une requête sur base des informations fournies. Cette requête retournera tous les
+		films répondant à tous les critères.
+	*/
 	FUNCTION recherche(p_titre IN varchar2, p_acteurs IN tabChar, p_real IN tabChar, p_anneeSortie IN number, p_avant IN number, 
 		p_apres IN number) RETURN SYS_REFCURSOR
 	AS
@@ -46,6 +60,7 @@ IS
 		v_index NUMBER;
 	BEGIN
 
+		--Si on précise un titre : 
 		IF p_titre IS NOT NULL THEN
 			StringRequest := 'SELECT * FROM film WHERE UPPER(film.Titre) LIKE ''' || p_titre || '%''';
 		END IF;
@@ -53,6 +68,7 @@ IS
 		--TRAITEMENT DE LA REQUETE DES ACTEURS
 		IF p_acteurs IS NOT NULL THEN
 			IF StringRequest IS NOT NULL THEN
+				--Si ce n'est pas le début de la requête
 				StringRequest := StringRequest || ' INTERSECT ';
 			END IF;
 
@@ -71,9 +87,10 @@ IS
 			StringRequest := StringRequest || ' ))';
 		END IF;
 
-
+		--Liste des realisateur
 		IF p_real IS NOT NULL THEN
 			IF StringRequest IS NOT NULL THEN
+				--Si ce n'est pas le début de la requete
 				StringRequest := StringRequest || ' INTERSECT ';
 			END IF;
 
@@ -81,6 +98,7 @@ IS
 				 INNER JOIN est_realisateur ON film.id = est_realisateur.id_film
 				 INNER JOIN personne ON personne.id = est_realisateur.id_personne
 				 WHERE UPPER(personne.nom) IN ( ';
+			--On boucle sur la liste des réalisateurs pour les ajouter à la clause IN
 			v_index := p_real.FIRST;
 			StringRequest := StringRequest || '''' || p_real(v_index) || '''';
 			v_index := p_real.NEXT(v_index);
@@ -92,6 +110,7 @@ IS
 			StringRequest := StringRequest || ' ))';
 		END IF;
 
+		--Si on précise une année de sorties
 		IF p_anneeSortie IS NOT NULL THEN
 			IF StringRequest IS NOT NULL THEN
 				StringRequest := StringRequest || ' INTERSECT ';
@@ -120,6 +139,7 @@ IS
 
 		LOGEVENT('package recherche ', StringRequest);
 
+		--retour du curseur de résultat
 		OPEN result FOR StringRequest;
 		RETURN result;
 
@@ -128,6 +148,13 @@ IS
 	END;
 
 
+	/*
+		paramètres :
+		IN : ID du film dont on veut l'affiche
+		OUT : Curseur contenant l'affiche trouvée
+
+		PROCESS : Va chercher l'affiche correspondant au film 
+	*/
 	FUNCTION getAfficheFilm(p_id IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
@@ -139,7 +166,13 @@ IS
 	END;
 
 
-	--RETOURNE LA SOMME ET LA MOYENNE DES NOTES STOCKEES DANS LA TABLE EVALUATION POUR UN FILM DONNE
+	/*
+		paramètres :
+		IN : ID du film dont on veut la moyenne des notes et le nombre de notes
+		OUT : Curseur contenant la moyenne et le nombre de notes
+
+		PROCESS : Calcul la moyenne et recupération du total de notes pour le film donné
+	*/
 	FUNCTION getNoteUtilisateurFilm(p_id IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
@@ -151,7 +184,13 @@ IS
 	END;
 
 
-	--RETOURNE TOUS LES ACTEURS POUR UN FILM DONNE
+	/*
+		paramètres :
+		IN : ID du film 
+		OUT : Curseur contenant la liste des acteurs jouant dans ce film
+
+		PROCESS : Recupere les acteurs du film passé en paramètre
+	*/
 	FUNCTION getActeursFilm(p_id IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
@@ -165,7 +204,13 @@ IS
 		WHEN OTHERS THEN LOGEVENT('Package recherche function getActeursFilm', SQLERRM);
 	END;
 
+	/*
+		paramètres :
+		IN : ID du film 
+		OUT : Curseur contenant la liste des réalisateurs jouant dans ce film
 
+		PROCESS : Recupere les réalisateurs du film passé en paramètre
+	*/
 	FUNCTION getRealisateursFilm(p_id IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
@@ -179,7 +224,13 @@ IS
 	END;
 
 
-	--RECUPERE LES AVIS 5 PAR 5 SELON LE NUMERO DE PAGE OU L'ON SE TROUVE
+	/*
+		paramètres :
+		IN : ID du film, numero de page
+		OUT : Curseur contenant la liste des avis pour ce film et cette page
+
+		PROCESS : Recupere 5 commentaires correspondant au film. (5 commentaires étant le maximum pour une page)
+	*/
 	FUNCTION getAvisFilm(p_id IN number, p_page IN number) RETURN SYS_REFCURSOR
 	AS
 		result SYS_REFCURSOR;
