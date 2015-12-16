@@ -1,4 +1,4 @@
-@CC/registerXSD.sql
+@CC/RegisterXsd.sql
 @CC/CreateLogTable.sql
 @CC/CreateXMLTable.sql
 

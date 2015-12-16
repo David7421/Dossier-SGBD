@@ -1,4 +1,4 @@
-@CC/procedureInsertXml.sql
+@CC/ProcedureInsertXml.sql
 
 EXIT;
 

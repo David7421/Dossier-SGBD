@@ -21,12 +21,12 @@ import oracle.jdbc.OracleTypes;
  *
  * @author Jerome
  */
-public class formulaireRecherche extends javax.swing.JPanel {
+public class FormulaireRecherchePanel extends javax.swing.JPanel {
     
     /**
      * Creates new form formulaireRecherche
      */
-    public formulaireRecherche() {
+    public FormulaireRecherchePanel() {
         initComponents();
         DefaultListModel lmActeur = new DefaultListModel();
         DefaultListModel lmReal = new DefaultListModel();

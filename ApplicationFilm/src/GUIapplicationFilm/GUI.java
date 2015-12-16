@@ -72,10 +72,10 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         connexionPanel1 = new GUIapplicationFilm.ConnexionPanel();
-        accueil = new GUIapplicationFilm.accueilPanel();
-        formulaireRecherche = new GUIapplicationFilm.formulaireRecherche();
-        rechercheResult = new GUIapplicationFilm.rechercheResult();
-        affichageFilm = new GUIapplicationFilm.affichageFilm();
+        accueil = new GUIapplicationFilm.AccueilPanel();
+        formulaireRecherche = new GUIapplicationFilm.FormulaireRecherchePanel();
+        rechercheResult = new GUIapplicationFilm.RechercheResultPanel();
+        affichageFilm = new GUIapplicationFilm.AffichageFilmPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
@@ -216,10 +216,10 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private GUIapplicationFilm.accueilPanel accueil;
-    private GUIapplicationFilm.affichageFilm affichageFilm;
+    private GUIapplicationFilm.AccueilPanel accueil;
+    private GUIapplicationFilm.AffichageFilmPanel affichageFilm;
     private GUIapplicationFilm.ConnexionPanel connexionPanel1;
-    private GUIapplicationFilm.formulaireRecherche formulaireRecherche;
-    private GUIapplicationFilm.rechercheResult rechercheResult;
+    private GUIapplicationFilm.FormulaireRecherchePanel formulaireRecherche;
+    private GUIapplicationFilm.RechercheResultPanel rechercheResult;
     // End of variables declaration//GEN-END:variables
 }

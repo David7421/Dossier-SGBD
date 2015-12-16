@@ -21,14 +21,14 @@ import oracle.jdbc.OracleTypes;
  *
  * @author Jerome
  */
-public class affichageFilm extends javax.swing.JPanel {
+public class AffichageFilmPanel extends javax.swing.JPanel {
     
     private int pNumber;
     private int filmID;
     /**
      * Creates new form affichageFilm
      */
-    public affichageFilm() {
+    public AffichageFilmPanel() {
         initComponents();
         DefaultListModel acteur = new DefaultListModel();
         acteurList.setModel(acteur);
@@ -450,7 +450,7 @@ public class affichageFilm extends javax.swing.JPanel {
     private void evaluerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_evaluerButtonActionPerformed
         GUI container = (GUI)SwingUtilities.getWindowAncestor(this);
         Connection conDB = container.getBeanbd().getConnexion();
-        noterDialog dial = new noterDialog((Frame) SwingUtilities.getWindowAncestor(this), true, filmID, conDB, container.getUser());
+        NoterDialog dial = new NoterDialog((Frame) SwingUtilities.getWindowAncestor(this), true, filmID, conDB, container.getUser());
         dial.setVisible(true);
     }//GEN-LAST:event_evaluerButtonActionPerformed
 

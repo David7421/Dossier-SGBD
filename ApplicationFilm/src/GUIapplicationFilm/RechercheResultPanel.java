@@ -13,12 +13,12 @@ import javax.swing.SwingUtilities;
  *
  * @author John
  */
-public class rechercheResult extends javax.swing.JPanel {
+public class RechercheResultPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form recherchePanel
      */
-    public rechercheResult() {
+    public RechercheResultPanel() {
         initComponents();
     }
 

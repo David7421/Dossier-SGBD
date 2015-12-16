@@ -2,7 +2,7 @@
 @CBB/PackageRecherche.sql
 @CBB/ProcedureRestore.sql
 @CBB/TriggerCopieCotesAvis.sql
-@CBB/TriggerCopieFilm.sql
+@CBB/TriggersCopieFilm.sql
 
 EXIT;
 
