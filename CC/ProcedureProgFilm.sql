@@ -6,7 +6,9 @@ AS
 	cpt number;
 	isValid number;
 
-  	tmp varchar2(20);
+  	XmlValueBuffer varchar2(20);
+  	resultTest varchar2(2);
+
 BEGIN
 
     WITH xmlt(value) AS(
@@ -19,16 +21,33 @@ BEGIN
   	cpt := tabProgra.FIRST;
 	WHILE cpt IS NOT NULL
 	LOOP
-		--isValid := tabProgra(cpt).isSchemaValid('http://cc/prograEntrante.xsd');
-
 		SELECT XMLISVALID(tabProgra(cpt), 'http://cc/prograEntrante.xsd') INTO isValid
 		FROM DUAL;
 
 		DBMS_OUTPUT.PUT_LINE('test : '||isValid);
 
-		
+		IF(tabProgra(cpt).extract('progra/idFilm/text()') IS NULL) THEN
+			DBMS_OUTPUT.PUT_LINE('NULL');
+			--Pas d'ID film : progra non valide
+			--TO DO FEEDBACK
+			cpt := tabProgra.NEXT(cpt);
+			CONTINUE;
+		END IF;
+
+		XmlValuebuffer := tabProgra(cpt).extract('progra/idFilm/text()').getStringVal();
+
+		--Test de la valeur de retour
+		BEGIN
+			SELECT 'ok' INTO resultTest FROM FILMSCHEMA
+			WHERE XmlValuebuffer = extractvalue(object_value, 'film/id_film');
+		EXCEPTION
+			WHEN NO_DATA_FOUND THEN resultTest := 'ko';
+		END;
 
 		
+
+		DBMS_OUTPUT.PUT_LINE(resultTest);
+
     	cpt := tabProgra.NEXT(cpt);
 	END LOOP;
 

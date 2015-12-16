@@ -110,6 +110,7 @@
 
     <progra>
         <idFilm>4</idFilm>
+        <numCopy>5</numCopy>
         <salle>fdssdf</salle>
         <heureDebut>fsdf</heureDebut>
     </progra>
