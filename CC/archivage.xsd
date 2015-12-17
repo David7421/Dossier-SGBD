@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema  xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+            xmlns:xdb="http://xmlns.oracle.com/xdb"
+            xdb:storeVarrayAsTable="true"
+            version="1.0">
+
+    <xs:element name="archivage" type="archiType" xdb:defaultTable="ARCHIVAGE_TABLE"/>
+    
+    <!--Definition du type complexe film-->
+    <xs:complexType name="archiType" xdb:SQLType="ARCHIVAGE_TYPE">
+        <xs:sequence>
+            <xs:element name="idFilm" type="xs:integer" minOccurs="1" xdb:SQLName="IDFILM" xdb:SQLType="NUMBER"/>
+            <xs:element name="perennite" type="xs:integer" minOccurs="1" xdb:SQLName="PERENNITE" xdb:SQLType="NUMBER"/>
+            <xs:element name="nbrPlaces" type="xs:integer" minOccurs="1" xdb:SQLName="NBR_PLACES" xdb:SQLType="VARCHAR2"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

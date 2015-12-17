@@ -88,6 +88,14 @@
     <date></date>
 </programmation>
 
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<archivage>
+    <idFilm></idFilm>
+    <perennite></perennite>
+    <nbrPlaces></nbrPlaces>
+</archivage>
+
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <programmations>
     <progra>
