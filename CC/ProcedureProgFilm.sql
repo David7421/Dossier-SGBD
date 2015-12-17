@@ -2,6 +2,9 @@ create or replace PROCEDURE PROGFILM
 AS	
  	TYPE tabCol IS TABLE OF xmltype INDEX BY BINARY_INTEGER;
 	tabProgra tabCol;	
+
+	TYPE tabNumber IS TABLE OF number INDEX BY BINARY_INTEGER;
+	tabCopie tabNumber;
   	
 	cpt number;
 	isValid number;
@@ -26,6 +29,8 @@ AS
 
   	nomFichierFeedback varchar2(50) := 'feedback.xml';
   	xmlFeedBack xmltype := xmltype('<body><programmations></programmations></body>');
+
+  	cpt number;
 
   	--Interval entre deux films pour ranger la salle etc
   	intervalFilm interval day(0) to second(0) := interval '30' minute;
@@ -62,22 +67,6 @@ BEGIN
 		END IF;
 
 		idFilm := tabProgra(cpt).extract('progra/idFilm/text()').getStringVal();
-
-		--test de la copie du film
-		IF(tabProgra(cpt).extract('progra/numCopy/text()') IS NULL) THEN
-
-			LOGEVENT('PROGFILM','XML sans numCopy');
-			--Pas de num copy: progra non valide
-			select INSERTCHILDXML(tabProgra(cpt), 'progra', 'feedback', xmltype('<feedback>Vous devez indiquer une balise numCopy</feedback>'))
-			INTO tabProgra(cpt) FROM DUAL;
-			
-			--Construction du XML feedback
-			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
-			cpt := tabProgra.NEXT(cpt);
-			CONTINUE;
-		END IF;
-
-		idCopie := tabProgra(cpt).extract('progra/numCopy/text()').getStringVal();
 
 		--récupération du numero de salle
 
@@ -158,27 +147,6 @@ BEGIN
 
 		minuteDebut := numtodsinterval(testHeureMinute, 'minute');
 
-		--La copie existe-t-elle sur CC?
-		BEGIN
-			SELECT 'ok' INTO resultTest FROM COPIEFILM
-			WHERE idFilm = extractvalue(object_value, 'copie/idFilm')
-			AND idCopie = extractvalue(object_value, 'copie/numCopy');
-		EXCEPTION
-			WHEN NO_DATA_FOUND THEN resultTest := 'ko';
-		END;
-
-		IF(resultTest = 'ko') THEN
-
-			LOGEVENT('PROGFILM','La copie choisie n existe pas dans CC');
-			--La copie n'existe pas
-			select INSERTCHILDXML(tabProgra(cpt), 'progra', 'feedback', xmltype('<feedback>La copie choisie pour la diffusion n''est pas en stock</feedback>'))
-			INTO tabProgra(cpt) FROM DUAL;
-
-			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
-			cpt := tabProgra.NEXT(cpt);
-			CONTINUE;
-		END IF;
-
 		dateDebut := TRUNC(sysdate + 1) + heureDebut + minuteDebut;
 
     	nbrJours := FLOOR(dbms_random.normal * 3 + 8);
@@ -194,7 +162,20 @@ BEGIN
     	--Date et heure de fin
     	dateFin := dateDebut + nbrJours + dureeProjection;
 
-    	--La salle est libre à cette heure la pour ce film
+    	--La salle est libre à cette heure la pour le film
+    	cpt := 1
+    	FOR cpt <= nbrJours LOOP
+
+    		BEGIN
+    			SELECT 'ko' INTO resultTest
+    			FROM programmation
+    			WHERE extractvalue(object_value, 'programmation/salle') = idSalle
+    			AND to_timestamp_tz(extractvalue(object_value, 'programmation/debut'))
+    		EXCEPTION
+    			WHEN NO_DATA_FOUND THEN resultTest = 'ok'
+    		END;
+
+    	END LOOP;
 
     	SELECT 'ko' INTO resultTest
     	FROM PROGRAMMATION
