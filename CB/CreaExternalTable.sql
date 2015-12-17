@@ -1,7 +1,3 @@
-
---Permet de créer une table sur base d'un fichier.
-
---Creation de la table externe avec la valeur des champs
 create table movies_ext (
   id integer,
   title varchar2(2000),
@@ -64,3 +60,8 @@ reject limit unlimited; --Limite des tuples rejetés (echec du script si la limi
 
 COMMIT;
 
+
+
+--Permet de créer une table sur base d'un fichier.
+
+--Creation de la table externe avec la valeur des champs
