@@ -1,4 +1,4 @@
 @SYS/CreateUsers.sql
-@SYS/acl.sql
+@SYS/Acl.sql
 
 EXIT;
