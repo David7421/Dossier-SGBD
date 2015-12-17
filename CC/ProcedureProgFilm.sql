@@ -12,17 +12,23 @@ AS
 
   	heureDebut interval day(0) to second(0);
   	minuteDebut interval day(0) to second(0);
+
+  	dureeProjection interval day(0) to second(0);
   	nbrJours number;
 
   	dateDebut timestamp with time zone;
   	dateFin timestamp with time zone;
 
   	testHeureMinute number;
+  	runtime number;
 
   	resultTest varchar2(2);
 
   	nomFichierFeedback varchar2(50) := 'feedback.xml';
   	xmlFeedBack xmltype := xmltype('<body><programmations></programmations></body>');
+
+  	--Interval entre deux films pour ranger la salle etc
+  	intervalFilm interval day(0) to second(0) := interval '30' minute;
 
 BEGIN
 
@@ -177,10 +183,24 @@ BEGIN
 
     	nbrJours := FLOOR(dbms_random.normal * 3 + 8);
 
-    	--Date de fin
-    	dateFin := dateDebut + nbrJours;
+    	-- Duree de la projection
 
-    	--tester les programmations de ce jour
+    	SELECT extractvalue(object_value, 'film/runtime') INTO runtime
+    	FROM FILMSCHEMA
+    	WHERE extractvalue(object_value, 'film/id_film') = idFilm;
+
+    	dureeProjection := numtodsinterval(runtime, 'minute') + intervalFilm;
+
+    	--Date et heure de fin
+    	dateFin := dateDebut + nbrJours + dureeProjection;
+
+    	--La salle est libre à cette heure la pour ce film
+
+    	SELECT 'ko' INTO resultTest
+    	FROM PROGRAMMATION
+    	WHERE extractvalue(object_value, 'programmation/salle') = idFilm
+    	AND to_timestamp_tz(extractvalue(object_value, 'programmation/debut')) >= dateDebut
+    	AND to_timestamp_tz(extractvalue(object_value, 'programmation/debut')) <= dateFin;
 
     	--inserer si ok
     	select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;

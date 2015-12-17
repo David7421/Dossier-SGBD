@@ -92,6 +92,7 @@ INSERT INTO PROGRAMMATION VALUES (XMLTYPE.CREATEXML('<?xml version="1.0" encodin
     <numCopy>3</numCopy>
     <debut>25/12/15 18:00:00,000000000</debut>
     <fin>25/12/15 18:00:00,000000000</fin>
+    <salle>2</salle>
 </programmation>'
 ));
 
