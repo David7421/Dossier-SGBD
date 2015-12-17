@@ -11,9 +11,11 @@ AS
   	idSalle varchar2(20);
 
   	heureDebut interval day(0) to second(0);
-  	heureFin interval day(0) to second(0);
   	minuteDebut interval day(0) to second(0);
-  	minuteFin interval day(0) to second(0);
+  	nbrJours number;
+
+  	dateDebut timestamp with time zone;
+  	dateFin timestamp with time zone;
 
   	testHeureMinute number;
 
@@ -171,15 +173,18 @@ BEGIN
 			CONTINUE;
 		END IF;
 
-		--Determiner l'heure
+		dateDebut := TRUNC(sysdate + 1) + heureDebut + minuteDebut;
 
-		DBMS_OUTPUT.PUT_LINE(heureDebut);
+    	nbrJours := FLOOR(dbms_random.normal * 3 + 8);
 
-    	--tirer aleatoirement un nombre
+    	--Date de fin
+    	dateFin := dateDebut + nbrJours;
 
     	--tester les programmations de ce jour
 
     	--inserer si ok
+    	select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+		cpt := tabProgra.NEXT(cpt);
 	END LOOP;
 
 
