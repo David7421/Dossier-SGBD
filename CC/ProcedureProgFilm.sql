@@ -14,7 +14,7 @@ AS
   	resultTest varchar2(2);
 
   	nomFichierFeedback varchar2(50) := 'feedback.xml';
-  	xmlFeedBack xmltype := xmltype('<programmations></programmations>');
+  	xmlFeedBack xmltype := xmltype('<body><programmations></programmations></body>');
 
 BEGIN
 
@@ -42,7 +42,7 @@ BEGIN
 			INTO tabProgra(cpt) FROM DUAL;
 
 			--On construit le xml feedback
-			select INSERTCHILDXML(xmlFeedBack, 'programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
 			cpt := tabProgra.NEXT(cpt);
 			CONTINUE;
 		END IF;
@@ -58,7 +58,7 @@ BEGIN
 			INTO tabProgra(cpt) FROM DUAL;
 			
 			--Construction du XML feedback
-			select INSERTCHILDXML(xmlFeedBack, 'programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
 			cpt := tabProgra.NEXT(cpt);
 			CONTINUE;
 		END IF;
@@ -75,7 +75,7 @@ BEGIN
 			INTO tabProgra(cpt) FROM DUAL;
 
 			--Construction du XML feedback
-			select INSERTCHILDXML(xmlFeedBack, 'programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
 			cpt := tabProgra.NEXT(cpt);
 			CONTINUE;
 		END IF;
@@ -93,7 +93,7 @@ BEGIN
 			INTO tabProgra(cpt) FROM DUAL;
 
 			--construction XML 
-			select INSERTCHILDXML(xmlFeedBack, 'programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
 			cpt := tabProgra.NEXT(cpt);
 			CONTINUE;
 		END IF;
@@ -116,19 +116,26 @@ BEGIN
 			select INSERTCHILDXML(tabProgra(cpt), 'progra', 'feedback', xmltype('<feedback>La copie choisie pour la diffusion n''est pas en stock</feedback>'))
 			INTO tabProgra(cpt) FROM DUAL;
 
-			select INSERTCHILDXML(xmlFeedBack, 'programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
 			cpt := tabProgra.NEXT(cpt);
 			CONTINUE;
 		END IF;
 
 		--Heure de fin de la projection
-		select INSERTCHILDXML(xmlFeedBack, 'programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+		select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
     	cpt := tabProgra.NEXT(cpt);
 	END LOOP;
 
 
 	--Ecriture dans le fichier feedback
-	DBMS_XSLPROCESSOR.CLOB2FILE(xmlFeedBack.getClobVal(), 'MOVIEDIRECTORY/programmations', nomFichierFeedback, nls_charset_id('AL32UTF8'));
+	LOGEVENT('PROGFILM', 'avant ajout du CSS');
+
+	--SELECT INSERTXMLBEFORE(xmlFeedBack, 'body/programmations', xmltype('<?xml-stylesheet type="text/css" href="style.css"?>'))
+	--INTO xmlFeedBack FROM DUAL;
+
+	LOGEVENT('PROGFILM', 'avant enregistrement du feedback');
+
+	DBMS_XSLPROCESSOR.CLOB2FILE(xmlFeedBack.getClobVal(), 'MOVIEDIRECTORY', nomFichierFeedback, nls_charset_id('AL32UTF8'));
 
 
 EXCEPTION
