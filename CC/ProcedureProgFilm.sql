@@ -9,7 +9,13 @@ AS
   	idFilm varchar2(20);
   	idCopie varchar2(20);
   	idSalle varchar2(20);
-  	heureDebut varchar2(20);
+
+  	heureDebut interval day(0) to second(0);
+  	heureFin interval day(0) to second(0);
+  	minuteDebut interval day(0) to second(0);
+  	minuteFin interval day(0) to second(0);
+
+  	testHeureMinute number;
 
   	resultTest varchar2(2);
 
@@ -83,7 +89,7 @@ BEGIN
 		idSalle := tabProgra(cpt).extract('progra/numSalle/text()').getStringVal();
 
 
-		--récupération de la date et de l'heure du debut de sceance
+		--Heure de debut de sceance mentionné
 
 		IF(tabProgra(cpt).extract('progra/heureDebut/text()') IS NULL) THEN
 			
@@ -98,7 +104,51 @@ BEGIN
 			CONTINUE;
 		END IF;
 
-		heureDebut := tabProgra(cpt).extract('progra/heureDebut/text()').getStringVal();
+		--Minute debut de sceance
+		IF(tabProgra(cpt).extract('progra/minuteDebut/text()') IS NULL) THEN
+			
+			LOGEVENT('PROGFILM','XML sans minuteDebut');
+			--Pas de num salle: progra non valide
+			select INSERTCHILDXML(tabProgra(cpt), 'progra', 'feedback', xmltype('<feedback>Vous devez indiquer une balise minuteDebut</feedback>'))
+			INTO tabProgra(cpt) FROM DUAL;
+
+			--construction XML 
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			cpt := tabProgra.NEXT(cpt);
+			CONTINUE;
+		END IF;
+
+		testHeureMinute := TO_NUMBER(tabProgra(cpt).extract('progra/heureDebut/text()').getStringVal());
+
+		IF(testHeureMinute > 23 OR testHeureMinute < 0) THEN
+			LOGEVENT('PROGFILM','Heure de debut invalide');
+			--Pas de num salle: progra non valide
+			select INSERTCHILDXML(tabProgra(cpt), 'progra', 'feedback', xmltype('<feedback>l''heure de debut doit etre comprise entre 0 et 23 h</feedback>'))
+			INTO tabProgra(cpt) FROM DUAL;
+
+			--construction XML 
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			cpt := tabProgra.NEXT(cpt);
+			CONTINUE;
+		END IF;
+
+		heureDebut := numtodsinterval(testHeureMinute, 'hour');
+
+		testHeureMinute := TO_NUMBER(tabProgra(cpt).extract('progra/minuteDebut/text()').getStringVal());
+
+		IF(testHeureMinute > 59 OR testHeureMinute < 0) THEN
+			LOGEVENT('PROGFILM','Minute de debut invalide');
+			--Pas de num salle: progra non valide
+			select INSERTCHILDXML(tabProgra(cpt), 'progra', 'feedback', xmltype('<feedback>les minutes de debut doivent etre comprises entre 0 et 59</feedback>'))
+			INTO tabProgra(cpt) FROM DUAL;
+
+			--construction XML 
+			select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
+			cpt := tabProgra.NEXT(cpt);
+			CONTINUE;
+		END IF;
+
+		minuteDebut := numtodsinterval(testHeureMinute, 'minute');
 
 		--La copie existe-t-elle sur CC?
 		BEGIN
@@ -121,9 +171,9 @@ BEGIN
 			CONTINUE;
 		END IF;
 
-		--Heure de fin de la projection
-		select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
-    	cpt := tabProgra.NEXT(cpt);
+		--Determiner l'heure
+
+		DBMS_OUTPUT.PUT_LINE(heureDebut);
 
     	--tirer aleatoirement un nombre
 

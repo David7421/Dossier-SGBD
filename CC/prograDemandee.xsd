@@ -13,7 +13,8 @@
             <xs:element name="idFilm" type="xs:integer" minOccurs="1" xdb:SQLName="IDFILM" xdb:SQLType="NUMBER"/>
             <xs:element name="numCopy" type="xs:integer" minOccurs="1" xdb:SQLName="IDCOPIE" xdb:SQLType="NUMBER"/>
             <xs:element name="numSalle" type="xs:integer" minOccurs="1" xdb:SQLName="IDSALLE" xdb:SQLType="NUMBER"/>
-            <xs:element name="heureDebut" type="xs:string" minOccurs="1" xdb:SQLName="HEURE" xdb:SQLType="VARCHAR2"/>
+            <xs:element name="heureDebut" type="xs:integer" minOccurs="1" xdb:SQLName="HEURE" xdb:SQLType="NUMBER"/>
+            <xs:element name="minuteDebut" type="xs:integer" minOccurs="1" xdb:SQLName="MINUTE" xdb:SQLType="NUMBER"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
