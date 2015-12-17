@@ -35,7 +35,7 @@ BEGIN
 
 EXCEPTION
 	WHEN OTHERS THEN 
-		LOGEVENT('CB : TRIGGER DELETECOPIE', 'Delete ratee => ' || SQLCODE || ' : ' || SQLERRM);
+		LOGEVENT('CBB : TRIGGER DELETECOPIE', 'Delete ratee => ' || SQLCODE || ' : ' || SQLERRM);
 END;
 /
 

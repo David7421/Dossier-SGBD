@@ -1,9 +1,13 @@
 CREATE OR REPLACE TRIGGER COPIECOTESAVIS
 BEFORE INSERT OR UPDATE ON EVALUATION
 FOR EACH ROW
+DECLARE
+  checkException exception;
+  pragma exception_init(checkException, -2291);
 BEGIN
 	IF :NEW.TOKEN IS NULL THEN
 		:NEW.TOKEN := 'OK';
+		LOGEVENT('CBB : TRIGGER COPIECOTESAVIS', 'Debut de copie');
 
 			IF (INSERTING) THEN
 				INSERT INTO EVALUATION@CB.DBL (IDFILM, LOGIN, COTE, AVIS, DATEEVAL, TOKEN)
@@ -21,18 +25,8 @@ BEGIN
 	END IF;
 
 EXCEPTION
-	WHEN OTHERS THEN
-		IF SQLCODE = -2291 THEN -- Clé étrangère (login) inconnue de l'autre schéma
-			:NEW.TOKEN := 'KO';
-			LOGEVENT('CBB : COPIECOTESAVIS', 'Erreur de FK');
-		
-		ELSIF SQLCODE = -28000 THEN -- DB Link inaccessible donc user hors connexion
-			:NEW.TOKEN := 'KO';
-			LOGEVENT('CBB : COPIECOTESAVIS',' CB inaccessible');
-
-		ELSE RAISE;
-
-		END IF;
+	WHEN checkException THEN :NEW.TOKEN := 'KO'; LOGEVENT('CBB : TRIGGER COPIECOTESAVIS', 'Copie ratee (Foreign Key) => ' || SQLCODE || ' : ' || SQLERRM);
+	WHEN OTHERS THEN LOGEVENT('CBB : TRIGGER COPIECOTESAVIS', 'Copie ratee => ' || SQLCODE || ' : ' || SQLERRM); RAISE;
 END;
 /
 
