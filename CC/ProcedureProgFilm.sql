@@ -124,6 +124,12 @@ BEGIN
 		--Heure de fin de la projection
 		select INSERTCHILDXML(xmlFeedBack, 'body/programmations', 'progra', tabProgra(cpt)) INTO xmlFeedBack FROM DUAL;
     	cpt := tabProgra.NEXT(cpt);
+
+    	--tirer aleatoirement un nombre
+
+    	--tester les programmations de ce jour
+
+    	--inserer si ok
 	END LOOP;
 
 
