@@ -12,7 +12,8 @@
         <xs:sequence>
             <xs:element name="idFilm" type="xs:integer" minOccurs="1" xdb:SQLName="IDFILM" xdb:SQLType="NUMBER"/>
             <xs:element name="perennite" type="xs:integer" minOccurs="1" xdb:SQLName="PERENNITE" xdb:SQLType="NUMBER"/>
-            <xs:element name="nbrPlaces" type="xs:integer" minOccurs="1" xdb:SQLName="NBR_PLACES" xdb:SQLType="VARCHAR2"/>
+            <xs:element name="nbrPlaces" type="xs:integer" minOccurs="1" xdb:SQLName="NBR_PLACES" xdb:SQLType="NUMBER"/>
+            <xs:element name="nbrCopies" type="xs:integer" minOccurs="1" xdb:SQLName="NBR_COPIE" xdb:SQLType="NUMBER"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
