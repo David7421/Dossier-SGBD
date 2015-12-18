@@ -1,0 +1,58 @@
+createXMLTable
+
+Creation des tables sur base des schémas XSD préalablements
+enregistrés(voir RegisterXsd.sql).
+
+Les principales tables créées sont les suivantes :
+-filmSchema : Contient toutes les informations relatives à un film
+-copieFilm : Contient les copies des films
+-programmation : Les programmations de films
+-archives : des informations utiles pour des calcules statistique sur les programmations
+
+
+Création des DBLink permettant de communiquer avec CB et CBB
+
+
+
+Film.xsd
+
+Schéma de validation des XML contenant les informations relatives
+aux films. Il servira à valider les XML venant de CB ou CBB
+
+
+
+
+Grammaire CC.xml : a supprimer
+
+
+ProcedureInsertXML.sql
+
+Cette procedure est exécutée sur demande de CB (voir
+CB/ProcedureAlimCB et CB/PackageAlimCC)
+La procédure effectue les actions suivantes : 
+
+1) Remplissage d'une table (TMPXMLCOPY) qui va contenir les copies
+de film devant retourner à CB.
+
+2) Lecture de la table de CB contenant les informations de films
+que CC doit inserer dans sa table filmSchema
+
+3) Lecture de la table de CB contenant les XML copies que CC dans insèrer
+dans sa table COPIEFILM
+
+4) Une fois les table de CB vue CC efface leur contenu pour ne pas réinsèrer
+les mêmes copies au prochain appel
+
+5) CC appel une methode de CB qui lire la table TMPXMLCOPY afin de récupérer
+les copies retournées par CC.
+
+
+
+
+ProcedureProgFilm.sql
+
+Cette procedure va lire un fichier XML de demande de programmations se trouvant dans la directory
+MOVIEDIRECTORY. Cette demande de programmation
+
+
+
