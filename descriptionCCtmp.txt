@@ -52,7 +52,28 @@ les copies retournées par CC.
 ProcedureProgFilm.sql
 
 Cette procedure va lire un fichier XML de demande de programmations se trouvant dans la directory
-MOVIEDIRECTORY. Cette demande de programmation
+MOVIEDIRECTORY. Cette demande de programmation contient une id de film à programmer,
+le numéro de la salle et une heure de début de scéance.
+
+La procedure vérifie la validité du XML reçus et va calculer la durée de la scéance sur
+base de la durée du film + 30 min (pub + rangement). 
+
+On va ensuite tirer un nombre de jour aléatoire pour avoir la durée de programmation.
+
+On vérifie que la salle est libre dans la tranche horaire demandée et ce pour tous les jours de programmation
+
+On regarde si on a une copie libre pour être programmée à cette heure la.
+
+Si toutes ces conditions sont remplies on insert la programmation sinon on génère un message de feedback précisant 
+la nature l'erreur.
+
+
+RegisterXSD.sql
+
+Enregistrement de la grammaire XML pour chaque document XML manipulé par CC.
+
+
+
 
 
 
