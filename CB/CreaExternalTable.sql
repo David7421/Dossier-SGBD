@@ -23,12 +23,12 @@ create table movies_ext (
 )
 organization external (
   type oracle_loader
-  default directory MOVIEDIRECTORY --Directory contenant le fichier à parser
+  default directory MOVIEDIRECTORY
   access parameters (
-    records delimited by "\n" --1 ligne = 1 tuple
+    records delimited by "\n"
     characterset "AL32UTF8"
     string sizes are in characters
-    fields terminated by '@|@' --Caracteres de séparation des différents champs
+    fields terminated by '@|@'
     missing field values are null
     (
       id unsigned integer external,
@@ -54,9 +54,9 @@ organization external (
       spoken_languages char(1000)
     )
   )
-  location('movies.txt') --Nom du fichier source de données
+  location('movies.txt')
 )
-reject limit unlimited; --Limite des tuples rejetés (echec du script si la limite est dépassée)
+reject limit unlimited;
 
 COMMIT;
 

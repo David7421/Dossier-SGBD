@@ -95,3 +95,6 @@ IS
 	END;
 END;
 /
+
+COMMIT;
+

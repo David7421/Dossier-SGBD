@@ -38,6 +38,16 @@ echo CB4
 
 sqlplus CB/CB@localhost:1521/xe @CB/ScriptCreationCB4.sql
 
+
+echo MKT1
+
+sqlplus MKT/MKT@localhost:1521/xe @MKT/ScriptCreationMKT1.sql
+
+echo DW1
+
+sqlplus DW/DW@localhost:1521/xe @DW/ScriptCreationDw1.sql
+
+
 echo INSTALLATION TERMINEE
 
 pause
