@@ -14,6 +14,10 @@
             <xs:element name="numCopy" type="xs:integer" minOccurs="1" xdb:SQLName="IDCOPIE" xdb:SQLType="NUMBER"/>
             <xs:element name="debut" type="xs:string" minOccurs="1" xdb:SQLName="DEBUT" xdb:SQLType="VARCHAR2"/>
             <xs:element name="fin" type="xs:string" minOccurs="1" xdb:SQLName="FIN" xdb:SQLType="VARCHAR2"/>
+            <xs:element name="salle" type="xs:integer" minOccurs="1" xdb:SQLName="SALLE" xdb:SQLType="NUMBER"/>
+            <xs:element name="nbrSpectateurs" type="xs:integer" minOccurs="1" xdb:SQLName="SPECTATEURS" xdb:SQLType="NUMBER"/>
+            <xs:element name="nbrPlaces" type="xs:integer" minOccurs="1" xdb:SQLName="PLACES" xdb:SQLType="NUMBER"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
+

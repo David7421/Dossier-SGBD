@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<programmations>
+    <progra>
+        <idFilm>4848</idFilm>
+        <numSalle>8</numSalle>
+        <heureDebut>12</heureDebut>
+        <minuteDebut>30</minuteDebut>
+    </progra>
+    <progra>
+        <idFilm>4848</idFilm>
+        <numSalle>8</numSalle>
+        <heureDebut>12</heureDebut>
+        <minuteDebut>30</minuteDebut>
+    </progra>
+    <progra>
+        <idFilm>4849</idFilm>
+        <numSalle>10</numSalle>
+        <heureDebut>12</heureDebut>
+        <minuteDebut>30</minuteDebut>
+    </progra>
+</programmations>
