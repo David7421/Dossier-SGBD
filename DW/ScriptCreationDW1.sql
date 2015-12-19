@@ -1,5 +1,5 @@
 @DW/CreaDW.sql
 @DW/CreateLogTable.sql
---@DW/PackageAlimDW.sql
+@DW/PackageAlimDW.sql
 
 EXIT;
