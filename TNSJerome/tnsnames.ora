@@ -24,3 +24,12 @@ CC =
       (SERVICE_NAME = XE)
     )
   )
+
+MKT =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = John-PC)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = XE)
+    )
+  )
